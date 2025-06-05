@@ -18,7 +18,7 @@ defineProps<{
 
     <div class="flex items-center gap-2">
       <Link :href="createUrl">
-        <Button variant="default">+ Create</Button>
+        <Button variant="outline" sizw="sm">+ Create</Button>
       </Link>
       <Button
         variant="destructive"

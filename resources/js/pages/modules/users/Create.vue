@@ -8,7 +8,6 @@ const breadcrumbs = [
     { title: 'Create User', href: '/management/users/create' },
 ];
 
-
 </script>
 
 <template>
