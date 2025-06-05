@@ -5,7 +5,7 @@ import { Head, router } from '@inertiajs/vue3'
 import { type BreadcrumbItem } from '@/types'
 import { Info, Clock, Pencil, Trash2, ArrowLeft } from 'lucide-vue-next'
 
-const props = defineProps<{
+defineProps<{
   title: string
   breadcrumbs: BreadcrumbItem[]
   fields: { label: string; value: string }[]
