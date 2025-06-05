@@ -1,4 +1,3 @@
-`
 <script setup lang="ts">
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'

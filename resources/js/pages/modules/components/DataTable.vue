@@ -95,10 +95,7 @@ const getPageNumbers = () => {
   <div class="space-y-4">
     <!-- Search and Length -->
     <div class="flex justify-between items-center gap-4">
-      <div class="w-64">
-        <Input v-model="searchQuery" placeholder="Search..." class="w-full" />
-      </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2"> <!-- Show entries dulu -->
         <span class="text-sm text-muted-foreground">Show</span>
         <select v-model="pageLength"
           class="w-20 rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
@@ -109,7 +106,11 @@ const getPageNumbers = () => {
         </select>
         <span class="text-sm text-muted-foreground">entries</span>
       </div>
+      <div class="w-64"> <!-- Search pindah ke kanan -->
+        <Input v-model="searchQuery" placeholder="Search..." class="w-full" />
+      </div>
     </div>
+
 
     <!-- Table -->
     <div class="border rounded-md overflow-x-auto">
@@ -155,13 +156,16 @@ const getPageNumbers = () => {
           </Button>
 
           <div class="flex items-center gap-1">
-            <Button v-for="page in getPageNumbers()" :key="page" size="sm" variant="outline" :class="[
-              currentPage === page
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
-                : 'bg-muted/40 hover:bg-muted border-input text-gray-800 dark:text-white'
-            ]" @click="goToPage(page)">
+            <Button v-for="page in getPageNumbers()" :key="page" size="sm" class="px-3 py-1.5 text-sm border rounded-md"
+              :class="[
+                currentPage === page
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-muted text-black dark:text-white border-input'
+              ]" @click="goToPage(page)">
               {{ page }}
             </Button>
+
+
           </div>
 
           <Button size="sm" variant="outline" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)"
