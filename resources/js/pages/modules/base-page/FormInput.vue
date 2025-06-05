@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import ButtonsForm from './ButtonsForm.vue'
 
-const props = defineProps<{
+defineProps<{
   formInputs: {
     name: string
     label: string
@@ -14,6 +14,7 @@ const props = defineProps<{
     options?: { value: string | number; label: string }[]
   }[]
 }>()
+
 
 const formData = ref<Record<string, any>>({})
 

@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Link } from '@inertiajs/vue3'
 
-const props = defineProps<{
+defineProps<{
   createUrl: string
   selected: number[]
   onDeleteSelected: () => void

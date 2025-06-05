@@ -3,11 +3,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button'
 import { ref } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   title?: string
   description?: string
   modelValue: boolean
 }>()
+
 
 const emit = defineEmits(['update:modelValue', 'confirm'])
 
