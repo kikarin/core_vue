@@ -11,8 +11,9 @@ const breadcrumbs = [
 
 <template>
   <PageCreate
-    title="Tambah Team"
+    title="Create Team"
     :breadcrumbs="breadcrumbs"
+    back-url="/data-master/team-names"
   >
     <Form mode="create" />
   </PageCreate>

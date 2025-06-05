@@ -3,5 +3,15 @@ defineProps<{ title: string }>()
 </script>
 
 <template>
-  <h1 class="text-xl font-medium text-muted-foreground">{{ title }}</h1>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <!-- Title -->
+    <h1 class="text-2xl font-semibold tracking-tight">
+      {{ title }}
+    </h1>
+
+    <!-- Slot untuk tombol -->
+    <div class="flex flex-wrap gap-2 items-center">
+      <slot />
+    </div>
+  </div>
 </template>

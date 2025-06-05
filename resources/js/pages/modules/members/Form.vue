@@ -44,15 +44,12 @@ const handleSave = (data: Record<string, any>) => {
   }
 }
 
-const handleCancel = () => {
-  router.visit('/management/members')
-}
+
 </script>
 
 <template>
   <FormInput
     :form-inputs="formInputs"
     @save="handleSave"
-    @cancel="handleCancel"
   />
 </template> 

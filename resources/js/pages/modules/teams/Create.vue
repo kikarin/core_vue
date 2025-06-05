@@ -14,6 +14,7 @@ const breadcrumbs = [
   <PageCreate
     title="Create Team"
     :breadcrumbs="breadcrumbs"
+    back-url="/management/teams"
   >
     <Form mode="create" />
   </PageCreate>

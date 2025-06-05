@@ -7,10 +7,12 @@ const breadcrumbs = [
     { title: 'Users', href: '/management/users' },
     { title: 'Create User', href: '/management/users/create' },
 ];
+
+
 </script>
 
 <template>
-    <PageCreate title="Create User" :breadcrumbs="breadcrumbs">
+    <PageCreate title="Create User" :breadcrumbs="breadcrumbs" back-url="/management/users">
         <Form mode="create" />
     </PageCreate>
 </template>

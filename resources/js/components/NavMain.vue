@@ -1,15 +1,18 @@
-`<script setup lang="ts">
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { ChevronDown } from 'lucide-vue-next'
 import { type NavItem } from '@/types'
 
-defineProps<{
+const props = defineProps<{
   items: NavItem[]
   sectionTitle?: string
+  sectionId?: string
 }>()
 
-const openGroups = ref<string[]>([])
+// Inisialisasi openGroups dari localStorage dengan sectionId
+const getStorageKey = () => `openGroups_${props.sectionId || 'default'}`
+const openGroups = ref<string[]>(JSON.parse(localStorage.getItem(getStorageKey()) || '[]'))
 const page = usePage()
 
 const toggleGroup = (title: string) => {
@@ -18,12 +21,60 @@ const toggleGroup = (title: string) => {
   } else {
     openGroups.value.push(title)
   }
+  // Simpan ke localStorage dengan sectionId
+  localStorage.setItem(getStorageKey(), JSON.stringify(openGroups.value))
 }
 
 const isActive = (href?: string) => {
   if (!href) return false
   return page.url.startsWith(href)
 }
+
+// Fungsi untuk mencari parent menu dari route aktif
+const findActiveParents = (items: NavItem[], currentUrl: string): string[] => {
+  let foundPath: string[] = []
+
+  const traverse = (items: NavItem[]): boolean => {
+    for (const item of items) {
+      if (item.href && currentUrl.startsWith(item.href)) {
+        foundPath.push(item.title)
+        return true
+      }
+      if (item.children) {
+        if (traverse(item.children)) {
+          foundPath.unshift(item.title)
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  traverse(items)
+  // Jangan return leaf, hanya parent
+  foundPath.pop()
+  return foundPath
+}
+
+// Fungsi untuk membuka menu berdasarkan URL aktif
+const openActiveMenus = () => {
+  const activeParents = findActiveParents(props.items, page.url)
+  // Gabungkan dengan menu yang sudah dibuka manual
+  const newOpenGroups = Array.from(new Set([...openGroups.value, ...activeParents]))
+  openGroups.value = newOpenGroups
+  // Simpan ke localStorage dengan sectionId
+  localStorage.setItem(getStorageKey(), JSON.stringify(newOpenGroups))
+}
+
+// Buka menu saat komponen dimuat
+onMounted(() => {
+  openActiveMenus()
+})
+
+// Buka menu setiap kali URL berubah
+watch(() => page.url, () => {
+  openActiveMenus()
+})
 </script>
 
 <template>
@@ -113,4 +164,3 @@ const isActive = (href?: string) => {
     </ul>
   </div>
 </template>
-`

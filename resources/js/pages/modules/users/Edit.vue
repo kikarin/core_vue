@@ -8,7 +8,6 @@ const breadcrumbs = [
     { title: 'Edit User', href: '/management/users/edit' },
 ];
 
-// Ini nanti akan diganti dengan data dari API
 const initialData = {
     id: 1,
     name: 'John Doe',
@@ -17,7 +16,7 @@ const initialData = {
 </script>
 
 <template>
-    <PageEdit title="Edit User" :breadcrumbs="breadcrumbs">
+    <PageEdit title="User" :breadcrumbs="breadcrumbs" back-url="/management/users">
         <Form mode="edit" :initial-data="initialData" />
     </PageEdit>
 </template>

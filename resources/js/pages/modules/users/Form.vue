@@ -61,12 +61,8 @@ const handleSave = (data: Record<string, any>) => {
         router.put(`/management/users/${props.initialData?.id}`, data);
     }
 };
-
-const handleCancel = () => {
-    router.visit('/management/users');
-};
 </script>
 
 <template>
-    <FormInput :form-inputs="formInputs" @save="handleSave" @cancel="handleCancel" />
+    <FormInput :form-inputs="formInputs" @save="handleSave"/>
 </template>

@@ -19,8 +19,9 @@ const initialData = {
 
 <template>
   <PageEdit
-    title="Edit Team"
+    title="Team"
     :breadcrumbs="breadcrumbs"
+    back-url="/management/teams"
   >
     <Form mode="edit" :initial-data="initialData" />
   </PageEdit>

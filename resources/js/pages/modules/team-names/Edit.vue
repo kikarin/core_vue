@@ -19,8 +19,9 @@ const initialData = ref({
 
 <template>
   <PageEdit
-    title="Edit Team"
+    title="Team"
     :breadcrumbs="breadcrumbs"
+    back-url="/data-master/team-names"
   >
     <Form mode="edit" :initial-data="initialData" />
   </PageEdit>

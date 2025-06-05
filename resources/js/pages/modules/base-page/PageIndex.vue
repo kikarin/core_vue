@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue'
-import HeaderIndex from './HeaderIndex.vue'
-import ButtonsIndex from './ButtonsIndex.vue'
+import HeaderActions from './HeaderActions.vue'
 import DataTable from '../components/DataTable.vue'
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { type BreadcrumbItem } from '@/types'
 
 const selected = ref<number[]>([])
-const showConfirm = ref(false)
+const showConfirm = ref<boolean>(false)
 
 const deleteSelected = () => {
   alert(`Deleted: ${selected.value.join(', ')}`)
@@ -32,8 +31,8 @@ defineProps<{
   <Head :title="title" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
-      <HeaderIndex :title="title" />
-      <ButtonsIndex :create-url="createUrl || '#'" :selected="selected" :on-delete-selected="deleteSelected" />
+      <HeaderActions :title="title" :create-url="createUrl || '#'" :selected="selected"
+        :on-delete-selected="() => (showConfirm = true)" />
       <DataTable :columns="columns" :rows="rows" :actions="actions" v-model:selected="selected" />
       <ConfirmDialog v-model="showConfirm" title="Delete selected?"
         :description="`You are about to delete ${selected.length} record(s). This action cannot be undone.`"

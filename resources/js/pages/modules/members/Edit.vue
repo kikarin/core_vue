@@ -20,7 +20,7 @@ const initialData = ref({
 </script>
 
 <template>
-    <PageEdit title="Edit Member" :breadcrumbs="breadcrumbs">
+    <PageEdit title="Member" :breadcrumbs="breadcrumbs" back-url="/management/members">
         <Form mode="edit" :initial-data="initialData" />
     </PageEdit>
 </template>

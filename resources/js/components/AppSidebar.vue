@@ -84,11 +84,11 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" section-title="Menu" />
+            <NavMain :items="mainNavItems" section-title="Menu" section-id="main" />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavMain :items="footerNavItems" section-title="Settings" />
+            <NavMain :items="footerNavItems" section-title="Settings" section-id="footer" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

@@ -8,11 +8,37 @@ const breadcrumbs = [
 ]
 
 const columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'role', label: 'Role' },
-    { key: 'status', label: 'Status' },
+  {
+    key: 'name',
+    label: 'Name',
+    searchable: true,
+    orderable: true,
+    visible: true,
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    searchable: true,
+    orderable: true,
+    visible: true,
+  },
+  {
+    key: 'role',
+    label: 'Role',
+    searchable: false,
+    orderable: false,
+    visible: true,
+  },
+  {
+    key: 'status',
+    label: 'Status',
+    className: 'text-green-500',
+    searchable: false,
+    orderable: true,
+    visible: true,
+  },
 ]
+
 
 const rows = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active' },

@@ -11,7 +11,7 @@ const breadcrumbs = [
 </script>
 
 <template>
-    <PageCreate title="Tambah Member" :breadcrumbs="breadcrumbs">
+    <PageCreate title="Create Member" :breadcrumbs="breadcrumbs" back-url="/management/members">
         <Form mode="create" />
     </PageCreate>
 </template>

@@ -7,14 +7,16 @@ import { type BreadcrumbItem } from '@/types'
 defineProps<{
   title: string
   breadcrumbs: BreadcrumbItem[]
+  backUrl?: string
 }>()
 </script>
 
 <template>
+
   <Head :title="`Edit ${title}`" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
-      <HeaderIndex :title="`Edit ${title}`" />
+      <HeaderIndex :title="`Edit ${title}`" :back-url="backUrl" />
       <slot />
     </div>
   </AppLayout>
