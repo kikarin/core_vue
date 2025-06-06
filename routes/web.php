@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\TeamController;
+
+use App\Http\Controllers\UsersController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -12,20 +13,7 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/management/users', function () {
-    return Inertia::render('modules/users/Index');
-})->name('management.users');
-Route::get('/management/users/create', function () {
-    return Inertia::render('modules/users/Create');
-})->name('management.users.create');
-
-Route::get('/management/users/{id}/edit', function () {
-    return Inertia::render('modules/users/Edit');
-})->name('management.users.edit');
-
-Route::get('/management/users/{id}', function () {
-    return Inertia::render('modules/users/Show');
-})->name('management.users.show');
+Route::resource('management/users', UsersController::class)->names('users');
 
 // Teams Routes
 Route::middleware(['auth', 'verified'])->group(function () {

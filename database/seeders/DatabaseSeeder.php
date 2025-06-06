@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +16,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', 0);
+        try {
+			DB::beginTransaction();
+            $this->call(CategoryIdentitySeeder::class);
+            $this->call(IdentitySeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            $this->call(CategoryPermissionSeeder::class);
+            $this->call(UsersMenuSeeder::class);
+            $this->call(RoleSeeder::class);
+            $this->call(UsersSeeder::class);
+            $this->call(SetRolePermissionSeeder::class);
+
+            DB::commit();
+		} catch (Exception $e) {
+			DB::rollback();
+            throw $e;
+		}   
+        $this->call(ImportSqlSeeder::class);
+
     }
 }
