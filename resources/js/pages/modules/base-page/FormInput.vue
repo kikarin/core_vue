@@ -33,7 +33,7 @@ const submit = () => {
         <div class="col-span-9">
           <textarea v-if="input.type === 'textarea'" v-model="formData[input.name]" :placeholder="input.placeholder"
             :required="input.required"
-            class="flex min-h-[100px] w-full rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+            class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
           <Select v-else-if="input.type === 'select'" v-model="formData[input.name]" :required="input.required">
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="input.placeholder" />

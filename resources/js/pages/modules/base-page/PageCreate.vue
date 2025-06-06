@@ -30,8 +30,8 @@ defineProps<{
           <Card class="w-full">
             <CardHeader class="flex items-center justify-between">
               <CardTitle class="text-2xl">{{ title }}</CardTitle>
-              <Button variant="outline" @click="backUrl ? router.visit(backUrl) : router.visit('/')">
-                Cancel
+              <Button variant="secondary" @click="backUrl ? router.visit(backUrl) : router.visit('/')">
+                ← Back
               </Button>
             </CardHeader>
             <CardContent>
