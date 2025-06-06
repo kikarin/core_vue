@@ -19,6 +19,7 @@ trait BaseTrait
     private $kode_second_menu = "";
     private $permission_main;
     private $commonData = [];
+    private $check_permission = true;
 
     public function initialize()
     {
@@ -40,6 +41,9 @@ trait BaseTrait
     public function index()
     {
         $data = $this->commonData + [];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
         $data = $this->repository->customIndex($data);
         return inertia('modules/' . $this->route . '/Index', $data);
     }
@@ -50,6 +54,9 @@ trait BaseTrait
         $data = $this->commonData + [
             "item" => null,
         ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
         $data = $this->repository->customCreateEdit($data);
         if (!is_array($data)) {
             return $data;
@@ -64,6 +71,9 @@ trait BaseTrait
         $data = $this->commonData + [
             'item' => $item,
         ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
         $data = $this->repository->customCreateEdit($data, $item);
         if (!is_array($data)) {
             return $data;
@@ -78,6 +88,9 @@ trait BaseTrait
         $data = $this->commonData + [
             'item' => $item,
         ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
         $data = $this->repository->customShow($data, $item);
         return inertia("modules/$this->route/Show", $data);
     }
@@ -183,5 +196,17 @@ trait BaseTrait
     public function export()
     {
         return Excel::download(new GeneralExport($this->repository->getInstanceModel(), request()->all()), $this->titlePage . '.xlsx');
+    }
+    
+    private function getPermission() {
+        $auth_user = auth()->user();
+        return [
+            "can" => [
+                "Add" => $auth_user->can($this->permission_main . " Add"),
+                "Edit" => $auth_user->can($this->permission_main . " Edit"),
+                "Delete" => $auth_user->can($this->permission_main . " Delete"),
+                "Detail" => $auth_user->can($this->permission_main . " Detail"),
+            ],
+        ];
     }
 }

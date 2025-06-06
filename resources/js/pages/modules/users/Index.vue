@@ -68,11 +68,12 @@ const actions = (row: any) => [
         },
     },
 ]
+
 </script>
 
 <template>
+    
     <PageIndex title="Users" :breadcrumbs="breadcrumbs" :columns="columns" :rows="rows" :actions="actions"
         create-url="/management/users/create" />
 
 </template>
-`
