@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { ref } from 'vue'
 
 defineProps<{
   title?: string

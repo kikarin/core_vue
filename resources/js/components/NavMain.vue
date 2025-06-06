@@ -29,7 +29,7 @@ const isActive = (href?: string) => {
 }
 
 const findActiveParents = (items: NavItem[], currentUrl: string): string[] => {
-  let foundPath: string[] = []
+  const foundPath: string[] = []
 
   const traverse = (items: NavItem[]): boolean => {
     for (const item of items) {

@@ -8,7 +8,7 @@ defineProps<{
   formInputs: {
     name: string
     label: string
-    type: 'text' | 'email' | 'password' | 'textarea' | 'select'
+    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number'
     placeholder?: string
     required?: boolean
     options?: { value: string | number; label: string }[]

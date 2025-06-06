@@ -11,7 +11,7 @@ const formInputs = [
   {
     name: 'name',
     label: 'Nama Team',
-    type: 'text',
+    type: 'text'as const,
     placeholder: 'Masukkan nama team',
     required: true,
   },

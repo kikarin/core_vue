@@ -11,21 +11,21 @@ const formInputs = [
     {
         name: 'name',
         label: 'Nama',
-        type: 'text',
+        type: 'text' as const,
         placeholder: 'Masukkan nama',
         required: true,
     },
     {
         name: 'age',
         label: 'Umur',
-        type: 'number',
+        type: 'number' as const,
         placeholder: 'Masukkan umur',
         required: true,
     },
     {
         name: 'team_id',
         label: 'Team',
-        type: 'select',
+        type: 'select' as const,
         placeholder: 'Pilih team',
         required: true,
         options: [

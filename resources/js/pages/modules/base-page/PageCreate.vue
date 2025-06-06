@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue'
-import HeaderIndex from './HeaderIndex.vue'
 import { type BreadcrumbItem } from '@/types'
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'

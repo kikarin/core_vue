@@ -11,14 +11,14 @@ const formInputs = [
   {
     name: 'name',
     label: 'Team Name',
-    type: 'text',
+    type: 'text' as const,
     placeholder: 'Enter team name',
     required: true,
   },
   {
     name: 'description',
     label: 'Description',
-    type: 'textarea',
+    type: 'textarea' as const,
     placeholder: 'Enter team description',
     required: true,
   },

@@ -11,28 +11,28 @@ const formInputs = [
     {
         name: 'name',
         label: 'Name',
-        type: 'text',
+        type: 'text'as const,
         placeholder: 'Enter name',
         required: true,
     },
     {
         name: 'email',
         label: 'Email',
-        type: 'email',
+        type: 'email'as const,
         placeholder: 'Enter email',
         required: true,
     },
     {
         name: 'password',
         label: 'Password',
-        type: 'password',
+        type: 'password'as const,
         placeholder: 'Enter password',
         required: props.mode === 'create',
     },
     {
         name: 'role',
         label: 'Role',
-        type: 'select',
+        type: 'select'as const,
         placeholder: 'Pilih Role',
         required: true,
         options: [
@@ -44,7 +44,7 @@ const formInputs = [
     {
         name: 'status',
         label: 'Status',
-        type: 'select',
+        type: 'select'as const,
         placeholder: 'Pilih status',
         required: true,
         options: [

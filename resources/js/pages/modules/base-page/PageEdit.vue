@@ -20,8 +20,13 @@ const emit = defineEmits(['cancel'])
 
 const handleCancel = () => {
   emit('cancel')
-  props.backUrl ? router.visit(props.backUrl) : router.visit('/')
+  if (props.backUrl) {
+    router.visit(props.backUrl)
+  } else {
+    router.visit('/')
+  }
 }
+
 </script>
 
 <template>
