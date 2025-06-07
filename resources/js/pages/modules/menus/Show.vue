@@ -35,7 +35,7 @@ const handleDelete = () => {
 
 <template>
   <PageShow
-    title="Menus"
+    title="Menu"
     :breadcrumbs="breadcrumbs"
     :fields="fields"
     :action-fields="actionFields"

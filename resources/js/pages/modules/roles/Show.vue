@@ -33,7 +33,7 @@ const handleDelete = () => {
 
 <template>
   <PageShow
-    title="Roles"
+    title="Role"
     :breadcrumbs="breadcrumbs"
     :fields="fields"
     :action-fields="actionFields"

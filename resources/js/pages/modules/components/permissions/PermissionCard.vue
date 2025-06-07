@@ -83,13 +83,13 @@ const handleDeletePermission = (permission: { id: number; name: string }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" class="w-40">
             <DropdownMenuItem @click="goTo(`/menu-permissions/permissions/${perm.id}/edit-permission`)">
-              ✏️ Edit
+              Edit
             </DropdownMenuItem>
             <DropdownMenuItem @click="goTo(`/menu-permissions/permissions/${perm.id}/detail`)">
-              👁️ View Detail
+              View Detail
             </DropdownMenuItem>
             <DropdownMenuItem class="text-red-500" @click="handleDeletePermission(perm)">
-              🗑️ Delete
+              Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

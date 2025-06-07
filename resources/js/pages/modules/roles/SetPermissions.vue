@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import PageCreate from '@/pages/modules/base-page/PageCreate.vue'
-import PermissionTree from '@/components/permissions/PermissionTree.vue'
+import PermissionTree from '@/pages/modules/roles/PermissionTree.vue'
+import { Button } from '@/components/ui/button'
+
+const page = usePage()
+const roleId = page.props.id
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
@@ -33,14 +37,12 @@ const permissionGroups = [
 
 const savePermissions = () => {
   console.log('Selected IDs:', selectedPermissions.value)
-  router.post('/menu-permissions/roles/set-permissions', {
+  router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
     permissions: selectedPermissions.value,
   })
 }
 
-const goBack = () => {
-  router.visit('/menu-permissions/roles')
-}
+
 </script>
 
 <template>
@@ -52,18 +54,12 @@ const goBack = () => {
       />
 
       <div class="flex justify-end gap-2">
-        <button
-          class="px-4 py-2 border rounded-md text-sm hover:bg-muted"
-          @click="goBack"
-        >
-          Back
-        </button>
-        <button
-          class="px-4 py-2 bg-primary text-white text-sm rounded-md hover:bg-primary/90"
-          @click="savePermissions"
+        <Button
+        variant="default"
+        @click="savePermissions"
         >
           Save
-        </button>
+        </Button>
       </div>
     </div>
   </PageCreate>

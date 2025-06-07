@@ -39,7 +39,7 @@ const actions = (row: any) => [
     },
     {
         label: 'Set Permissions',
-        onClick: () => router.visit(`/menu-permissions/roles/set-permissions`)
+        onClick: () => router.visit(`/menu-permissions/roles/set-permissions/${row.id}`)
     }
 ]
 </script>
