@@ -2,9 +2,9 @@
 import { Button } from '@/components/ui/button'
 import { Link } from '@inertiajs/vue3'
 
-defineProps<{
+const props = defineProps<{
   title: string
-  createUrl: string
+  createUrl?: string // ubah ke opsional
   selected: number[]
   onDeleteSelected: () => void
 }>()
@@ -17,9 +17,10 @@ defineProps<{
     </h1>
 
     <div class="flex items-center gap-2">
-      <Link :href="createUrl">
-        <Button variant="outline" sizw="sm">+ Create</Button>
+      <Link v-if="props.createUrl" :href="props.createUrl">
+        <Button variant="outline" size="sm">+ Create</Button>
       </Link>
+
       <Button
         variant="destructive"
         size="sm"

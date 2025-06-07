@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import ButtonsForm from './ButtonsForm.vue'
 
 defineProps<{
   formInputs: {
     name: string
     label: string
-    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number'
+    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number' | 'radio'
     placeholder?: string
     required?: boolean
     options?: { value: string | number; label: string }[]
   }[]
 }>()
 
-
 const formData = ref<Record<string, any>>({})
-
 const emit = defineEmits(['save', 'cancel'])
 
 const submit = () => {
@@ -31,23 +35,66 @@ const submit = () => {
       <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-12 gap-4 items-center">
         <label class="col-span-3 text-sm font-medium">{{ input.label }}</label>
         <div class="col-span-9">
-          <textarea v-if="input.type === 'textarea'" v-model="formData[input.name]" :placeholder="input.placeholder"
+          <!-- TEXTAREA -->
+          <textarea
+            v-if="input.type === 'textarea'"
+            v-model="formData[input.name]"
+            :placeholder="input.placeholder"
             :required="input.required"
-            class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-          <Select v-else-if="input.type === 'select'" v-model="formData[input.name]" :required="input.required">
+            class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          />
+
+          <!-- SELECT -->
+          <Select
+            v-else-if="input.type === 'select'"
+            v-model="formData[input.name]"
+            :required="input.required"
+          >
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="input.placeholder" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="option in input.options" :key="option.value" :value="option.value">
+              <SelectItem
+                v-for="option in input.options"
+                :key="option.value"
+                :value="option.value"
+              >
                 {{ option.label }}
               </SelectItem>
             </SelectContent>
           </Select>
-          <Input v-else v-model="formData[input.name]" :type="input.type" :placeholder="input.placeholder"
-            :required="input.required" />
+
+          <!-- RADIO -->
+          <div v-else-if="input.type === 'radio'" class="flex gap-4">
+            <label
+              v-for="option in input.options"
+              :key="option.value"
+              class="inline-flex items-center space-x-2 cursor-pointer"
+            >
+              <input
+                type="radio"
+                :name="input.name"
+                :value="option.value"
+                v-model="formData[input.name]"
+                :required="input.required"
+                class="form-radio text-primary border-input focus:ring-ring"
+              />
+              <span class="text-sm">{{ option.label }}</span>
+            </label>
+          </div>
+
+          <!-- DEFAULT INPUT (text, email, password, number) -->
+          <Input
+            v-else
+            v-model="formData[input.name]"
+            :type="input.type"
+            :placeholder="input.placeholder"
+            :required="input.required"
+          />
         </div>
       </div>
+
+      <!-- BUTTONS -->
       <div class="grid grid-cols-12 items-center">
         <div class="col-span-3"></div>
         <div class="col-span-9">

@@ -13,7 +13,7 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('management/users', UsersController::class)->names('users');
+Route::resource('/users', UsersController::class)->names('users');
 
 // Teams Routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -72,6 +72,56 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('data-master.team-names.edit');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+// Menus Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/menu-permissions/menus', function () {
+        return Inertia::render('modules/menus/Index');
+    })->name('menu-permissions.menus.index');
+
+    Route::get('/menu-permissions/menus/create', function () {
+        return Inertia::render('modules/menus/Create');
+    })->name('menu-permissions.menus.create');
+
+    Route::get('/menu-permissions/menus/{id}', function () {
+        return Inertia::render('modules/menus/Show');
+    })->name('menu-permissions.menus.show');
+
+    Route::get('/menu-permissions/menus/{id}/edit', function () {
+        return Inertia::render('modules/menus/Edit');
+    })->name('menu-permissions.menus.edit');
+});
+
+// Roles Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/menu-permissions/roles', fn() => Inertia::render('modules/roles/Index'))->name('access-control.roles.index');
+    Route::get('/menu-permissions/roles/create', fn() => Inertia::render('modules/roles/Create'))->name('access-control.roles.create');
+    Route::get('/menu-permissions/roles/{id}', fn() => Inertia::render('modules/roles/Show'))->name('access-control.roles.show');
+    Route::get('/menu-permissions/roles/{id}/edit', fn() => Inertia::render('modules/roles/Edit'))->name('access-control.roles.edit');
+    Route::get('/menu-permissions/roles/set-permissions/{id}', function () {
+        return Inertia::render('modules/roles/SetPermissions');
+    })->name('access-control.roles.set-permissions')->middleware(['auth', 'verified']);
+});
+
+// Category Permissions
+Route::middleware(['auth', 'verified'])->prefix('menu-permissions')->group(function () {
+    Route::get('/permissions', fn() => Inertia::render('modules/permissions/Index'))->name('permissions.index');
+    Route::get('/permissions/create', fn() => Inertia::render('modules/permissions/Create'))->name('permissions.create');
+    Route::get('/permissions/category/{id}', fn() => Inertia::render('modules/permissions/Show'))->name('permissions.show');
+    Route::get('/permissions/category/{id}/edit', fn() => Inertia::render('modules/permissions/Edit'))->name('permissions.edit');
+    
+    Route::get('/permissions/create-permission', fn() => Inertia::render('modules/permissions/PermissionCreate'))->name('permissions.create-permission');
+    Route::get('/permissions/{id}/edit-permission', fn() => Inertia::render('modules/permissions/PermissionEdit'))->name('permissions.edit-permission');
+    Route::get('/permissions/{id}/detail', fn() => Inertia::render('modules/permissions/PermissionDetail'))->name('permissions.detail');
+});
+
+// Activity Logs Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/menu-permissions/logs', fn () => Inertia::render('modules/activity-logs/Index'))->name('access-control.logs.index');
+    Route::get('/menu-permissions/logs/{id}', fn () => Inertia::render('modules/activity-logs/Show'))->name('access-control.logs.show');
+});
+
+
+
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
 

@@ -31,8 +31,8 @@ defineProps<{
   <Head :title="title" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
-      <HeaderActions :title="title" :create-url="createUrl || '#'" :selected="selected"
-        :on-delete-selected="() => (showConfirm = true)" />
+      <HeaderActions :title="title" :selected="selected" :on-delete-selected="() => (showConfirm = true)"
+        v-bind="createUrl ? { createUrl } : {}" />
       <DataTable :columns="columns" :rows="rows" :actions="actions" v-model:selected="selected" />
       <ConfirmDialog v-model="showConfirm" title="Delete selected?"
         :description="`You are about to delete ${selected.length} record(s). This action cannot be undone.`"

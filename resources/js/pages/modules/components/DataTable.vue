@@ -4,6 +4,7 @@ import { type PropType } from 'vue'
 import RowActions from '@/pages/modules/components/tables/RowActions.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import * as LucideIcons from 'lucide-vue-next'
 
 const props = defineProps({
   columns: {
@@ -161,12 +162,8 @@ const toggleSelectAll = (checked: boolean) => {
                 @change="(e) => toggleSelectAll((e.target as HTMLInputElement).checked)" />
             </th>
             <th class="w-28 px-3 py-2 text-center">Actions</th>
-            <th
-              v-for="col in visibleColumns"
-              :key="col.key"
-              class="px-4 py-2 text-left cursor-pointer select-none whitespace-nowrap"
-              @click="sortBy(col.key)"
-            >
+            <th v-for="col in visibleColumns" :key="col.key"
+              class="px-4 py-2 text-left cursor-pointer select-none whitespace-nowrap" @click="sortBy(col.key)">
               <div class="flex items-center gap-1">
                 {{ col.label }}
                 <span v-if="sortKey === col.key">
@@ -189,14 +186,16 @@ const toggleSelectAll = (checked: boolean) => {
               <RowActions v-if="actions(row).length > 0" :actions="actions(row)" :id="row.id" :base-url="baseUrl"
                 :on-delete="() => console.log('Delete', row.id)" />
             </td>
-            <td
-              v-for="col in visibleColumns"
-              :key="col.key"
-              class="px-4 py-2 text-left whitespace-nowrap"
-              :class="col.className"
-            >
-              {{ row[col.key] }}
+            <td v-for="col in visibleColumns" :key="col.key" class="px-4 py-2 text-left whitespace-nowrap"
+              :class="col.className">
+              <!-- Render icon component dynamically -->
+              <component v-if="col.key === 'icon' && row[col.key] && row[col.key] in LucideIcons"
+                :is="LucideIcons[row[col.key] as keyof typeof LucideIcons]" class="w-4 h-4 text-muted-foreground" />
+              <span v-else>
+                {{ row[col.key] }}
+              </span>
             </td>
+
           </tr>
         </tbody>
       </table>

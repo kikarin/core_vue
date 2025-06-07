@@ -4,7 +4,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { LayoutGrid , FolderKanban, FileStack, Users, ShieldCheck} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -16,12 +16,8 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Management',
         href: '/management',
-        icon: Folder,
+        icon: FolderKanban,
         children: [
-            {
-                title: 'Users',
-                href: '/management/users',
-            },
             {
                 title: 'Teams',
                 href: '/management/teams',
@@ -43,7 +39,7 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Data Master',
-        icon: LayoutGrid,
+        icon: FileStack,
         href: '/data-master',
         children: [
             {
@@ -61,9 +57,32 @@ const footerNavItems: NavItem[] = [
         ],
     },
     {
-        title: 'Help',
-        icon: BookOpen,
-        href: 'https://laravel.com/docs/starter-kits#vue',
+        title: 'Users',
+        href: '/users',
+        icon: Users,
+    },
+    {
+        title: 'Menu & Permissions',
+        icon: ShieldCheck,
+        href: '/menu-permissions',
+        children: [
+            {
+                title: 'Menu',
+                href: '/menu-permissions/menus',
+            },
+            {
+                title: 'Role',
+                href: '/menu-permissions/roles',
+            },
+            {
+                title: 'Permission',
+                href: '/menu-permissions/permissions',
+            },
+            {
+                title: 'Activity Log',
+                href: '/menu-permissions/logs',
+            },
+        ],
     },
 ];
 
