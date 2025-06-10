@@ -4,7 +4,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid , FolderKanban, FileStack, Users, ShieldCheck} from 'lucide-vue-next';
+import { LayoutGrid, FolderKanban, FileStack, Users, ShieldCheck } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -36,7 +36,7 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const settingNavItems: NavItem[] = [
     {
         title: 'Data Master',
         icon: FileStack,
@@ -78,10 +78,6 @@ const footerNavItems: NavItem[] = [
                 title: 'Permission',
                 href: '/menu-permissions/permissions',
             },
-            {
-                title: 'Activity Log',
-                href: '/menu-permissions/logs',
-            },
         ],
     },
 ];
@@ -104,10 +100,10 @@ const footerNavItems: NavItem[] = [
 
         <SidebarContent>
             <NavMain :items="mainNavItems" section-title="Menu" section-id="main" />
+            <NavMain :items="settingNavItems" section-title="Settings" section-id="setting" />
         </SidebarContent>
 
         <SidebarFooter>
-            <NavMain :items="footerNavItems" section-title="Settings" section-id="footer" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

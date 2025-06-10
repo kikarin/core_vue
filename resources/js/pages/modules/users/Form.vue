@@ -56,9 +56,9 @@ const formInputs = [
 
 const handleSave = (data: Record<string, any>) => {
     if (props.mode === 'create') {
-        router.post('/management/users', data);
+        router.post('/users', data);
     } else {
-        router.put(`/management/users/${props.initialData?.id}`, data);
+        router.put(`/users/${props.initialData?.id}`, data);
     }
 };
 </script>

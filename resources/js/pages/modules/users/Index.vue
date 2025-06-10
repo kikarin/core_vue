@@ -3,8 +3,7 @@ import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
 
 const breadcrumbs = [
-    { title: 'Management', href: '#' },
-    { title: 'Users', href: '/management/users' },
+    { title: 'Users', href: '/users' },
 ]
 
 const columns = [
@@ -50,20 +49,20 @@ const actions = (row: any) => [
     {
         label: 'Detail',
         onClick: () => {
-            router.visit(`/management/users/${row.id}`)
+            router.visit(`/users/${row.id}`)
         },
     },
     {
         label: 'Edit',
         onClick: () => {
-            router.visit(`/management/users/${row.id}/edit`)
+            router.visit(`/users/${row.id}/edit`)
         },
     },
     {
         label: 'Delete',
         onClick: () => {
             if (confirm(`Are you sure you want to delete ${row.name}?`)) {
-                router.delete(`/management/users/${row.id}`)
+                router.delete(`/users/${row.id}`)
             }
         },
     },
@@ -74,6 +73,6 @@ const actions = (row: any) => [
 <template>
     
     <PageIndex title="Users" :breadcrumbs="breadcrumbs" :columns="columns" :rows="rows" :actions="actions"
-        create-url="/management/users/create" />
+        create-url="/users/create" />
 
 </template>

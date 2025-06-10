@@ -32,40 +32,39 @@ const toggleGroup = (group: typeof props.groups[0]) => {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
     <div
       v-for="group in groups"
       :key="group.label"
-      class="border rounded-md p-4 bg-card"
+      class="rounded-lg border bg-card shadow-sm"
     >
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-semibold text-sm text-muted-foreground">
-          {{ group.label }}
-        </h3>
-        <label class="inline-flex items-center space-x-2 text-sm cursor-pointer">
-          <input
-            type="checkbox"
-            :checked="isGroupChecked(group)"
-            @change="() => toggleGroup(group)"
-          />
-          <span>Select All</span>
-        </label>
+      <!-- Card Header -->
+      <div class="flex items-center justify-between border-b px-4 py-3">
+        <h3 class="text-sm font-semibold tracking-tight">{{ group.label }}</h3>
+        <input
+          type="checkbox"
+          class="form-checkbox scale-125 accent-primary"
+          :checked="isGroupChecked(group)"
+          @change="() => toggleGroup(group)"
+        />
       </div>
 
-      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
-        <label
+      <!-- Permissions List -->
+      <ul class="divide-y">
+        <li
           v-for="perm in group.children"
           :key="perm.id"
-          class="flex items-center space-x-2 text-sm cursor-pointer"
+          class="px-4 py-2 flex items-center gap-2 text-sm"
         >
           <input
             type="checkbox"
+            class="form-checkbox scale-110 accent-primary"
             :checked="isChecked(perm.id)"
             @change="() => toggle(perm.id)"
           />
           <span>{{ perm.label }}</span>
-        </label>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
-import PageCreate from '@/pages/modules/base-page/PageCreate.vue'
+import AppLayout from '@/layouts/AppLayout.vue'
 import PermissionTree from '@/pages/modules/roles/PermissionTree.vue'
 import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-vue-next'
 
 const page = usePage()
 const roleId = page.props.id
@@ -36,31 +37,38 @@ const permissionGroups = [
 ]
 
 const savePermissions = () => {
-  console.log('Selected IDs:', selectedPermissions.value)
   router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
     permissions: selectedPermissions.value,
   })
 }
-
-
 </script>
 
 <template>
-  <PageCreate title="Set Permissions" :breadcrumbs="breadcrumbs" back-url="/menu-permissions/roles">
-    <div class="bg-white dark:bg-background border rounded-lg shadow-sm p-6 space-y-6">
-      <PermissionTree
-        :groups="permissionGroups"
-        v-model="selectedPermissions"
-      />
+  <AppLayout :breadcrumbs="breadcrumbs">
+    <div class="p-6 space-y-6">
 
-      <div class="flex justify-end gap-2">
-        <Button
-        variant="default"
-        @click="savePermissions"
-        >
-          Save
+      <!-- Back Button -->
+      <div>
+        <Button variant="secondary" @click="router.visit('/menu-permissions/roles')">
+          <ArrowLeft class="w-4 h-4 mr-2" />
+          Back
         </Button>
       </div>
+
+      <!-- Role Name -->
+      <div class="border px-4 py-3 rounded bg-muted font-medium text-center">
+        <span>Name: </span>
+        <span class="text-foreground">Super Admin</span>
+      </div>
+
+      <!-- Save Button -->
+      <div class="flex justify-center">
+        <Button @click="savePermissions">Save</Button>
+      </div>
+
+      <!-- Permissions -->
+      <PermissionTree :groups="permissionGroups" v-model="selectedPermissions" />
+
     </div>
-  </PageCreate>
+  </AppLayout>
 </template>

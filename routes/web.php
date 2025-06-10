@@ -114,13 +114,6 @@ Route::middleware(['auth', 'verified'])->prefix('menu-permissions')->group(funct
     Route::get('/permissions/{id}/detail', fn() => Inertia::render('modules/permissions/PermissionDetail'))->name('permissions.detail');
 });
 
-// Activity Logs Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/menu-permissions/logs', fn () => Inertia::render('modules/activity-logs/Index'))->name('access-control.logs.index');
-    Route::get('/menu-permissions/logs/{id}', fn () => Inertia::render('modules/activity-logs/Show'))->name('access-control.logs.show');
-});
-
-
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

@@ -16,7 +16,7 @@ const props = defineProps<{
       {{ title }}
     </h1>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center flex-wrap gap-2">
       <Link v-if="props.createUrl" :href="props.createUrl">
         <Button variant="outline" size="sm">+ Create</Button>
       </Link>

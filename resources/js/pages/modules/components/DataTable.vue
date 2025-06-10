@@ -134,85 +134,90 @@ const toggleSelectAll = (checked: boolean) => {
 <template>
   <div class="space-y-4">
     <!-- Search and Length -->
-    <div class="flex justify-between items-center gap-4">
+    <div class="flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center gap-2">
         <span class="text-sm text-muted-foreground">Show</span>
         <select v-model="pageLength"
-          class="w-20 rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          class="w-24 rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <option :value="10">10</option>
           <option :value="25">25</option>
           <option :value="50">50</option>
           <option :value="100">100</option>
+          <option :value="500">500</option>
+          <option :value="filteredRows.length">All</option>
         </select>
         <span class="text-sm text-muted-foreground">entries</span>
       </div>
-      <div class="w-64">
+      <div class="w-full sm:w-64">
         <Input v-model="searchQuery" placeholder="Search..." class="w-full" />
       </div>
     </div>
 
     <!-- Table -->
-    <div class="border rounded-md overflow-x-auto">
-      <table class="min-w-full divide-y text-sm text-left">
-        <thead class="bg-muted">
-          <tr>
-            <th class="w-12 px-3 py-2 text-center">No</th>
-            <th class="w-10 px-3 py-2 text-center">
-              <input type="checkbox" :checked="props.selected.length === props.rows.length"
-                @change="(e) => toggleSelectAll((e.target as HTMLInputElement).checked)" />
-            </th>
-            <th class="w-28 px-3 py-2 text-center">Actions</th>
-            <th v-for="col in visibleColumns" :key="col.key"
-              class="px-4 py-2 text-left cursor-pointer select-none whitespace-nowrap" @click="sortBy(col.key)">
-              <div class="flex items-center gap-1">
-                {{ col.label }}
-                <span v-if="sortKey === col.key">
-                  <span v-if="sortOrder === 'asc'">▲</span>
-                  <span v-else>▼</span>
+    <div class="border rounded-md">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y text-sm text-left">
+          <thead class="bg-muted">
+            <tr>
+              <th class="w-12 px-3 py-2 text-center">No</th>
+              <th class="w-10 px-3 py-2 text-center">
+                <input type="checkbox" :checked="props.selected.length === props.rows.length"
+                  @change="(e) => toggleSelectAll((e.target as HTMLInputElement).checked)" />
+              </th>
+              <th class="w-28 px-3 py-2 text-center">Actions</th>
+              <th v-for="col in visibleColumns" :key="col.key"
+                class="px-4 py-2 text-left cursor-pointer select-none whitespace-nowrap" @click="sortBy(col.key)">
+                <div class="flex items-center gap-1">
+                  {{ col.label }}
+                  <span v-if="sortKey === col.key">
+                    <span v-if="sortOrder === 'asc'">▲</span>
+                    <span v-else>▼</span>
+                  </span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in paginatedRows" :key="index" class="border-t hover:bg-muted/40 transition">
+              <td class="w-12 px-3 py-2 text-center">
+                {{ (currentPage - 1) * pageLength + index + 1 }}
+              </td>
+              <td class="w-10 px-3 py-2 text-center">
+                <input type="checkbox" :checked="props.selected.includes(index)" @change="() => toggleSelect(index)" />
+              </td>
+              <td class="w-28 px-3 py-2 text-center">
+                <RowActions v-if="actions(row).length > 0" :actions="actions(row)" :id="row.id" :base-url="baseUrl"
+                  :on-delete="() => console.log('Delete', row.id)" />
+              </td>
+              <td v-for="col in visibleColumns" :key="col.key" class="px-4 py-2 text-left whitespace-nowrap"
+                :class="col.className">
+                <!-- Render icon component dynamically -->
+                <component v-if="col.key === 'icon' && row[col.key] && row[col.key] in LucideIcons"
+                  :is="LucideIcons[row[col.key] as keyof typeof LucideIcons]" class="w-4 h-4 text-muted-foreground" />
+                <span v-else>
+                  {{ row[col.key] }}
                 </span>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in paginatedRows" :key="index" class="border-t hover:bg-muted/40 transition">
-            <td class="w-12 px-3 py-2 text-center">
-              {{ (currentPage - 1) * pageLength + index + 1 }}
-            </td>
-            <td class="w-10 px-3 py-2 text-center">
-              <input type="checkbox" :checked="props.selected.includes(index)" @change="() => toggleSelect(index)" />
-            </td>
-            <td class="w-28 px-3 py-2 text-center">
-              <RowActions v-if="actions(row).length > 0" :actions="actions(row)" :id="row.id" :base-url="baseUrl"
-                :on-delete="() => console.log('Delete', row.id)" />
-            </td>
-            <td v-for="col in visibleColumns" :key="col.key" class="px-4 py-2 text-left whitespace-nowrap"
-              :class="col.className">
-              <!-- Render icon component dynamically -->
-              <component v-if="col.key === 'icon' && row[col.key] && row[col.key] in LucideIcons"
-                :is="LucideIcons[row[col.key] as keyof typeof LucideIcons]" class="w-4 h-4 text-muted-foreground" />
-              <span v-else>
-                {{ row[col.key] }}
-              </span>
-            </td>
+              </td>
 
-          </tr>
-        </tbody>
-      </table>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Pagination Info -->
-      <div class="flex justify-between items-center p-4 border-t text-sm text-muted-foreground">
+      <div class="flex flex-wrap justify-between items-center gap-2 p-4 border-t text-sm text-muted-foreground">
         <span>
           Showing {{ (currentPage - 1) * pageLength + 1 }}
           to {{ Math.min(currentPage * pageLength, filteredRows.length) }}
           of {{ filteredRows.length }} entries
         </span>
-        <div class="flex items-center gap-2">
+
+        <div class="flex flex-wrap items-center gap-2">
           <Button size="sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)"
             class="bg-muted/40 text-foreground">
             Previous
           </Button>
-          <div class="flex items-center gap-1">
+          <div class="flex flex-wrap items-center gap-1">
             <Button v-for="page in getPageNumbers()" :key="page" size="sm" class="px-3 py-1.5 text-sm border rounded-md"
               :class="[
                 currentPage === page
@@ -228,6 +233,7 @@ const toggleSelectAll = (checked: boolean) => {
           </Button>
         </div>
       </div>
+
     </div>
   </div>
 </template>

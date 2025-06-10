@@ -10,18 +10,17 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-wrap justify-between items-center gap-2">
-    <Link :href="createUrl">
+  <div class="flex flex-wrap items-start gap-2">
+    <div>
+      <Link :href="createUrl">
       <Button variant="default">+ Create</Button>
-    </Link>
+      </Link>
+    </div>
 
-    <Button
-      variant="destructive"
-      size="sm"
-      :disabled="selected.length === 0"
-      @click="onDeleteSelected"
-    >
-      Delete Selected ({{ selected.length }})
-    </Button>
+    <div>
+      <Button variant="destructive" size="sm" :disabled="selected.length === 0" @click="onDeleteSelected">
+        Delete Selected ({{ selected.length }})
+      </Button>
+    </div>
   </div>
 </template>

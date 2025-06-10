@@ -3,9 +3,8 @@ import PageShow from '@/pages/modules/base-page/PageShow.vue'
 import { router } from '@inertiajs/vue3'
 
 const breadcrumbs = [
-  { title: 'Management', href: '#' },
-  { title: 'Users', href: '/management/users' },
-  { title: 'Detail User', href: '/management/users/show' },
+  { title: 'Users', href: '/users' },
+  { title: 'Detail User', href: '/users/show' },
 ]
 
 const fields = [
@@ -23,12 +22,12 @@ const actionFields = [
 ]
 
 const handleEdit = () => {
-  router.visit('/management/users/1/edit')
+  router.visit('/users/1/edit')
 }
 
 const handleDelete = () => {
   if (confirm('Are you sure you want to delete this user?')) {
-    router.delete('/management/users/1')
+    router.delete('/users/1')
   }
 }
 </script>
@@ -39,7 +38,7 @@ const handleDelete = () => {
     :breadcrumbs="breadcrumbs"
     :fields="fields"
     :actionFields="actionFields"
-    :back-url="'/management/users'"
+    :back-url="'/users'"
     :on-edit="handleEdit"
     :on-delete="handleDelete"
   />
