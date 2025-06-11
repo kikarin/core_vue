@@ -11,85 +11,120 @@ class UsersMenuSeeder extends Seeder
     {
         $usersMenus = [
             [
-                'nama' => 'Menu',
-                'kode' => 'MENU-SIDEBAR',
-                'url' => '#',
-                'icon' => null,
+                'nama' => 'Dashboard',
+                'kode' => 'DASHBOARD',
+                'url' => '/dashboard',
+                'icon' => 'LayoutGrid',
                 'rel' => 0,
                 'urutan' => 1,
-                'permission_id' => 'Menu Sidebar Show',
+                'permission_id' => 'Dashboard Show',
+            ],
+            [
+                'nama' => 'Management',
+                'kode' => 'MANAGEMENT',
+                'url' => '/management',
+                'icon' => 'FolderKanban',
+                'rel' => 0,
+                'urutan' => 2,
+                'permission_id' => 'Management Show',
                 'children' => [
                     [
-                        'nama' => 'Dashboard',
-                        'icon' => '<i class="ti ti-dashboard"></i>',
+                        'nama' => 'Teams',
+                        'kode' => 'TEAMS',
+                        'url' => '/management/teams',
+                        'icon' => 'Users',
                         'urutan' => 1,
+                        'permission_id' => 'Teams Show',
+                        'children' => [
+                            [
+                                'nama' => 'List Team',
+                                'kode' => 'TEAMS-LIST',
+                                'url' => '/management/teams',
+                                'urutan' => 1,
+                                'permission_id' => 'Teams List Show',
+                            ],
+                            [
+                                'nama' => 'Member',
+                                'kode' => 'TEAMS-MEMBER',
+                                'url' => '/management/members',
+                                'urutan' => 2,
+                                'permission_id' => 'Teams Member Show',
+                            ],
+                        ],
                     ],
                 ],
             ],
             [
-                'nama' => 'Settings',
-                'kode' => 'SETTING-SIDEBAR',
-                'url' => '#',
-                'icon' => null,
+                'nama' => 'Data Master',
+                'kode' => 'DATA-MASTER',
+                'url' => '/data-master',
+                'icon' => 'FileStack',
                 'rel' => 0,
-                'urutan' => 1000,
-                'permission_id' => 'Setting Sidebar Show',
+                'urutan' => 11,
+                'permission_id' => 'Data Master Show',
                 'children' => [
                     [
-                        'nama' => 'Menu & Permissions',
-                        'kode' => 'USERS-MANAGEMENT',
-                        'url' => '#',
-                        'icon' => '<i class="ti ti-users-group"></i>',
-                        'urutan' => 999,
-                        'permission_id' => 'Users Management Show',
-                        'children' => [
-                            [
-                                'nama' => 'Menu',
-                                'kode' => 'USERS-MENU',
-                                'url' => 'users-menu',
-                                'urutan' => 1,
-                                'permission_id' => 'Users Menu Show',
-                            ],
-                            [
-                                'nama' => 'Role',
-                                'urutan' => 2,
-                            ],
-                            [
-                                'nama' => 'Permission',
-                                'urutan' => 3,
-                            ],
-                            [
-                                'nama' => 'Activity Log',
-                                'urutan' => 4,
-                            ],
-                        ],
-                    ],
-                    [
-                        'nama' => 'Users',
-                        'icon' => '<i class="ti ti-users"></i>',
-                        'urutan' => 998,
-                    ],
-                    [
-                        'nama' => 'Master',
-                        'url' => '#',
-                        'icon' => '<i class="ti ti-list"></i>',
+                        'nama' => 'Nama Team',
+                        'kode' => 'TEAM-NAMES',
+                        'url' => '/data-master/team-names',
                         'urutan' => 1,
-                        'children' => [
-                            [
-                                'nama' => 'Identity',
-                                'urutan' => 1,
-                            ],
-                        ],
+                        'permission_id' => 'Team Names Show',
+                    ],
+                ],
+            ],
+            [
+                'nama' => 'Users',
+                'kode' => 'USERS',
+                'url' => '/users',
+                'icon' => 'Users',
+                'rel' => 0,
+                'urutan' => 12,
+                'permission_id' => 'Users Show',
+            ],
+            [
+                'nama' => 'Menu & Permissions',
+                'kode' => 'USERS-MANAGEMENT',
+                'url' => '/menu-permissions',
+                'icon' => 'ShieldCheck',
+                'rel' => 0,
+                'urutan' => 13,
+                'permission_id' => 'Users Management Show',
+                'children' => [
+                    [
+                        'nama' => 'Menu',
+                        'kode' => 'USERS-MENU',
+                        'url' => '/menu-permissions/menus',
+                        'urutan' => 1,
+                        'permission_id' => '',
+                    ],
+                    [
+                        'nama' => 'Role',
+                        'kode' => 'USERS-ROLE',
+                        'url' => '/menu-permissions/roles',
+                        'urutan' => 2,
+                        'permission_id' => 'Users Role Show',
+                    ],
+                    [
+                        'nama' => 'Permission',
+                        'kode' => 'USERS-PERMISSION',
+                        'url' => '/menu-permissions/permissions',
+                        'urutan' => 3,
+                        'permission_id' => 'Users Permission Show',
+                    ],
+                    [
+                        'nama' => 'Activity Log',
+                        'kode' => 'USERS-LOG',
+                        'url' => '/menu-permissions/logs',
+                        'urutan' => 4,
+                        'permission_id' => 'Users Log Show',
                     ],
                 ],
             ],
         ];
 
-
         $this->insertMenus($usersMenus);
     }
 
-    // Recursive untuk insert menu & child-nya
     private function insertMenus(array $menus, $parentId = 0)
     {
         foreach ($menus as $menuData) {

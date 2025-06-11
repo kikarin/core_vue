@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\UsersMenu;
 use App\Traits\RepositoryTrait;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class UsersMenuRepository
@@ -33,8 +34,8 @@ class UsersMenuRepository
     public function listDropdown()
     {
         $list = [];
+        $list[0] = "Menu Utama";
         $data = $this->getByRel(0);
-        $list[0] = "Tidak ada";
         foreach ($data as $key => $value) {
             $list[$value->id] = $value->nama;
             foreach ($value->children as $k => $v) {
@@ -47,14 +48,10 @@ class UsersMenuRepository
         return $list;
     }
 
-
     public function updateCache()
     {
         $usersMenu = $this->model::get();
-
-        // Ubah array menjadi Collection sebelum menyimpan di cache
         $usersMenu = collect($usersMenu);
-
         Cache::put($this->cacheKey, $usersMenu, now()->addDay());
         $usersMenu = Cache::get($this->cacheKey);
         return $usersMenu;
@@ -83,11 +80,27 @@ class UsersMenuRepository
         Cache::forget($this->cacheKey);
     }
 
-
     public function customIndex($data)
     {
         $data += [
-            'listUsersMenu' => $this->getByRel(0),
+            'listUsersMenu' => $this->listDropdown(),
+            'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
+            'menus' => $this->model
+                ->with(['rel_users_menu', 'permission'])
+                ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
+                ->get()
+                ->map(function ($menu) {
+                    return [
+                        'id' => $menu->id,
+                        'name' => $menu->nama,
+                        'code' => $menu->kode,
+                        'icon' => $menu->icon,
+                        'parent' => optional($menu->rel_users_menu)->nama ?? '-',
+                        'permission' => optional($menu->permission)->name ?? '-',
+                        'url' => $menu->url,
+                        'order' => $menu->urutan,
+                    ];
+                }),
         ];
         return $data;
     }
@@ -99,5 +112,100 @@ class UsersMenuRepository
             'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
         ];
         return $data;
+    }
+
+public function getMenus()
+    {
+        return $this->model
+            ->with('children.children.children')
+            ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
+            ->where('rel', 0)
+            ->orderBy('urutan')
+            ->get();
+    }
+
+    public function deleteSelected(array $ids): void
+    {
+        $this->model->whereIn('id', $ids)->delete();
+        $this->forgetCache();
+    }
+
+    public function getDetailWithUserTrack($id)
+    {
+        $item = $this->getFind($id);
+        if (!$item) {
+            return null;
+        }
+        return $this->model->with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])->find($id);
+    }
+
+    public function customDataCreateUpdate($data, $record = null)
+    {
+        $result = [];
+        
+        if ($record == null) {
+            // Create
+            $result['created_by'] = Auth::id();
+        }
+        $result['updated_by'] = Auth::id();
+
+        // Pastikan nilai numerik
+        $result['rel'] = isset($data['rel']) ? (int) $data['rel'] : 0;
+        $result['permission_id'] = isset($data['permission_id']) ? (int) $data['permission_id'] : null;
+        $result['urutan'] = isset($data['urutan']) ? (int) $data['urutan'] : 1;
+        
+        // Tambahkan field lain
+        $result['nama'] = $data['nama'] ?? '';
+        $result['kode'] = $data['kode'] ?? '';
+        $result['icon'] = $data['icon'] ?? '';
+        $result['url'] = $data['url'] ?? '';
+
+        // Tambahkan id jika mode update
+        if ($record !== null) {
+            $result['id'] = $record;
+        }
+
+        return $result;
+    }
+
+    public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
+    {
+        // Hapus cache setelah store/update
+        $this->forgetCache();
+        
+        // Update cache dengan data terbaru
+        $this->updateCache();
+        
+        return $model;
+    }
+
+    public function create($data)
+    {
+        $record = $this->model->create($data);
+        $this->forgetCache();
+        $this->updateCache();
+        return $record;
+    }
+
+    public function update($id, $data)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            $record->update($data);
+            $this->forgetCache();
+            $this->updateCache();
+        }
+        return $record;
+    }
+
+    public function delete($id)
+    {
+        $record = $this->model->find($id);
+        if ($record) {
+            $record->delete();
+            $this->forgetCache();
+            $this->updateCache();
+        }
+        return $record;
     }
 }

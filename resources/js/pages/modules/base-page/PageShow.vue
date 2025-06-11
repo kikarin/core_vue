@@ -8,7 +8,7 @@ import { Info, Clock, Pencil, Trash2, ArrowLeft } from 'lucide-vue-next'
 defineProps<{
   title: string
   breadcrumbs: BreadcrumbItem[]
-  fields: { label: string; value: string }[]
+  fields: { label: string; value: string; className?: string }[]
   actionFields?: { label: string; value: string }[]
   backUrl?: string
   onDelete?: () => void
@@ -22,7 +22,9 @@ defineProps<{
     <div class="p-4 space-y-4">
       <!-- Header & Action Buttons -->
       <HeaderShow :title="`Detail ${title}`">
+        <!-- Only show if onEdit is provided -->
         <button
+          v-if="onEdit"
           class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
           @click="onEdit"
         >
@@ -30,7 +32,9 @@ defineProps<{
           Edit
         </button>
 
+        <!-- Always show Delete -->
         <button
+          v-if="onDelete"
           class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
           @click="onDelete"
         >
@@ -38,6 +42,7 @@ defineProps<{
           Delete
         </button>
 
+        <!-- Back -->
         <button
           class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
           @click="() => router.visit(backUrl || '#')"
@@ -46,6 +51,7 @@ defineProps<{
           Back
         </button>
       </HeaderShow>
+
 
       <div class="grid grid-cols-12 gap-6">
         <!-- Information Panel -->
@@ -65,7 +71,7 @@ defineProps<{
                 class="space-y-1"
               >
                 <div class="text-xs text-muted-foreground">{{ field.label }}</div>
-                <div class="text-sm font-semibold text-foreground whitespace-pre-wrap">
+                <div :class="['text-sm font-semibold text-foreground whitespace-pre-wrap', field.className]">
                   {{ field.value }}
                 </div>
               </div>

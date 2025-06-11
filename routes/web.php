@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UsersMenuController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -13,7 +14,11 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Menu API
+Route::get('/api/users-menu', [UsersMenuController::class, 'getMenus'])->middleware(['auth', 'verified']);
+// Users Routes
 Route::resource('/users', UsersController::class)->names('users');
+Route::post('/users/destroy-selected', [UsersController::class, 'destroy_selected'])->name('users.destroy-selected');
 
 // Teams Routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -74,21 +79,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Menus Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/menu-permissions/menus', function () {
-        return Inertia::render('modules/menus/Index');
-    })->name('menu-permissions.menus.index');
-
-    Route::get('/menu-permissions/menus/create', function () {
-        return Inertia::render('modules/menus/Create');
-    })->name('menu-permissions.menus.create');
-
-    Route::get('/menu-permissions/menus/{id}', function () {
-        return Inertia::render('modules/menus/Show');
-    })->name('menu-permissions.menus.show');
-
-    Route::get('/menu-permissions/menus/{id}/edit', function () {
-        return Inertia::render('modules/menus/Edit');
-    })->name('menu-permissions.menus.edit');
+Route::resource('/menu-permissions/menus', UsersMenuController::class)
+    ->names('menus'); // tanpa prefix menu-permissions
+    Route::post('/menu-permissions/menus/destroy-selected', [UsersMenuController::class, 'destroy_selected'])->name('menu-permissions.menus.destroy-selected');
 });
 
 // Roles Routes
@@ -112,6 +105,12 @@ Route::middleware(['auth', 'verified'])->prefix('menu-permissions')->group(funct
     Route::get('/permissions/create-permission', fn() => Inertia::render('modules/permissions/PermissionCreate'))->name('permissions.create-permission');
     Route::get('/permissions/{id}/edit-permission', fn() => Inertia::render('modules/permissions/PermissionEdit'))->name('permissions.edit-permission');
     Route::get('/permissions/{id}/detail', fn() => Inertia::render('modules/permissions/PermissionDetail'))->name('permissions.detail');
+});
+
+// Activity Logs Routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/menu-permissions/logs', fn () => Inertia::render('modules/activity-logs/Index'))->name('access-control.logs.index');
+    Route::get('/menu-permissions/logs/{id}', fn () => Inertia::render('modules/activity-logs/Show'))->name('access-control.logs.show');
 });
 
 

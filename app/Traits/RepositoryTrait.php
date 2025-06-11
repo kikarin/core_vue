@@ -147,19 +147,20 @@ trait RepositoryTrait
 
     public function delete_selected($array_id)
     {
-        try {
-            DB::beginTransaction();
-            foreach ($array_id as $key => $value) {
-                $record = $this->getById($value);
-                $model = $record;
-                $model->delete();
-            }
-            DB::commit();
-            return $record;
-        } catch (Exception $e) {
-            DB::rollback();
-            throw $e;
+        if (!is_array($array_id)) {
+            $array_id = [];
         }
+        
+        if (empty($array_id)) {
+            return;
+        }
+
+        $record = $this->model->whereIn('id', $array_id)->get();
+        foreach ($record as $item) {
+            $this->callbackAfterDelete($item, request());
+        }
+        $this->model->whereIn('id', $array_id)->delete();
+        $this->callbackAfterDeleteSelected($record, request());
     }
 
     public function getDataTable($data = [])

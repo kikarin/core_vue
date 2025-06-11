@@ -9,21 +9,21 @@ use App\Traits\BaseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Inertia\Inertia;
 
 class UsersMenuController extends Controller implements HasMiddleware
 {
     use BaseTrait;
     private $repository;
     private $permissionRepository;
-    private $request;
 
-    public function __construct(UsersMenuRepository $repository, PermissionRepository $permissionRepository, Request $request)
+    public function __construct(UsersMenuRepository $repository, PermissionRepository $permissionRepository)
     {
-        $this->repository                     = $repository;
-        $this->permissionRepository           = $permissionRepository;
-        $this->request                        = UsersMenuRequest::createFromBase($request);
+        $this->repository = $repository;
+        $this->permissionRepository = $permissionRepository;
         $this->initialize();
-        $this->commonData['kode_first_menu']  = "USERS-MANAGEMENT";
+        $this->route = 'menus';
+        $this->commonData['kode_first_menu'] = "USERS-MANAGEMENT";
         $this->commonData['kode_second_menu'] = $this->kode_menu;
     }
 
@@ -38,5 +38,9 @@ class UsersMenuController extends Controller implements HasMiddleware
             new Middleware("can:$permission Edit", only: ['edit', 'update']),
             new Middleware("can:$permission Delete", only: ['destroy', 'destroy_selected']),
         ];
+    }
+    public function getMenus()
+    {
+        return response()->json($this->repository->getMenus());
     }
 }

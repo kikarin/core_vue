@@ -23,9 +23,10 @@ class UsersRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|max:100',
-            'no_hp' => 'required|max:20',
             'email' => 'required|max:200|email',
-            'is_active' => 'required',
+            'no_hp' => 'required|max:20',
+            'role' => 'required|exists:roles,id',
+            'is_active' => 'required|boolean',
         ];
         if ($this->isMethod('patch') || $this->isMethod('put')) {
             $rules['id'] = 'required';
@@ -35,9 +36,6 @@ class UsersRequest extends FormRequest
         }
         if ($this->hasFile('file')) {
             $rules['file'] = 'mimes:jpg,png,jpeg,webp,ico|max:2048';
-        }
-        if (@$this->from_menu == "pencaker") {
-            unset($rules['is_active']);
         }
         return $rules;
     }

@@ -1,35 +1,78 @@
 <script setup lang="ts">
 import PageShow from '@/pages/modules/base-page/PageShow.vue'
 import { router } from '@inertiajs/vue3'
+import { computed } from 'vue'
+
+const props = defineProps<{
+  item: {
+    id: number
+    name: string
+    email: string
+    no_hp: string
+    role: {
+      id: number
+      name: string
+      init_page_login: string
+      is_allow_login: number
+      bg: string
+      is_vertical_menu: number
+    }
+    is_active: number
+    created_at: string
+    created_by_user: {
+      id: number
+      name: string
+    } | null
+    updated_at: string
+    updated_by_user: {
+      id: number
+      name: string
+    } | null
+  }
+}>()
+
+const user = computed(() => props.item)
 
 const breadcrumbs = [
   { title: 'Users', href: '/users' },
-  { title: 'Detail User', href: '/users/show' },
+  { title: 'Detail User', href: `/users/${props.item.id}` },
 ]
 
-const fields = [
-  { label: 'Name', value: 'John Doe' },
-  { label: 'Email', value: 'john@example.com' },
-  { label: 'Role', value: 'Admin' },
-  { label: 'Status', value: 'Active' },
-]
+const fields = computed(() => [
+  { label: 'Name', value: user.value?.name || '-' },
+  { label: 'Email', value: user.value?.email || '-' },
+  { label: 'No. HP', value: user.value?.no_hp || '-' },
+  { label: 'Role', value: user.value?.role?.name || '-' },
+  { 
+    label: 'Status', 
+    value: user.value?.is_active ? 'Active' : 'Inactive',
+    className: user.value?.is_active ? 'text-green-600' : 'text-red-600'
+  },
+])
 
 const actionFields = [
-  { label: 'Created At', value: '2025-03-20' },
-  { label: 'Created By', value: 'Admin' },
-  { label: 'Updated At', value: '2025-04-10' },
-  { label: 'Updated By', value: 'Super Admin' },
+  { label: 'Created At', value: new Date(props.item.created_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) },
+  { label: 'Created By', value: props.item.created_by_user?.name || '-' },
+  { label: 'Updated At', value: new Date(props.item.updated_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) },
+  { label: 'Updated By', value: props.item.updated_by_user?.name || '-' },
 ]
 
 const handleEdit = () => {
-  router.visit('/users/1/edit')
+  router.visit(`/users/${props.item.id}/edit`)
 }
 
 const handleDelete = () => {
-  if (confirm('Are you sure you want to delete this user?')) {
-    router.delete('/users/1')
+  if (confirm(`Are you sure you want to delete ${props.item.name}?`)) {
+    router.delete(`/users/${props.item.id}`, {
+      onSuccess: () => {
+        router.visit('/users')
+      }
+    })
   }
 }
+
+// Debug untuk melihat data
+console.log('Show data:', props.item)
 </script>
 
 <template>

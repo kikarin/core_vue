@@ -2,7 +2,20 @@
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
 import * as LucideIcons from 'lucide-vue-next'
+import { ref } from 'vue'
 
+const props = defineProps<{
+  menus: Array<{
+    id: number
+    name: string
+    code: string
+    icon: string
+    parent: string
+    permission: string
+    url: string
+    order: number
+  }>
+}>()
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
@@ -13,33 +26,17 @@ const columns = [
   { key: 'name', label: 'Name', searchable: true, orderable: true, visible: true },
   { key: 'code', label: 'Code', searchable: true, orderable: true, visible: true },
   { key: 'icon', label: 'Icon', searchable: false, orderable: false, visible: true },
-  { key: 'parent', label: 'Parent', searchable: false, orderable: true, visible: true },
-  { key: 'permission', label: 'Permission', searchable: true, orderable: true, visible: true },
+  { 
+    key: 'parent', 
+    label: 'Parent', 
+    searchable: false, 
+    orderable: true, 
+    visible: true,
+    format: (row: any) => {
+      return row.parent === '-' ? 'Menu Utama' : row.parent
+    }
+  },
   { key: 'url', label: 'URL', searchable: true, orderable: true, visible: true },
-  { key: 'order', label: 'Order', searchable: false, orderable: true, visible: true },
-]
-
-const rows = [
-  {
-    id: 1,
-    name: 'Dashboard',
-    code: 'dashboard',
-    icon: 'LayoutGrid',
-    parent: '-',
-    permission: 'view dashboard',
-    url: '/dashboard',
-    order: 1,
-  },
-  {
-    id: 2,
-    name: 'Users',
-    code: 'users',
-    icon: 'Users',
-    parent: 'Management',
-    permission: 'manage users',
-    url: '/management/users',
-    order: 2,
-  },
 ]
 
 const actions = (row: any) => [
@@ -60,6 +57,26 @@ const actions = (row: any) => [
     },
   },
 ]
+
+const selected = ref<number[]>([])
+
+const deleteSelected = () => {
+  if (confirm(`Are you sure you want to delete ${selected.value.length} items?`)) {
+    router.delete(route('menu-permissions.menus.destroy-selected'), {
+      data: { array_id: selected.value },
+      onSuccess: () => {
+        selected.value = [];
+      }
+    });
+  }
+};
+
+const handleSearch = (params: any) => {
+  router.get(route('menu-permissions.menus.index'), params, {
+    preserveState: true,
+    preserveScroll: true,
+  });
+};
 </script>
 
 <template>
@@ -67,8 +84,11 @@ const actions = (row: any) => [
     title="Menus"
     :breadcrumbs="breadcrumbs"
     :columns="columns"
-    :rows="rows"
+    :rows="props.menus"
     :actions="actions"
     create-url="/menu-permissions/menus/create"
+    :selected="selected"
+    :on-delete-selected="deleteSelected"
+    @search="handleSearch"
   />
 </template>

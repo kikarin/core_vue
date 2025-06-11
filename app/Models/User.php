@@ -130,17 +130,18 @@ class User extends Authenticatable implements HasMedia
 
     public function created_by_user()
     {
-        return $this->belongsTo(User::class, 'created_by')->select(['id', 'name', 'file']);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function updated_by_user()
     {
-        return $this->belongsTo(User::class, 'updated_by')->select(['id', 'name']);
+        return $this->belongsTo(User::class, 'updated_by');
     }
+
 
     // Todo: End Relation
 
-    
+
     // Todo: Attribute
     public function getCreatedAtDiffAttribute()
     {
@@ -218,15 +219,15 @@ class User extends Authenticatable implements HasMedia
 
 
     // Todo: Scope
-	public function scopeIdInNotIn($query, $data)
-	{
-		if (isset($data["id_not_in"])) {
-			$query->whereNotIn("id", $data["id_not_in"]);
-		}
-		if (isset($data["id_in"])) {
-			$query->whereIn("id", $data["id_in"]);
-		}
-	}
+    public function scopeIdInNotIn($query, $data)
+    {
+        if (isset($data["id_not_in"])) {
+            $query->whereNotIn("id", $data["id_not_in"]);
+        }
+        if (isset($data["id_in"])) {
+            $query->whereIn("id", $data["id_in"]);
+        }
+    }
 
     public function scopeFilterUsersRole($query, $role_id)
     {
