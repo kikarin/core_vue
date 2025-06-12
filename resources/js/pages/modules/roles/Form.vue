@@ -3,9 +3,14 @@ import FormInput from '@/pages/modules/base-page/FormInput.vue'
 import { router } from '@inertiajs/vue3'
 
 const props = defineProps<{
-  mode: 'create' | 'edit'
-  initialData?: Record<string, any>
+  mode: 'create' | 'edit',
+  initialData?: Record<string, any>,
+  listBg: Record<string, string>,
+  listInitPage: Record<string, string>,
 }>()
+
+const bgOptions = Object.entries(props.listBg).map(([value, label]) => ({ value, label }))
+const initPageOptions = Object.entries(props.listInitPage).map(([value, label]) => ({ value, label }))
 
 const formInputs = [
   {
@@ -16,33 +21,53 @@ const formInputs = [
     required: true,
   },
   {
-    name: 'default_page',
+    name: 'bg',
+    label: 'BG',
+    type: 'select' as const,
+    placeholder: 'Select background',
+    required: false,
+    options: bgOptions,
+  },
+  {
+    name: 'init_page_login',
     label: 'Default Page',
     type: 'select' as const,
     placeholder: 'Select default page',
     required: true,
-    options: [
-      { value: '/dashboard', label: 'Dashboard' },
-      { value: '/management/users', label: 'Users' },
-    ],
+    options: initPageOptions,
   },
   {
-    name: 'can_login',
+    name: 'is_allow_login',
     label: 'Can Login',
     type: 'radio' as const,
     required: true,
     options: [
-      { value: 'ya', label: 'Ya' },
-      { value: 'tidak', label: 'Tidak' },
+      { value: '1', label: 'Ya' },
+      { value: '0', label: 'Tidak' },
+    ],
+  },
+  {
+    name: 'is_vertical_menu',
+    label: 'Menu Type',
+    type: 'radio' as const,
+    required: true,
+    options: [
+      { value: '1', label: 'Vertical' },
+      { value: '0', label: 'Horizontal' },
     ],
   },
 ]
 
 const handleSave = (data: Record<string, any>) => {
+  const formData = {
+    ...data,
+    is_allow_login: data.is_allow_login === '1',
+    is_vertical_menu: data.is_vertical_menu === '1',
+  }
   if (props.mode === 'create') {
-    router.post('/menu-permissions/roles', data)
+    router.post('/menu-permissions/roles', formData)
   } else {
-    router.put(`/menu-permissions/roles/${props.initialData?.id}`, data)
+    router.put(`/menu-permissions/roles/${props.initialData?.id}`, formData)
   }
 }
 </script>

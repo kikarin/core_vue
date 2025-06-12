@@ -27,22 +27,51 @@ class UsersRepository
 
     public function customIndex($data)
     {
+        $query = $this->model
+            ->with('role')
+            ->select('id', 'name', 'email', 'current_role_id', 'is_active');
+
+        // Apply search
+        if (request('search')) {
+            $query->where(function($q) {
+                $q->where('name', 'like', '%' . request('search') . '%')
+                  ->orWhere('email', 'like', '%' . request('search') . '%');
+            });
+        }
+
+        // Apply sorting
+        if (request('sort')) {
+            $order = request('order', 'asc');
+            $query->orderBy(request('sort'), $order);
+        } else {
+            $query->orderBy('id', 'desc');
+        }
+
+        // Get paginated results
+        $users = $query->paginate(request('per_page', 10))->withQueryString();
+
+        // Transform data untuk frontend
+        $transformedUsers = collect($users->items())->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role ? $user->role->name : '-',
+                'is_active' => $user->is_active,
+            ];
+        });
+
         $data += [
             "listRole" => $this->roleRepository->getAll()->pluck('name', 'id')->toArray(),
-            "users" => $this->model
-                ->with('role')
-                ->select('id', 'name', 'email', 'current_role_id', 'is_active')
-                ->get()
-                ->map(function ($user) {
-                    return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'role' => optional($user->role)->name,
-                        'status' => $user->is_active ? 'Active' : 'Inactive',
-                    ];
-                }),
+            "users" => $transformedUsers,
+            "total" => $users->total(),
+            "currentPage" => $users->currentPage(),
+            "perPage" => $users->perPage(),
+            "search" => request('search', ''),
+            "sort" => request('sort', ''),
+            "order" => request('order', 'asc'),
         ];
+
         return $data;
     }
 
@@ -99,6 +128,23 @@ class UsersRepository
         }
         return $model;
     }
+
+    public function queryPaginated($perPage = 10, $search = null)
+{
+    $query = $this->model
+        ->with(['role'])
+        ->select('id', 'name', 'email', 'current_role_id', 'is_active');
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
+
+    return $query->paginate($perPage);
+}
+
 
     public function customTable($table, $data, $request)
     {

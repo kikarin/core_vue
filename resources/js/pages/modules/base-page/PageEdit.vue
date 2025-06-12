@@ -34,8 +34,8 @@ const handleCancel = () => {
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
       <!-- <HeaderIndex :title="`Edit ${title}`" :back-url="backUrl" /> -->
-      <div class="grid grid-cols-12">
-        <div class="col-span-7">
+      <div class="grid grid-cols-1 lg:grid-cols-12">
+        <div class="col-span-1 lg:col-span-7 lg:col-start-1">
           <Card class="w-full">
             <CardHeader class="flex items-center justify-between">
               <CardTitle class="text-2xl">Edit {{ title }}</CardTitle>

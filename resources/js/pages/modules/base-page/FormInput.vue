@@ -9,10 +9,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import ButtonsForm from './ButtonsForm.vue'
-import { onMounted } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import * as LucideIcons from 'lucide-vue-next'
+import { useForm } from '@inertiajs/vue3'
 
 const props = defineProps<{
   formInputs: {
@@ -28,8 +28,10 @@ const props = defineProps<{
   initialData?: Record<string, any>
 }>()
 
-const formData = ref<Record<string, any>>(props.initialData || {})
 const emit = defineEmits(['save', 'cancel'])
+
+// Inisialisasi form menggunakan useForm dengan data awal
+const form = useForm(props.initialData || {})
 
 // Memisahkan icon options ke computed property
 const iconOptions = computed(() => {
@@ -42,15 +44,9 @@ const iconOptions = computed(() => {
     }))
 })
 
-onMounted(() => {
-  if (props.initialData) {
-    formData.value = { ...props.initialData }
-  }
-})
-
 const handleSubmit = (e: Event) => {
   e.preventDefault()
-  emit('save', formData.value)
+  emit('save', form)
 }
 
 const togglePassword = (field: { value: boolean }) => {
@@ -68,17 +64,17 @@ const togglePassword = (field: { value: boolean }) => {
           <Select
             v-if="input.type === 'icon'"
             :required="input.required"
-            :model-value="formData[input.name]"
-            @update:modelValue="val => formData[input.name] = val"
+            :model-value="form[input.name]"
+            @update:modelValue="val => form[input.name] = val"
           >
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="input.placeholder">
-                <template v-if="formData[input.name]">
+                <template v-if="form[input.name]">
                   <component 
-                    :is="LucideIcons[formData[input.name] as keyof typeof LucideIcons]" 
+                    :is="LucideIcons[form[input.name] as keyof typeof LucideIcons]" 
                     class="h-4 w-4 inline-block mr-2"
                   />
-                  {{ formData[input.name] }}
+                  {{ form[input.name] }}
                 </template>
               </SelectValue>
             </SelectTrigger>
@@ -103,7 +99,7 @@ const togglePassword = (field: { value: boolean }) => {
           <!-- TEXTAREA -->
           <textarea
             v-else-if="input.type === 'textarea'"
-            v-model="formData[input.name]"
+            v-model="form[input.name]"
             :placeholder="input.placeholder"
             :required="input.required"
             class="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -113,8 +109,8 @@ const togglePassword = (field: { value: boolean }) => {
           <Select
             v-else-if="input.type === 'select'"
             :required="input.required"
-            :model-value="formData[input.name]"
-            @update:modelValue="val => formData[input.name] = val"
+            :model-value="form[input.name]"
+            @update:modelValue="val => form[input.name] = val"
           >
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="input.placeholder" />
@@ -141,7 +137,7 @@ const togglePassword = (field: { value: boolean }) => {
                 type="radio"
                 :name="input.name"
                 :value="option.value"
-                v-model="formData[input.name]"
+                v-model="form[input.name]"
                 :required="input.required"
                 class="form-radio text-primary border-input focus:ring-ring"
               />
@@ -152,7 +148,7 @@ const togglePassword = (field: { value: boolean }) => {
           <!-- PASSWORD WITH TOGGLE -->
           <div v-else-if="input.type === 'password'" class="relative">
             <Input
-              v-model="formData[input.name]"
+              v-model="form[input.name]"
               :type="input.showPassword?.value ? 'text' : 'password'"
               :placeholder="input.placeholder"
               :required="input.required"
@@ -172,7 +168,7 @@ const togglePassword = (field: { value: boolean }) => {
           <!-- DEFAULT INPUT (text, email, number) -->
           <Input
             v-else
-            v-model="formData[input.name]"
+            v-model="form[input.name]"
             :type="input.type"
             :placeholder="input.placeholder"
             :required="input.required"

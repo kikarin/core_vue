@@ -20,6 +20,7 @@ class CategoryPermissionController extends Controller implements HasMiddleware
         $this->repository = $repository;
         $this->request    = CategoryPermissionRequest::createFromBase($request);
         $this->initialize();
+        $this->route = 'permissions';
         $this->commonData['kode_first_menu']  = "USERS-MANAGEMENT";
         $this->commonData['kode_second_menu'] = "PERMISSION";
     }

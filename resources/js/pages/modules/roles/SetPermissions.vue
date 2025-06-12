@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { router, usePage } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import PermissionTree from '@/pages/modules/roles/PermissionTree.vue'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-vue-next'
 
-const page = usePage()
-const roleId = page.props.id
+const props = defineProps<{
+  item: Record<string, any>,
+  permissionGroups: Array<{ label: string, children: Array<{ id: number, label: string }> }>,
+  selectedPermissions: number[],
+}>()
+
+const roleId = props.item.id
+const selectedPermissions = ref<number[]>([...props.selectedPermissions])
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
@@ -15,30 +21,10 @@ const breadcrumbs = [
   { title: 'Set Permissions', href: '#' },
 ]
 
-const selectedPermissions = ref<number[]>([])
-
-const permissionGroups = [
-  {
-    label: 'Users',
-    children: [
-      { id: 1, label: 'View Users' },
-      { id: 2, label: 'Create Users' },
-      { id: 3, label: 'Edit Users' },
-      { id: 4, label: 'Delete Users' },
-    ],
-  },
-  {
-    label: 'Teams',
-    children: [
-      { id: 5, label: 'View Teams' },
-      { id: 6, label: 'Create Teams' },
-    ],
-  },
-]
-
 const savePermissions = () => {
   router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
-    permissions: selectedPermissions.value,
+    id: roleId,
+    permission_id: selectedPermissions.value,
   })
 }
 </script>
@@ -58,7 +44,7 @@ const savePermissions = () => {
       <!-- Role Name -->
       <div class="border px-4 py-3 rounded bg-muted font-medium text-center">
         <span>Name: </span>
-        <span class="text-foreground">Super Admin</span>
+        <span class="text-foreground">{{ props.item.name }}</span>
       </div>
 
       <!-- Save Button -->
@@ -67,7 +53,7 @@ const savePermissions = () => {
       </div>
 
       <!-- Permissions -->
-      <PermissionTree :groups="permissionGroups" v-model="selectedPermissions" />
+      <PermissionTree :groups="props.permissionGroups" v-model="selectedPermissions" />
 
     </div>
   </AppLayout>

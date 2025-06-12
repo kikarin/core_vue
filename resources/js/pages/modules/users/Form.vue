@@ -93,45 +93,12 @@ const formInputs = [
 ];
 
 const handleSave = (data: Record<string, any>) => {
-    console.log('Form data:', data) // Debug log
-    
-    // Validasi password
-    if (props.mode === 'create') {
-        if (data.password !== data.password_confirmation) {
-            alert('Password dan konfirmasi password harus sama');
-            return;
-        }
-    } else {
-        // Jika mode edit dan password diisi
-        if (data.password) {
-            if (data.password !== data.password_confirmation) {
-                alert('Password dan konfirmasi password harus sama');
-                return;
-            }
-        } else {
-            // Jika password kosong, hapus field password
-            delete data.password;
-            delete data.password_confirmation;
-        }
-    }
-    
-    // Pastikan role ada dan dalam format yang benar
-    if (!data.role) {
-        alert('Role harus dipilih');
-        return;
-    }
-    
     // Konversi role menjadi role_id array untuk backend
     const roleId = Number(data.role);
-    if (isNaN(roleId)) {
-        alert('Role tidak valid');
-        return;
-    }
-    
     const formData = {
         ...data,
         role_id: [roleId],
-        role: roleId // Tetap kirim role untuk validasi
+        role: roleId
     };
 
     // Tambahkan id jika mode edit
@@ -143,32 +110,12 @@ const handleSave = (data: Record<string, any>) => {
         router.post('/users', formData, {
             onSuccess: () => {
                 router.visit('/users')
-            },
-            onError: (errors) => {
-                console.error('Error:', errors)
-                // Tampilkan error ke user
-                if (errors.password) {
-                    alert('Password harus minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka')
-                }
-                if (errors.role) {
-                    alert('Role harus dipilih')
-                }
             }
         });
     } else {
         router.put(`/users/${props.initialData?.id}`, formData, {
             onSuccess: () => {
                 router.visit('/users')
-            },
-            onError: (errors) => {
-                console.error('Error:', errors)
-                // Tampilkan error ke user
-                if (errors.password) {
-                    alert('Password harus minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka')
-                }
-                if (errors.role) {
-                    alert('Role harus dipilih')
-                }
             }
         });
     }

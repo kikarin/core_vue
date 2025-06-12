@@ -86,25 +86,15 @@ Route::resource('/menu-permissions/menus', UsersMenuController::class)
 
 // Roles Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/menu-permissions/roles', fn() => Inertia::render('modules/roles/Index'))->name('access-control.roles.index');
-    Route::get('/menu-permissions/roles/create', fn() => Inertia::render('modules/roles/Create'))->name('access-control.roles.create');
-    Route::get('/menu-permissions/roles/{id}', fn() => Inertia::render('modules/roles/Show'))->name('access-control.roles.show');
-    Route::get('/menu-permissions/roles/{id}/edit', fn() => Inertia::render('modules/roles/Edit'))->name('access-control.roles.edit');
-    Route::get('/menu-permissions/roles/set-permissions/{id}', function () {
-        return Inertia::render('modules/roles/SetPermissions');
-    })->name('access-control.roles.set-permissions')->middleware(['auth', 'verified']);
+    Route::resource('/menu-permissions/roles', \App\Http\Controllers\RoleController::class)->names('roles');
+    Route::get('/menu-permissions/roles/set-permissions/{id}', [\App\Http\Controllers\RoleController::class, 'set_permission'])->name('roles.set-permission');
+    Route::post('/menu-permissions/roles/set-permissions/{id}', [\App\Http\Controllers\RoleController::class, 'set_permission_action'])->name('roles.set-permission-action');
 });
 
-// Category Permissions
+// Permissions & Category Permissions Routes
 Route::middleware(['auth', 'verified'])->prefix('menu-permissions')->group(function () {
-    Route::get('/permissions', fn() => Inertia::render('modules/permissions/Index'))->name('permissions.index');
-    Route::get('/permissions/create', fn() => Inertia::render('modules/permissions/Create'))->name('permissions.create');
-    Route::get('/permissions/category/{id}', fn() => Inertia::render('modules/permissions/Show'))->name('permissions.show');
-    Route::get('/permissions/category/{id}/edit', fn() => Inertia::render('modules/permissions/Edit'))->name('permissions.edit');
-    
-    Route::get('/permissions/create-permission', fn() => Inertia::render('modules/permissions/PermissionCreate'))->name('permissions.create-permission');
-    Route::get('/permissions/{id}/edit-permission', fn() => Inertia::render('modules/permissions/PermissionEdit'))->name('permissions.edit-permission');
-    Route::get('/permissions/{id}/detail', fn() => Inertia::render('modules/permissions/PermissionDetail'))->name('permissions.detail');
+    Route::resource('/permissions', \App\Http\Controllers\CategoryPermissionController::class)->names('permissions');
+    Route::resource('/permissions/detail', \App\Http\Controllers\PermissionController::class)->names('permissions.detail');
 });
 
 // Activity Logs Routes

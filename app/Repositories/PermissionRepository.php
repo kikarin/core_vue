@@ -20,7 +20,17 @@ class PermissionRepository
     public function customIndex($data)
     {
         $data += [
-            'get_CategoryPermission' => $this->categoryPermissionRepository->getAll_OrderSequence(),
+            'permissions' => $this->model
+                ->with('category_permission')
+                ->get()
+                ->map(function ($perm) {
+                    return [
+                        'id' => $perm->id,
+                        'name' => $perm->name,
+                        'category_permission_id' => $perm->category_permission_id,
+                        'category_permission' => optional($perm->category_permission)->name,
+                    ];
+                }),
         ];
         return $data;
     }

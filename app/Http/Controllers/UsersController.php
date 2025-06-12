@@ -14,21 +14,20 @@ class UsersController extends Controller implements HasMiddleware
 {
     use BaseTrait;
     private $request;
-
     private $repository;
     private $roleRepository;
 
     public function __construct(Request $request, UsersRepository $repository, RoleRepository $roleRepository)
     {
-        $this->repository     = $repository;
+        $this->repository = $repository;
         $this->roleRepository = $roleRepository;
-        $this->request        = UsersRequest::createFromBase($request);
+        $this->request = UsersRequest::createFromBase($request);
         $this->initialize();
     }
 
     public static function middleware(): array
     {
-        $className  = class_basename(__CLASS__);
+        $className = class_basename(__CLASS__);
         $permission = str_replace('Controller', '', $className);
         $permission = trim(implode(' ', preg_split('/(?=[A-Z])/', $permission)));
         return [

@@ -16,12 +16,13 @@ defineProps<{
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="space-y-4 p-4">
             <!-- <HeaderIndex :title="title" :back-url="backUrl" /> -->
-            <div class="grid grid-cols-1 md:grid-cols-12">
-                <div class="col-span-1 md:col-span-7">
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                <div class="col-span-1 lg:col-span-7 lg:col-start-1">
                     <Card class="w-full">
                         <CardHeader class="flex items-center justify-between">
                             <CardTitle class="text-2xl">{{ title }}</CardTitle>
-                            <Button variant="secondary" @click="backUrl ? router.visit(backUrl) : router.visit('/')"> ← Back </Button>
+                            <Button variant="secondary" @click="backUrl ? router.visit(backUrl) : router.visit('/')"> ←
+                                Back </Button>
                         </CardHeader>
                         <CardContent>
                             <slot />

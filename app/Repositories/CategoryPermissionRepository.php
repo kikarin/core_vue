@@ -8,6 +8,7 @@ use App\Traits\RepositoryTrait;
 class CategoryPermissionRepository
 {
     use RepositoryTrait;
+    protected $model;
 
     public function __construct(CategoryPermission $model)
     {
@@ -50,5 +51,29 @@ class CategoryPermissionRepository
     public function getAll_OrderSequence()
     {
         return $this->model::orderBy("sequence", "asc")->get();
+    }
+
+    public function customIndex($data)
+    {
+        $data += [
+            'categories' => $this->model
+                ->with('permission')
+                ->orderBy('sequence')
+                ->get()
+                ->map(function ($cat) {
+                    return [
+                        'id' => $cat->id,
+                        'name' => $cat->name,
+                        'sequence' => $cat->sequence,
+                        'permissions' => $cat->permission->map(function ($perm) {
+                            return [
+                                'id' => $perm->id,
+                                'name' => $perm->name,
+                            ];
+                        }),
+                    ];
+                }),
+        ];
+        return $data;
     }
 }

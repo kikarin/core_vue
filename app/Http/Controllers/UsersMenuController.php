@@ -14,14 +14,15 @@ use Inertia\Inertia;
 class UsersMenuController extends Controller implements HasMiddleware
 {
     use BaseTrait;
+    private $request;
     private $repository;
     private $permissionRepository;
-
-    public function __construct(UsersMenuRepository $repository, PermissionRepository $permissionRepository)
+    public function __construct(Request $request, UsersMenuRepository $repository, PermissionRepository $permissionRepository)
     {
         $this->repository = $repository;
         $this->permissionRepository = $permissionRepository;
         $this->initialize();
+        $this->request = UsersMenuRequest::createFromBase($request);
         $this->route = 'menus';
         $this->commonData['kode_first_menu'] = "USERS-MANAGEMENT";
         $this->commonData['kode_second_menu'] = $this->kode_menu;
@@ -43,4 +44,5 @@ class UsersMenuController extends Controller implements HasMiddleware
     {
         return response()->json($this->repository->getMenus());
     }
+    
 }

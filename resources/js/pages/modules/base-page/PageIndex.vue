@@ -29,61 +29,59 @@ const props = defineProps<{
 const emit = defineEmits(['search'])
 
 const selected = ref<number[]>(props.selected || [])
-const showConfirm = ref<boolean>(false)
+const showConfirm = ref(false)
 
-const handleSearch = (params: any) => {
-  emit('search', params);
-}
+const handleSearch = (params: any) => emit('search', params)
 
-const deleteSelected = () => {
-  // Ambil ID dari baris yang dipilih
-  const selectedIds = selected.value.map(index => props.rows[index].id);
-
-  if (selectedIds.length === 0) {
-    alert('Pilih data yang akan dihapus');
-    return;
-  }
+const handleDeleteSelected = () => {
+  const selectedIds = selected.value.map(index => props.rows[index]?.id).filter(Boolean)
+  if (!selectedIds.length) return alert('Pilih data yang akan dihapus')
 
   router.delete('/users/destroy-selected', {
-    data: {
-      id: selectedIds 
-    },
+    data: { id: selectedIds },
     onSuccess: () => {
-      selected.value = [];
-      showConfirm.value = false;
-      router.reload();
+      selected.value = []
+      showConfirm.value = false
+      router.reload()
     },
     onError: (errors) => {
-      console.error('Error:', errors);
-      alert('Gagal menghapus data yang dipilih');
-    }
-  });
-
+      console.error(errors)
+      alert('Gagal menghapus data yang dipilih')
+    },
+  })
 }
-
 </script>
 
 <template>
-
   <Head :title="title" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
-      <HeaderActions :title="title" :selected="selected" :on-delete-selected="() => (showConfirm = true)"
-        v-bind="createUrl ? { createUrl } : {}" />
-      <DataTable :columns="columns" :rows="rows" :actions="actions" v-model:selected="selected"
-        @search="handleSearch" />
+      <HeaderActions
+        :title="title"
+        :selected="selected"
+        :on-delete-selected="() => (showConfirm = true)"
+        v-bind="createUrl ? { createUrl } : {}"
+      />
+
+      <DataTable
+        :columns="columns"
+        :rows="rows"
+        :actions="actions"
+        v-model:selected="selected"
+        @search="handleSearch"
+      />
 
       <Dialog v-model:open="showConfirm">
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete selected?</DialogTitle>
+            <DialogTitle>Hapus data terpilih?</DialogTitle>
             <DialogDescription>
-              You are about to delete {{ selected.length }} record(s). This action cannot be undone.
+              Anda akan menghapus {{ selected.length }} data. Tindakan ini tidak dapat dibatalkan.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" @click="showConfirm = false">Cancel</Button>
-            <Button variant="destructive" @click="deleteSelected">Delete</Button>
+            <Button variant="outline" @click="showConfirm = false">Batal</Button>
+            <Button variant="destructive" @click="handleDeleteSelected">Hapus</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

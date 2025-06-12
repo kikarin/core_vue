@@ -2,6 +2,11 @@
 import PageCreate from '@/pages/modules/base-page/PageCreate.vue'
 import Form from './Form.vue'
 
+const props = defineProps<{
+  listBg: Record<string, string>,
+  listInitPage: Record<string, string>,
+}>()
+
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
   { title: 'Roles', href: '/menu-permissions/roles' },
@@ -11,6 +16,6 @@ const breadcrumbs = [
 
 <template>
   <PageCreate title="Create Role" :breadcrumbs="breadcrumbs" back-url="/menu-permissions/roles">
-    <Form mode="create" />
+    <Form mode="create" :listBg="listBg" :listInitPage="listInitPage" />
   </PageCreate>
 </template>

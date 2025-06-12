@@ -9,8 +9,14 @@ const props = defineProps<{
     name: string
     email: string
     role: string
-    status: string
+    is_active: boolean
   }>
+  total: number
+  currentPage: number
+  perPage: number
+  search: string
+  sort: string
+  order: string
 }>()
 
 const breadcrumbs = [
@@ -20,17 +26,17 @@ const breadcrumbs = [
 const columns = [
   { key: 'name', label: 'Name', searchable: true, orderable: true, visible: true },
   { key: 'email', label: 'Email', searchable: true, orderable: true, visible: true },
-  { key: 'role', label: 'Role', searchable: false, orderable: false, visible: true },
-  {
-    key: 'status',
-    label: 'Status',
-    className: 'text-center',
-    searchable: false,
-    orderable: true,
+  { key: 'role', label: 'Role', searchable: true, orderable: true, visible: true },
+  { 
+    key: 'is_active', 
+    label: 'Status', 
+    searchable: false, 
+    orderable: true, 
     visible: true,
     format: (row: any) => {
-      const isActive = row.status === 'Active';
-      return `<span class="${isActive ? 'text-green-600' : 'text-red-600'}">${row.status}</span>`;
+      return row.is_active ? 
+        '<span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">Active</span>' : 
+        '<span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Inactive</span>';
     }
   },
 ]
@@ -47,7 +53,7 @@ const actions = (row: any) => [
   {
     label: 'Delete',
     onClick: () => {
-      if (confirm(`Are you sure you want to delete ${row.name}?`)) {
+      if (confirm(`Delete user "${row.name}"?`)) {
         router.delete(`/users/${row.id}`)
       }
     }
@@ -58,19 +64,41 @@ const selected = ref<number[]>([])
 
 const deleteSelected = () => {
   if (confirm(`Are you sure you want to delete ${selected.value.length} items?`)) {
-    router.delete(route('users.destroy-selected'), {
-      data: { id: selected.value },
+    router.delete('/users/delete-selected', {
+      data: { ids: selected.value },
       onSuccess: () => {
-        selected.value = [];
+        selected.value = []
       }
-    });
+    })
   }
-};
+}
 
-
+const handleSearch = (params: any) => {
+  router.get('/users', params, {
+    preserveState: true,
+    preserveScroll: true,
+  })
+}
 </script>
 
 <template>
-  <PageIndex title="Users" :breadcrumbs="breadcrumbs" :columns="columns" :rows="props.users" :actions="actions"
-    create-url="/users/create" destroy-selected-url="/users/destroy-selected" />
+  <div class="space-y-4">
+    <PageIndex
+      title="Users"
+      :breadcrumbs="breadcrumbs"
+      :columns="columns"
+      :rows="users"
+      :actions="actions"
+      create-url="/users/create"
+      :selected="selected"
+      :on-delete-selected="deleteSelected"
+      :total="total"
+      :current-page="currentPage"
+      :per-page="perPage"
+      :search="search"
+      :sort="sort"
+      :order="order"
+      @search="handleSearch"
+    />
+  </div>
 </template>
