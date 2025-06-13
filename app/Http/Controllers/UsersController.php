@@ -50,13 +50,15 @@ class UsersController extends Controller implements HasMiddleware
         $data = $this->repository->customIndex([]);
 
         return response()->json([
-            'data' => $data['users'],        
-            'total' => $data['total'],           
-            'current_page' => $data['currentPage'],
-            'per_page' => $data['perPage'],
-            'search' => $data['search'],         
-            'sort' => $data['sort'],            
-            'order' => $data['order'],           
+            'data' => $data['users'],
+            'meta' => [
+                'total' => $data['total'],
+                'current_page' => $data['currentPage'],
+                'per_page' => $data['perPage'],
+                'search' => $data['search'],
+                'sort' => $data['sort'],
+                'order' => $data['order'],
+            ],
         ]);
     }
 

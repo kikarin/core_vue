@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { onMounted, watch } from 'vue'
+import debounce from 'lodash.debounce'
 
 const rows = ref<any[]>([])
 const total = ref(0)
@@ -24,7 +25,7 @@ const loading = ref(false)
 const page = ref(1)
 const limit = ref(10)
 const search = ref('')
-const sort = ref({ key: '', order: 'asc' })
+const sort = ref<{ key: string; order: 'asc' | 'desc' }>({ key: '', order: 'asc' })
 
 const fetchData = async () => {
   loading.value = true
@@ -32,15 +33,21 @@ const fetchData = async () => {
     const response = await axios.get(props.apiEndpoint, {
       params: {
         search: search.value,
-        page: page.value,
-        limit: limit.value,
+        page: page.value > 1 ? page.value - 1 : 0,
+        per_page: limit.value,
         sort: sort.value.key,
         order: sort.value.order,
       },
     })
 
     rows.value = response.data.data
-    total.value = response.data.total
+    const meta = response.data.meta || {}
+    total.value = Number(meta.total) || 0
+    page.value = Number(meta.current_page) || 1
+    limit.value = Number(meta.per_page) || 10
+    search.value = meta.search || ''
+    sort.value.key = meta.sort || ''
+    sort.value.order = meta.order || 'asc'
   } catch (error) {
     console.error('Gagal fetch data:', error)
   } finally {
@@ -48,11 +55,15 @@ const fetchData = async () => {
   }
 }
 
+const debouncedFetchData = debounce(fetchData, 400)
 
 onMounted(fetchData)
 
-watch([page, limit, search, () => sort.value], fetchData)
+watch(search, () => {
+  debouncedFetchData()
+})
 
+watch([page, limit, () => sort.value.key, () => sort.value.order], fetchData)
 
 const props = defineProps<{
   title: string
@@ -63,12 +74,21 @@ const props = defineProps<{
   createUrl: string
   selected?: number[]
   onDeleteSelected?: () => void
-  apiEndpoint: string 
+  apiEndpoint: string
 }>()
 
-const emit = defineEmits(['search'])
+const emit = defineEmits(['search', 'update:selected'])
 
-const selected = ref<number[]>(props.selected || [])
+const selected = ref<number[]>([])
+
+watch(() => props.selected, (val) => {
+  if (val) selected.value = val
+})
+
+watch(selected, (val) => {
+  emit('update:selected', val)
+})
+
 const showConfirm = ref(false)
 
 const handleSearch = (params: {
@@ -111,9 +131,23 @@ const handleDeleteSelected = () => {
     <div class="p-4 space-y-4">
       <HeaderActions :title="title" :selected="selected" :on-delete-selected="() => (showConfirm = true)"
         v-bind="createUrl ? { createUrl } : {}" />
-      <DataTable :columns="columns" :rows="rows" :actions="actions" :total="total" :loading="loading"
-        :current-page="page" :page-length="limit" v-model:selected="selected" @search="handleSearch" />
-
+<DataTable 
+  :columns="columns" 
+  :rows="rows" 
+  :actions="actions" 
+  :total="total" 
+  :loading="loading"
+  v-model:selected="selected" 
+  :search="search"
+  :sort="sort"
+  :page="page"
+  :per-page="limit"
+  @update:search="(val) => handleSearch({ search: val })"
+  @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
+  @update:page="(val) => handleSearch({ page: val })"
+  @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })"
+/>
+      
 
       <Dialog v-model:open="showConfirm">
         <DialogContent>

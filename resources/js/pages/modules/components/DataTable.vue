@@ -21,8 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import RowActions from '@/pages/modules/components/tables/RowActions.vue';
 import * as LucideIcons from 'lucide-vue-next';
-import { computed, ref, type PropType } from 'vue';
-
+import { computed, type PropType } from 'vue';
 
 const props = defineProps({
     columns: {
@@ -55,64 +54,46 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    total: { 
+        type: Number, 
+        required: true 
+    },
+    search: { 
+        type: String, 
+        default: '' 
+    },
+    sort: { 
+        type: Object as PropType<{ key: string; order: 'asc' | 'desc' }>, 
+        default: () => ({ key: '', order: 'asc' }) 
+    },
+    page: { 
+        type: Number, 
+        default: 1 
+    },
+    perPage: { 
+        type: Number, 
+        default: 10 
+    },
 });
 
-const emit = defineEmits(['update:selected']);
-
-const searchQuery = ref('');
-const pageLength = ref(10);
-const currentPage = ref(1);
-const sortKey = ref<string | null>(null);
-const sortOrder = ref<'asc' | 'desc'>('asc');
+const emit = defineEmits([
+    'update:selected',
+    'update:search',
+    'update:sort',
+    'update:page',
+    'update:perPage',
+]);
 
 const visibleColumns = computed(() => {
     return props.columns.filter((col) => col.visible !== false);
 });
 
-const filteredRows = computed(() => {
-    if (!searchQuery.value) return props.rows;
-    const query = searchQuery.value.toLowerCase();
-    const searchableCols = props.columns.filter((c) => c.searchable !== false);
-
-    return props.rows.filter((row) =>
-        searchableCols.some((col) =>
-            String(row[col.key] ?? '')
-                .toLowerCase()
-                .includes(query),
-        ),
-    );
-});
-
-const sortedRows = computed(() => {
-    const rows = [...filteredRows.value];
-    if (!sortKey.value) return rows;
-
-    const col = props.columns.find((c) => c.key === sortKey.value);
-    if (col?.orderable === false) return rows;
-
-    const key = sortKey.value;
-    return rows.sort((a, b) => {
-        const aVal = a[key];
-        const bVal = b[key];
-
-        if (aVal === bVal) return 0;
-        if (sortOrder.value === 'asc') return aVal > bVal ? 1 : -1;
-        return aVal < bVal ? 1 : -1;
-    });
-});
-
-const totalPages = computed(() => Math.ceil(sortedRows.value.length / pageLength.value));
-
-const paginatedRows = computed(() => {
-    const start = (currentPage.value - 1) * pageLength.value;
-    const end = start + pageLength.value;
-    return sortedRows.value.slice(start, end);
-});
+const totalPages = computed(() => Math.ceil(props.total / props.perPage));
 
 const getPageNumbers = () => {
     const pages = [];
     const maxPages = 5;
-    let start = Math.max(1, currentPage.value - Math.floor(maxPages / 2));
+    let start = Math.max(1, props.page - Math.floor(maxPages / 2));
     const end = Math.min(totalPages.value, start + maxPages - 1);
 
     if (end - start + 1 < maxPages) {
@@ -123,22 +104,12 @@ const getPageNumbers = () => {
     return pages;
 };
 
-const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
-    }
-};
-
 const sortBy = (key: string) => {
-    const col = props.columns.find((c) => c.key === key);
-    if (col?.orderable === false) return;
+    const col = props.columns.find(c => c.key === key);
+    if (!col || col.orderable === false) return;
 
-    if (sortKey.value === key) {
-        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-    } else {
-        sortKey.value = key;
-        sortOrder.value = 'asc';
-    }
+    const order = props.sort.key === key && props.sort.order === 'asc' ? 'desc' : 'asc';
+    emit('update:sort', { key, order });
 };
 
 const toggleSelect = (rowId: number) => {
@@ -149,11 +120,9 @@ const toggleSelect = (rowId: number) => {
     }
 };
 
-
 const toggleSelectAll = (checked: boolean) => {
     emit('update:selected', checked ? props.rows.map(row => row.id) : []);
 };
-
 </script>
 
 <template>
@@ -163,7 +132,7 @@ const toggleSelectAll = (checked: boolean) => {
             class="flex flex-col flex-wrap items-center justify-center gap-4 text-center sm:flex-row sm:justify-between">
             <div class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">Show</span>
-                <Select v-model="pageLength">
+                <Select :model-value="props.perPage" @update:model-value="(val) => emit('update:perPage', val === 'all' ? -1 : Number(val))">
                     <SelectTrigger class="w-24">
                         <SelectValue placeholder="Select" />
                     </SelectTrigger>
@@ -173,14 +142,19 @@ const toggleSelectAll = (checked: boolean) => {
                         <SelectItem :value="50">50</SelectItem>
                         <SelectItem :value="100">100</SelectItem>
                         <SelectItem :value="500">500</SelectItem>
-                        <SelectItem :value="filteredRows.length">All</SelectItem>
+                        <SelectItem value="all">All</SelectItem>
                     </SelectContent>
                 </Select>
 
                 <span class="text-muted-foreground text-sm">entries</span>
             </div>
             <div class="w-full sm:w-64">
-                <Input v-model="searchQuery" placeholder="Search..." class="w-full" />
+                <Input
+                    :model-value="props.search"
+                    @update:model-value="(val) => emit('update:search', val)"
+                    placeholder="Search..."
+                    class="w-full"
+                />
             </div>
         </div>
 
@@ -207,8 +181,8 @@ const toggleSelectAll = (checked: boolean) => {
                                 @click="sortBy(col.key)">
                                 <div class="flex items-center gap-1">
                                     {{ col.label }}
-                                    <span v-if="sortKey === col.key">
-                                        <span v-if="sortOrder === 'asc'">▲</span>
+                                    <span v-if="props.sort.key === col.key">
+                                        <span v-if="props.sort.order === 'asc'">▲</span>
                                         <span v-else>▼</span>
                                     </span>
                                 </div>
@@ -216,10 +190,10 @@ const toggleSelectAll = (checked: boolean) => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="(row, index) in paginatedRows" :key="index"
+                        <TableRow v-for="(row, index) in props.rows" :key="index"
                             class="hover:bg-muted/40 border-t transition">
                             <TableCell class="text-center">
-                                {{ (currentPage - 1) * pageLength + index + 1 }}
+                                {{ (props.page - 1) * props.perPage + index + 1 }}
                             </TableCell>
                             <TableCell class="text-center">
                                 <label
@@ -250,34 +224,33 @@ const toggleSelectAll = (checked: boolean) => {
                         </TableRow>
                     </TableBody>
                 </Table>
-
             </div>
 
             <!-- Pagination Info -->
             <div
                 class="text-muted-foreground flex flex-col items-center justify-center gap-2 border-t p-4 text-center text-sm md:flex-row md:justify-between">
                 <span>
-                    Showing {{ (currentPage - 1) * pageLength + 1 }} to {{ Math.min(currentPage * pageLength,
-                        filteredRows.length) }} of
-                    {{ filteredRows.length }} entries
+                    Showing {{ (props.page - 1) * props.perPage + 1 }}
+                    to {{ Math.min(props.page * props.perPage, props.total) }}
+                    of {{ props.total }} entries
                 </span>
 
                 <div class="flex flex-wrap items-center justify-center gap-2">
-                    <Button size="sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)"
+                    <Button size="sm" :disabled="props.page === 1" @click="emit('update:page', props.page - 1)"
                         class="bg-muted/40 text-foreground">
                         Previous
                     </Button>
                     <div class="flex flex-wrap items-center gap-1">
                         <Button v-for="page in getPageNumbers()" :key="page" size="sm"
                             class="rounded-md border px-3 py-1.5 text-sm" :class="[
-                                currentPage === page
+                                props.page === page
                                     ? 'bg-primary text-primary-foreground border-primary'
                                     : 'bg-muted border-input text-black dark:text-white',
-                            ]" @click="goToPage(page)">
+                            ]" @click="emit('update:page', page)">
                             {{ page }}
                         </Button>
                     </div>
-                    <Button size="sm" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)"
+                    <Button size="sm" :disabled="props.page === totalPages" @click="emit('update:page', props.page + 1)"
                         class="bg-muted/40 text-foreground">
                         Next
                     </Button>

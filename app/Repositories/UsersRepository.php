@@ -47,8 +47,36 @@ class UsersRepository
             $query->orderBy('id', 'desc');
         }
 
-        // Get paginated results
-        $users = $query->paginate(request('per_page', 10))->withQueryString();
+        // --- PAGINATION FIX ---
+        $perPage = (int) request('per_page', 10);
+        $page = (int) request('page', 1);
+        if ($perPage === -1) {
+            $allUsers = $query->get();
+            $transformedUsers = collect($allUsers)->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role ? $user->role->name : '-',
+                    'is_active' => $user->is_active,
+                ];
+            });
+            $data += [
+                "listRole" => $this->roleRepository->getAll()->pluck('name', 'id')->toArray(),
+                "users" => $transformedUsers,
+                "total" => $transformedUsers->count(),
+                "currentPage" => 1,
+                "perPage" => -1,
+                "search" => request('search', ''),
+                "sort" => request('sort', ''),
+                "order" => request('order', 'asc'),
+            ];
+            return $data;
+        }
+        // Jika tidak -1, paginasi seperti biasa
+        $pageForPaginate = $page < 1 ? 1 : $page + 1;
+        $users = $query->paginate($perPage, ['*'], 'page', $pageForPaginate)->withQueryString();
+        // --- END PAGINATION FIX ---
 
         // Transform data untuk frontend
         $transformedUsers = collect($users->items())->map(function ($user) {
@@ -108,6 +136,7 @@ class UsersRepository
         return $data;
     }
 
+
     public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
     {
         if (@$data['is_delete_foto'] == 1) {
@@ -119,7 +148,7 @@ class UsersRepository
 
             Storage::disk($media->disk)->delete($media->getPathRelativeToRoot());
         }
-        $model->assignRole((int) $model->current_role_id);
+        $model->syncRoles($data['role_id']);
         $this->usersRoleRepository->setRole($model->id, $data['role_id']);
 
         if (@$data['from_menu'] == "pencaker") {
