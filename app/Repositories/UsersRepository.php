@@ -84,31 +84,27 @@ class UsersRepository
         return $data;
     }
 
-
     public function customDataCreateUpdate($data, $record = null)
     {
-        if ($record == null) {
-            // Create
-            $data['created_by'] = Auth::id();
-        }
-        $data['updated_by'] = Auth::id();
+        $userId = Auth::id();
 
-        if (@$data['password'] != "" and @$data['password'] != null) {
-            if (@$data['disabled_hash_password'] == true) {
-                $data['password'] = $data['password'];
-            } else {
-                $data['password'] = Hash::make($data['password']);
-            }
+        if (is_null($record)) {
+            $data['created_by'] = $userId;
+        }
+        $data['updated_by'] = $userId;
+
+        if (!empty($data['password'])) {
+            $data['password'] = !empty($data['disabled_hash_password'])
+                ? $data['password']
+                : Hash::make($data['password']);
         } else {
             unset($data['password']);
         }
-        if (isset($data['role_id']) && is_array($data['role_id']) && count($data['role_id']) > 0) {
-            $data['current_role_id'] = $data['role_id'][0];
-        } else {
-            $data['current_role_id'] = null;
-        }
+
+        $data['current_role_id'] = isset($data['role_id'][0]) ? $data['role_id'][0] : null;
 
         unset($data['disabled_hash_password']);
+
         return $data;
     }
 
@@ -132,52 +128,9 @@ class UsersRepository
         return $model;
     }
 
-    public function queryPaginated($perPage = 10, $search = null)
-    {
-        $query = $this->model
-            ->with(['role'])
-            ->select('id', 'name', 'email', 'current_role_id', 'is_active');
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        return $query->paginate($perPage);
-    }
-
-
-    public function customTable($table, $data, $request)
-    {
-        return $table->editColumn('email', function ($d) {
-            return $d->email . " <br> <small class='text-muted'>" . $d->no_hp . "</small>";
-        })->editColumn('file', function ($d) {
-            return $d->file_url_image;
-        })->addColumn('list_role_name_str', function ($d) {
-            return $d->list_role_name_str;
-        })->editColumn('is_active', function ($d) {
-            return $d->is_active_badge;
-        })->editColumn('created_at', function ($d) {
-            return $d->created_at;
-        })->rawColumns(["email", "file", "list_role_name_str", "is_active"]);
-    }
-
     public function getByEmail($email)
     {
         $record = $this->model::where("email", $email)->first();
-        return $record;
-    }
-
-    public function getByFile($data)
-    {
-        $record = $this->model::where("file", $data['file_name']);
-        if (array_key_exists("is_my_file", $data) && $data["is_my_file"] != "") {
-            $record = $record->where("id", Auth::user()->id);
-        }
-        $record = $record->first();
-        $record['file_path'] = $record["file_path"];
         return $record;
     }
 

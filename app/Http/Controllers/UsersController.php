@@ -45,19 +45,19 @@ class UsersController extends Controller implements HasMiddleware
         return redirect($init_page_login)->withSuccess("Login As successfully.");
     }
 
-public function apiIndex()
-{
-    $data = $this->repository->customIndex([]);
+    public function apiIndex()
+    {
+        $data = $this->repository->customIndex([]);
 
-    return response()->json([
-        'data' => $data['users'],             // ✔ isi datanya
-        'total' => $data['total'],            // ✔ jumlah total
-        'current_page' => $data['currentPage'],
-        'per_page' => $data['perPage'],
-        'search' => $data['search'],          // opsional (buat debugging)
-        'sort' => $data['sort'],              // opsional
-        'order' => $data['order'],            // opsional
-    ]);
-}
+        return response()->json([
+            'data' => $data['users'],        
+            'total' => $data['total'],           
+            'current_page' => $data['currentPage'],
+            'per_page' => $data['perPage'],
+            'search' => $data['search'],         
+            'sort' => $data['sort'],            
+            'order' => $data['order'],           
+        ]);
+    }
 
 }
