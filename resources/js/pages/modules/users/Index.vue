@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 
 const breadcrumbs = [
   { title: 'Users', href: '/users' },
@@ -24,6 +24,14 @@ const columns = [
 
 const selected = ref<number[]>([])
 
+const { emit } = getCurrentInstance()!
+
+const pageIndex = ref()
+
+const handleDeleteRow = (row: any) => {
+  
+}
+
 const actions = (row: any) => [
   {
     label: 'Detail',
@@ -35,11 +43,7 @@ const actions = (row: any) => [
   },
   {
     label: 'Delete',
-    onClick: () => {
-      if (confirm(`Delete user "${row.name}"?`)) {
-        router.delete(`/users/${row.id}`)
-      }
-    }
+    onClick: () => pageIndex.value.handleDeleteRow(row)
   }
 ]
 
@@ -66,6 +70,7 @@ const deleteSelected = () => {
       :selected="selected"
       :on-delete-selected="deleteSelected"
       api-endpoint="/api/users"
+      ref="pageIndex"
     />
   </div>
 </template>

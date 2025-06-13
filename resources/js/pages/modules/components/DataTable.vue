@@ -77,11 +77,12 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-    'update:selected',
-    'update:search',
-    'update:sort',
-    'update:page',
-    'update:perPage',
+  'update:selected',
+  'update:search',
+  'update:sort',
+  'update:page',
+  'update:perPage',
+  'deleted' 
 ]);
 
 const visibleColumns = computed(() => {
@@ -209,7 +210,7 @@ const toggleSelectAll = (checked: boolean) => {
                             </TableCell>
                             <TableCell class="text-center">
                                 <RowActions v-if="actions(row).length > 0" :actions="actions(row)" :id="row.id"
-                                    :base-url="baseUrl" :on-delete="() => console.log('Delete', row.id)" />
+                                    :base-url="baseUrl" :on-delete="() => emit('deleted')" />
                             </TableCell>
                             <TableCell v-for="col in visibleColumns" :key="col.key"
                                 :class="typeof col.className === 'function' ? col.className(row) : col.className">

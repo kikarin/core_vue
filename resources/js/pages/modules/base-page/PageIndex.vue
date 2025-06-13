@@ -90,6 +90,8 @@ watch(selected, (val) => {
 })
 
 const showConfirm = ref(false)
+const showDeleteDialog = ref(false)
+const rowToDelete = ref<any>(null)
 
 const handleSearch = (params: {
   search?: string
@@ -122,6 +124,39 @@ const handleDeleteSelected = () => {
   //   },
   // })
 }
+
+const handleDeleteRow = (row: any) => {
+  rowToDelete.value = row
+  showDeleteDialog.value = true
+}
+
+const confirmDeleteRow = () => {
+  if (!rowToDelete.value) return
+  router.delete(`/users/${rowToDelete.value.id}`, {
+    onSuccess: () => {
+      showDeleteDialog.value = false
+      rowToDelete.value = null
+      fetchData()
+    },
+    onError: () => {
+      showDeleteDialog.value = false
+      rowToDelete.value = null
+    }
+  })
+}
+
+const localActions = (row: any) => {
+  const base = props.actions ? props.actions(row) : []
+  return base.map(action => {
+    if (action.label === 'Delete') {
+      return {
+        ...action,
+        onClick: () => handleDeleteRow(row)
+      }
+    }
+    return action
+  })
+}
 </script>
 
 <template>
@@ -134,7 +169,7 @@ const handleDeleteSelected = () => {
 <DataTable 
   :columns="columns" 
   :rows="rows" 
-  :actions="actions" 
+  :actions="localActions" 
   :total="total" 
   :loading="loading"
   v-model:selected="selected" 
@@ -146,6 +181,8 @@ const handleDeleteSelected = () => {
   @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
   @update:page="(val) => handleSearch({ page: val })"
   @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })"
+  @deleted="fetchData()"
+  :on-delete-row="handleDeleteRow"
 />
       
 
@@ -160,6 +197,21 @@ const handleDeleteSelected = () => {
           <DialogFooter>
             <Button variant="outline" @click="showConfirm = false">Batal</Button>
             <Button variant="destructive" @click="handleDeleteSelected">Hapus</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog v-model:open="showDeleteDialog">
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Hapus data ini?</DialogTitle>
+            <DialogDescription>
+              Anda akan menghapus user <b>{{ rowToDelete?.name }}</b>. Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" @click="showDeleteDialog = false">Batal</Button>
+            <Button variant="destructive" @click="confirmDeleteRow">Hapus</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
