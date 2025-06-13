@@ -15,6 +15,7 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Menu API
+Route::get('/api/users', [UsersController::class, 'apiIndex']);
 Route::get('/api/users-menu', [UsersMenuController::class, 'getMenus'])->middleware(['auth', 'verified']);
 // Users Routes
 Route::resource('/users', UsersController::class)->names('users');

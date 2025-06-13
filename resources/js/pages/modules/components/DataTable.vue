@@ -141,20 +141,19 @@ const sortBy = (key: string) => {
     }
 };
 
-const toggleSelect = (index: number) => {
-    if (props.selected.includes(index)) {
-        emit(
-            'update:selected',
-            props.selected.filter((i) => i !== index),
-        );
+const toggleSelect = (rowId: number) => {
+    if (props.selected.includes(rowId)) {
+        emit('update:selected', props.selected.filter((id) => id !== rowId));
     } else {
-        emit('update:selected', [...props.selected, index]);
+        emit('update:selected', [...props.selected, rowId]);
     }
 };
 
+
 const toggleSelectAll = (checked: boolean) => {
-    emit('update:selected', checked ? props.rows.map((_, i) => i) : []);
+    emit('update:selected', checked ? props.rows.map(row => row.id) : []);
 };
+
 </script>
 
 <template>
@@ -196,7 +195,7 @@ const toggleSelectAll = (checked: boolean) => {
                                 <label
                                     class="inline-flex items-center justify-center w-5 h-5 rounded border border-input bg-background cursor-pointer relative">
                                     <input type="checkbox" class="sr-only peer"
-                                        :checked="props.selected.length === props.rows.length"
+                                        :checked="props.selected.length > 0 && props.selected.length === props.rows.length"
                                         @change="(e) => toggleSelectAll((e.target as HTMLInputElement).checked)" />
                                     <div
                                         class="h-3 w-3 scale-0 transform rounded-sm bg-primary transition-all peer-checked:scale-100">
@@ -226,7 +225,8 @@ const toggleSelectAll = (checked: boolean) => {
                                 <label
                                     class="inline-flex items-center justify-center w-5 h-5 rounded border border-input bg-background cursor-pointer relative">
                                     <input type="checkbox" class="sr-only peer"
-                                        :checked="props.selected.includes(index)" @change="() => toggleSelect(index)" />
+                                        :checked="props.selected.includes(row.id)"
+                                        @change="() => toggleSelect(row.id)" />
                                     <svg class="h-4 w-4 text-primary opacity-0 scale-75 transition-all duration-200 peer-checked:opacity-100 peer-checked:scale-100"
                                         fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

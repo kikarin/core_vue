@@ -44,4 +44,20 @@ class UsersController extends Controller implements HasMiddleware
         $init_page_login = ($user->role->init_page_login != "") ? $user->role->init_page_login : 'dashboard';
         return redirect($init_page_login)->withSuccess("Login As successfully.");
     }
+
+public function apiIndex()
+{
+    $data = $this->repository->customIndex([]);
+
+    return response()->json([
+        'data' => $data['users'],             // ✔ isi datanya
+        'total' => $data['total'],            // ✔ jumlah total
+        'current_page' => $data['currentPage'],
+        'per_page' => $data['perPage'],
+        'search' => $data['search'],          // opsional (buat debugging)
+        'sort' => $data['sort'],              // opsional
+        'order' => $data['order'],            // opsional
+    ]);
+}
+
 }

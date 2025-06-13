@@ -33,9 +33,9 @@ class UsersRepository
 
         // Apply search
         if (request('search')) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('name', 'like', '%' . request('search') . '%')
-                  ->orWhere('email', 'like', '%' . request('search') . '%');
+                    ->orWhere('email', 'like', '%' . request('search') . '%');
             });
         }
 
@@ -102,9 +102,12 @@ class UsersRepository
         } else {
             unset($data['password']);
         }
-        $role_id_array = $data['role_id'];
-        $data['current_role_id'] = $role_id_array[0];
-        // unset($data['role_id']);
+        if (isset($data['role_id']) && is_array($data['role_id']) && count($data['role_id']) > 0) {
+            $data['current_role_id'] = $data['role_id'][0];
+        } else {
+            $data['current_role_id'] = null;
+        }
+
         unset($data['disabled_hash_password']);
         return $data;
     }
@@ -130,20 +133,20 @@ class UsersRepository
     }
 
     public function queryPaginated($perPage = 10, $search = null)
-{
-    $query = $this->model
-        ->with(['role'])
-        ->select('id', 'name', 'email', 'current_role_id', 'is_active');
+    {
+        $query = $this->model
+            ->with(['role'])
+            ->select('id', 'name', 'email', 'current_role_id', 'is_active');
 
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
-        });
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($perPage);
     }
-
-    return $query->paginate($perPage);
-}
 
 
     public function customTable($table, $data, $request)
