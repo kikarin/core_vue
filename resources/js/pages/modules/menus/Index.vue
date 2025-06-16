@@ -3,19 +3,9 @@ import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
 import * as LucideIcons from 'lucide-vue-next'
 import { ref } from 'vue'
-
-const props = defineProps<{
-  menus: Array<{
-    id: number
-    name: string
-    code: string
-    icon: string
-    parent: string
-    permission: string
-    url: string
-    order: number
-  }>
-}>()
+import { getCurrentInstance as vueGetCurrentInstance } from 'vue'
+import axios from 'axios'
+import { useToast } from '@/components/ui/toast/useToast'
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
@@ -39,6 +29,14 @@ const columns = [
   { key: 'url', label: 'URL', searchable: true, orderable: true, visible: true },
 ]
 
+const selected = ref<number[]>([])
+
+const { emit } = getCurrentInstance()!
+
+const pageIndex = ref()
+
+const { toast } = useToast()
+
 const actions = (row: any) => [
   {
     label: 'Detail',
@@ -58,37 +56,55 @@ const actions = (row: any) => [
   },
 ]
 
-const selected = ref<number[]>([])
 
-const deleteSelected = () => {
-  if (confirm(`Are you sure you want to delete ${selected.value.length} items?`)) {
-    router.delete(route('menu-permissions.menus.destroy-selected'), {
-      data: { array_id: selected.value },
-      onSuccess: () => {
-        selected.value = [];
-      }
-    });
+function getCurrentInstance() {
+  const instance = vueGetCurrentInstance()
+  if (!instance) throw new Error('getCurrentInstance must be called within setup')
+  return instance
+}
+
+const deleteSelected = async () => {
+  if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
+  try {
+    await axios.post('/menu-permissions/menus/destroy-selected', {
+      ids: selected.value,
+    })
+    selected.value = []
+    pageIndex.value.fetchData()
+    toast({ title: 'Data berhasil dihapus', variant: 'success' })
+  } catch (error) {
+    console.error('Gagal menghapus data:', error)
+    toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' })
   }
-};
+}
 
-const handleSearch = (params: any) => {
-  router.get(route('menu-permissions.menus.index'), params, {
-    preserveState: true,
-    preserveScroll: true,
-  });
-};
+const deleteMenu = async (row: any) => {
+  await router.delete(`/menu-permissions/menus/${row.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Data berhasil dihapus', variant: 'success' })
+      pageIndex.value.fetchData()
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus data.', variant: 'destructive' })
+    }
+  })
+}
+
 </script>
 
 <template>
-  <PageIndex
-    title="Menus"
-    :breadcrumbs="breadcrumbs"
-    :columns="columns"
-    :rows="props.menus"
-    :actions="actions"
-    create-url="/menu-permissions/menus/create"
-    :selected="selected"
-    :on-delete-selected="deleteSelected"
-    @search="handleSearch"
-  />
+    <PageIndex
+      title="Menus"
+      :breadcrumbs="breadcrumbs"
+      :columns="columns"
+      :create-url="'/menu-permissions/menus/create'"
+      :actions="actions"
+      :selected="selected"
+      @update:selected="val => selected = val"
+      :on-delete-selected="deleteSelected"
+      api-endpoint="/api/menus"
+      ref="pageIndex"
+      :on-toast="toast"
+      :on-delete-row-confirm="deleteMenu"
+    />
 </template>

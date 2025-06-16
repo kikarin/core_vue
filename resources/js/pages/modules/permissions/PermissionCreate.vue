@@ -2,6 +2,10 @@
 import PageCreate from '@/pages/modules/base-page/PageCreate.vue'
 import PermissionForm from './PermissionForm.vue'
 
+const props = defineProps<{
+  category_permission_id?: number
+}>()
+
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
   { title: 'Permissions', href: '/menu-permissions/permissions' },
@@ -9,10 +13,10 @@ const breadcrumbs = [
 ]
 
 const query = new URLSearchParams(window.location.search)
-const categoryId = Number(query.get('category_id') || 1)
+const categoryId = props.category_permission_id || Number(query.get('category_id') || 1)
 
 const initialData = {
-  category_id: categoryId,
+  category_permission_id: categoryId,
   name: '',
   code: '',
   sequence: 1,

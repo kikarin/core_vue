@@ -44,4 +44,23 @@ class UsersMenuController extends Controller implements HasMiddleware
         return response()->json($this->repository->getMenus());
     }
     
+    public function apiIndex()
+    {
+        $data = $this->repository->customIndex([]);
+
+        return response()->json([
+            'data' => $data['menus'],
+            'meta' => [
+                'total' => $data['meta']['total'],
+                'current_page' => $data['meta']['current_page'],
+                'per_page' => $data['meta']['per_page'],
+                'search' => $data['meta']['search'],
+                'sort' => $data['meta']['sort'],
+                'order' => $data['meta']['order'],
+            ],
+            'listUsersMenu' => $data['listUsersMenu'],
+            'permissions' => $data['get_Permission'],
+        ]);
+    }
+
 }

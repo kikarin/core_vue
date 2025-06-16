@@ -5,6 +5,7 @@ import { router } from '@inertiajs/vue3'
 const props = defineProps<{
   mode: 'create' | 'edit'
   initialData?: Record<string, any>
+  get_CategoryPermission?: Record<number, string>
   onBack?: () => void
 }>()
 
@@ -16,10 +17,20 @@ const formInputs = [
     placeholder: 'Enter permission category name',
     required: true,
   },
+  ...(props.get_CategoryPermission ? [
+    {
+      name: 'parent_id',
+      label: 'Parent Category',
+      type: 'select' as const,
+      options: Object.entries(props.get_CategoryPermission).map(([id, name]) => ({ value: Number(id), label: name })),
+      required: false,
+      placeholder: 'Pilih Parent (opsional)',
+    }
+  ] : []),
   {
     name: 'sequence',
     label: 'Sequence',
-    type: 'text' as const,
+    type: 'number' as const,
     placeholder: 'Enter display order',
     required: true,
   },
@@ -35,5 +46,5 @@ const handleSave = (data: Record<string, any>) => {
 </script>
 
 <template>
-  <FormInput :form-inputs="formInputs" @save="handleSave" @cancel="props.onBack" />
+  <FormInput :form-inputs="formInputs" :initial-data="initialData" @save="handleSave" @cancel="props.onBack" />
 </template>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
-import { router, usePage } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 
 const props = defineProps<{
   mode: 'create' | 'edit'
   initialData?: Record<string, any>
-  categoryId?: number
+  get_CategoryPermission?: Record<number, string>
   onBack?: () => void
 }>()
 
@@ -17,7 +17,16 @@ const formInputs = [
     placeholder: 'Users Create',
     required: true,
   },
-
+  ...(props.get_CategoryPermission ? [
+    {
+      name: 'category_permission_id',
+      label: 'Category Permission',
+      type: 'select' as const,
+      options: Object.entries(props.get_CategoryPermission).map(([id, name]) => ({ value: Number(id), label: name })),
+      required: true,
+      placeholder: 'Pilih Kategori',
+    }
+  ] : [])
 ]
 
 const handleSave = (data: Record<string, any>) => {

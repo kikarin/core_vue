@@ -11,7 +11,15 @@ const props = defineProps<{
     is_allow_login: string
     is_vertical_menu: string
     created_at: string
+    created_by_user: {
+      id: number
+      name: string
+    } | null
     updated_at: string
+    updated_by_user: {
+      id: number
+      name: string
+    } | null
   }
 }>()
 
@@ -30,8 +38,10 @@ const fields = [
 ]
 
 const actionFields = [
-  { label: 'Created At', value: props.item.created_at },
-  { label: 'Updated At', value: props.item.updated_at },
+  { label: 'Created At', value: new Date(props.item.created_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) },
+  { label: 'Created By', value: props.item.created_by_user?.name || '-' },
+  { label: 'Updated At', value: new Date(props.item.updated_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) },
+  { label: 'Updated By', value: props.item.updated_by_user?.name || '-' },
 ]
 
 const handleEdit = () => {
@@ -45,13 +55,6 @@ const handleDelete = () => {
 </script>
 
 <template>
-  <PageShow
-    title="Role"
-    :breadcrumbs="breadcrumbs"
-    :fields="fields"
-    :action-fields="actionFields"
-    :back-url="'/menu-permissions/roles'"
-    :on-edit="handleEdit"
-    :on-delete="handleDelete"
-  />
+  <PageShow title="Role" :breadcrumbs="breadcrumbs" :fields="fields" :action-fields="actionFields"
+    :back-url="'/menu-permissions/roles'" :on-edit="handleEdit" :on-delete="handleDelete" />
 </template>

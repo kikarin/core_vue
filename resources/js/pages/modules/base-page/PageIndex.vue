@@ -78,6 +78,7 @@ const props = defineProps<{
   selected?: number[]
   onDeleteSelected?: () => void
   apiEndpoint: string
+  onDeleteRowConfirm?: (row: any) => Promise<void>
 }>()
 
 const emit = defineEmits(['search', 'update:selected'])
@@ -124,22 +125,34 @@ const handleDeleteRow = (row: any) => {
   showDeleteDialog.value = true
 }
 
-const confirmDeleteRow = () => {
+const confirmDeleteRow = async () => {
   if (!rowToDelete.value) return
-  router.delete(`/users/${rowToDelete.value.id}`, {
-    onSuccess: () => {
-      showDeleteDialog.value = false
-      rowToDelete.value = null
-      fetchData()
-      toast({ title: 'Data berhasil dihapus', variant: 'success' }) 
-    },
-    onError: () => {
-      showDeleteDialog.value = false
-      rowToDelete.value = null
-      toast({ title: 'Gagal menghapus data.', variant: 'destructive' }) 
-    }
-  })
+
+  if (props.onDeleteRowConfirm) {
+    await props.onDeleteRowConfirm(rowToDelete.value)
+    showDeleteDialog.value = false
+    rowToDelete.value = null
+    fetchData()
+    return
+  }
+
+  try {
+    const module = props.apiEndpoint.split('/').pop() 
+    await router.delete(`/${module}/${rowToDelete.value.id}`, {
+      onSuccess: () => {
+        toast({ title: 'Data berhasil dihapus', variant: 'success' })
+        fetchData()
+      },
+      onError: () => {
+        toast({ title: 'Gagal menghapus data.', variant: 'destructive' })
+      },
+    })
+  } finally {
+    showDeleteDialog.value = false
+    rowToDelete.value = null
+  }
 }
+
 
 
 const localActions = (row: any) => {

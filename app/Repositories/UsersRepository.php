@@ -76,12 +76,9 @@ class UsersRepository
             return $data;
         }
 
-        // Jika tidak -1, paginasi seperti biasa
         $pageForPaginate = $page < 1 ? 1 : $page + 1;
         $users = $query->paginate($perPage, ['*'], 'page', $pageForPaginate)->withQueryString();
-        // --- END PAGINATION FIX ---
 
-        // Transform data untuk frontend
         $transformedUsers = collect($users->items())->map(function ($user) {
             return [
                 'id' => $user->id,

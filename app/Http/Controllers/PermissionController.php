@@ -39,4 +39,51 @@ class PermissionController extends Controller implements HasMiddleware
             new Middleware("can:$permission Delete", only: ['destroy', 'destroy_selected']),
         ];
     }
+
+    public function create()
+    {
+        $this->repository->customProperty(__FUNCTION__);
+        $data = $this->commonData + [
+            "item" => null,
+        ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
+        $data = $this->repository->customCreateEdit($data);
+        if (!is_array($data)) {
+            return $data;
+        }
+        return inertia('modules/permissions/PermissionCreate', $data);
+    }
+
+    public function edit($id = "")
+    {
+        $this->repository->customProperty(__FUNCTION__, ["id" => $id]);
+        $item = $this->repository->getById($id);
+        $data = $this->commonData + [
+            'item' => $item,
+        ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
+        $data = $this->repository->customCreateEdit($data, $item);
+        if (!is_array($data)) {
+            return $data;
+        }
+        return inertia('modules/permissions/PermissionEdit', $data);
+    }
+
+    public function show($id = "")
+    {
+        $this->repository->customProperty(__FUNCTION__, ["id" => $id]);
+        $item = $this->repository->getById($id);
+        $data = $this->commonData + [
+            'item' => $item,
+        ];
+        if ($this->check_permission == true) {
+            $data = array_merge($data, $this->getPermission());
+        }
+        $data = $this->repository->customShow($data, $item);
+        return inertia('modules/permissions/PermissionDetail', $data);
+    }
 }

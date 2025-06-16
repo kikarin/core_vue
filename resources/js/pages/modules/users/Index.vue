@@ -82,6 +82,18 @@ const deleteSelected = async () => {
     toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' })
   }
 }
+
+const deleteUser = async (row: any) => {
+  await router.delete(`/users/${row.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Data berhasil dihapus', variant: 'success' })
+      pageIndex.value.fetchData()
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus data.', variant: 'destructive' })
+    }
+  })
+}
 </script>
 
 <template>
@@ -98,6 +110,7 @@ const deleteSelected = async () => {
       api-endpoint="/api/users"
       ref="pageIndex"
       :on-toast="toast"
+      :on-delete-row="deleteUser"
     />
   </div>
 </template>

@@ -24,6 +24,7 @@ class UsersMenuRepository
         ];
 
         $this->permissionRepository = $permissionRepository;
+        $this->with = ['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'];
     }
 
     public function getByRel($rel)
@@ -82,26 +83,73 @@ class UsersMenuRepository
 
     public function customIndex($data)
     {
+        $query = $this->model
+            ->with(['rel_users_menu', 'permission'])
+            ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id');
+
+        // Apply search
+        if (request('search')) {
+            $searchTerm = request('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('kode', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('url', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Apply sorting
+        if (request('sort')) {
+            $order = request('order', 'asc');
+            // Mapping nama kolom frontend ke nama kolom database
+            $sortMapping = [
+                'name' => 'nama',
+                'code' => 'kode',
+                'url' => 'url',
+                'parent' => 'rel',
+                'order' => 'urutan'
+            ];
+            
+            $sortColumn = $sortMapping[request('sort')] ?? 'urutan';
+            $query->orderBy($sortColumn, $order);
+        } else {
+            $query->orderBy('urutan'); // default sort
+        }
+
+        // Apply pagination
+        $perPage = (int) request('per_page', 10);
+        $page = (int) request('page', 0);
+        $pageForLaravel = $page < 1 ? 1 : $page + 1;
+        
+        $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
+
+        // Transform data
+        $transformedMenus = $menus->getCollection()->map(function ($menu) {
+            return [
+                'id' => $menu->id,
+                'name' => $menu->nama,
+                'code' => $menu->kode,
+                'icon' => $menu->icon,
+                'parent' => optional($menu->rel_users_menu)->nama ?? '-',
+                'permission' => optional($menu->permission)->name ?? '-',
+                'url' => $menu->url,
+                'order' => $menu->urutan,
+            ];
+        });
+
         $data += [
             'listUsersMenu' => $this->listDropdown(),
             'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
-            'menus' => $this->model
-                ->with(['rel_users_menu', 'permission'])
-                ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
-                ->get()
-                ->map(function ($menu) {
-                    return [
-                        'id' => $menu->id,
-                        'name' => $menu->nama,
-                        'code' => $menu->kode,
-                        'icon' => $menu->icon,
-                        'parent' => optional($menu->rel_users_menu)->nama ?? '-',
-                        'permission' => optional($menu->permission)->name ?? '-',
-                        'url' => $menu->url,
-                        'order' => $menu->urutan,
-                    ];
-                }),
+            'menus' => $transformedMenus,
+            'meta' => [
+                'total' => $menus->total(),
+                'current_page' => $menus->currentPage(),
+                'per_page' => $menus->perPage(),
+                'search' => request('search', ''),
+                'sort' => request('sort', ''),
+                'order' => request('order', 'asc'),
+            ],
         ];
+
         return $data;
     }
 
@@ -136,7 +184,9 @@ public function getMenus()
         if (!$item) {
             return null;
         }
-        return $this->model->with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])->find($id);
+        return $this->model->
+        with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])
+        ->find($id);
     }
 
     public function customDataCreateUpdate($data, $record = null)

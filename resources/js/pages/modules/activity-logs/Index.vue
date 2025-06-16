@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import { getCurrentInstance as vueGetCurrentInstance } from 'vue'
+import axios from 'axios'
+import { useToast } from '@/components/ui/toast/useToast'
 
 const breadcrumbs = [
     { title: 'Menu & Permissions', href: '#' },
@@ -12,27 +16,19 @@ const columns = [
     { key: 'event', label: 'Event', searchable: true, orderable: true, visible: true },
     { key: 'subject_type', label: 'Subject Type', searchable: true, orderable: true, visible: true },
     { key: 'subject_id', label: 'Subject ID', searchable: true, orderable: true, visible: true },
-    { key: 'data', label: 'Data', searchable: false, orderable: false, visible: true },
+    { key: 'data', label: 'Data', searchable: true, orderable: true, visible: true },
+    { key: 'causer_name', label: 'Causer', searchable: false, orderable: false, visible: true },
+    { key: 'causer_role', label: 'Causer Role', searchable: false, orderable: false, visible: true },
+    { key: 'created_at', label: 'Created At', searchable: false, orderable: true, visible: true },
 ]
 
-const rows = [
-    {
-        id: 1,
-        module: 'Users',
-        event: 'Updated',
-        subject_type: 'App\\Models\\User',
-        subject_id: 5,
-        data: 'Changed name from "John" to "Johnny"',
-    },
-    {
-        id: 2,
-        module: 'Roles',
-        event: 'Deleted',
-        subject_type: 'App\\Models\\Role',
-        subject_id: 2,
-        data: 'Deleted role: Editor',
-    },
-]
+const selected = ref<number[]>([])
+
+const { emit } = getCurrentInstance()!
+
+const pageIndex = ref()
+
+const { toast } = useToast()
 
 const actions = (row: any) => [
     {
@@ -41,15 +37,48 @@ const actions = (row: any) => [
     },
     {
         label: 'Delete',
-        onClick: () => {
-            if (confirm(`Are you sure to delete this log entry?`)) {
-                router.delete(`/menu-permissions/logs/${row.id}`)
-            }
-        },
+        onClick: () => pageIndex.value.handleDeleteRow(row),
     },
 ]
+
+function getCurrentInstance() {
+  const instance = vueGetCurrentInstance()
+  if (!instance) throw new Error('getCurrentInstance must be called within setup')
+  return instance
+}
+
+const deleteSelected = async () => {
+  if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
+  try {
+    await axios.post('/menu-permissions/logs/destroy-selected', {
+      ids: selected.value,
+    })
+    selected.value = []
+    pageIndex.value.fetchData()
+    toast({ title: 'Data berhasil dihapus', variant: 'success' })
+  } catch (error) {
+    console.error('Gagal menghapus data:', error)
+    toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' })
+  }
+}
+
+const deleteLog = async (row: any) => {
+  await router.delete(`/menu-permissions/logs/${row.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Data berhasil dihapus', variant: 'success' })
+      pageIndex.value.fetchData()
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus data.', variant: 'destructive' })
+    }
+  })
+}
+
 </script>
 
 <template>
-    <PageIndex title="Activity Logs" :breadcrumbs="breadcrumbs" :columns="columns" :rows="rows" :actions="actions" createUrl="" />
+    <PageIndex title="Activity Logs" :breadcrumbs="breadcrumbs" :columns="columns" :actions="actions"
+        api-endpoint="/api/activity-logs" ref="pageIndex" :selected="selected"
+        @update:selected="val => selected = val" :on-delete-selected="deleteSelected"
+        :on-delete-row-confirm="deleteLog" />
 </template>

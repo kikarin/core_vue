@@ -29,17 +29,21 @@ class CategoryPermissionRepository
 
     public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
     {
-        return redirect()->route('permission.index')->with('success', ($method == "store") ? trans('message.success_add') : trans('message.success_update'));
+        return redirect()->route('permissions.index')->with('success', ($method == "store") ? trans('message.success_add') : trans('message.success_update'));
     }
 
     public function callbackAfterDelete($model, $request)
     {
-        return redirect()->route('permission.index')->with('success', trans('message.success_delete'));
+        // Hapus semua permission anak sebelum hapus kategori
+        if ($model) {
+            $model->permission()->delete();
+        }
+        return redirect()->route('permissions.index')->with('success', trans('message.success_delete'));
     }
 
     public function callbackAfterDeleteSelected($model, $request)
     {
-        return redirect()->route('permission.index')->with('success', trans('message.success_delete'));
+        return redirect()->route('permissions.index')->with('success', trans('message.success_delete'));
     }
 
     public function getLastSequence()

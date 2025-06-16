@@ -78,5 +78,21 @@ class RoleController extends Controller implements HasMiddleware
         $this->repository->setPermission($request->id, $request->permission_id);
         return redirect()->route($this->route . '.set-permission', $request->id)->with('success', trans('message.success_save'));
     }
+
+    public function apiIndex()
+    {
+        $data = $this->repository->customIndex([]);
+        return response()->json([
+            'data' => $data['roles'],
+            'meta' => [
+                'total' => $data['meta']['total'],
+                'current_page' => $data['meta']['current_page'],
+                'per_page' => $data['meta']['per_page'],
+                'search' => $data['meta']['search'],
+                'sort' => $data['meta']['sort'],
+                'order' => $data['meta']['order'],
+            ],
+        ]);
+    }
 }
 

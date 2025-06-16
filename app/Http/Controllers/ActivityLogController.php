@@ -35,4 +35,21 @@ class ActivityLogController extends Controller implements HasMiddleware
             new Middleware("can:$permission Delete", only: ['destroy', 'destroy_selected']),
         ];
     }
+
+    public function apiIndex()
+    {
+        $data = $this->repository->customIndex([]);
+
+        return response()->json([
+            'data' => $data['logs'],
+            'meta' => [
+                'total' => $data['meta']['total'],
+                'current_page' => $data['meta']['current_page'],
+                'per_page' => $data['meta']['per_page'],
+                'search' => $data['meta']['search'],
+                'sort' => $data['meta']['sort'],
+                'order' => $data['meta']['order'],
+            ],
+        ]);
+    }
 }
