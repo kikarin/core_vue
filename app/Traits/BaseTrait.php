@@ -152,9 +152,12 @@ trait BaseTrait
         return redirect()->route($this->route . '.index')->with('success', trans('message.success_delete'));
     }
 
-    public function destroy_selected()
+    public function destroy_selected(Request $request)
     {
-        $model = $this->repository->delete_selected(request()->id);
+        $model = $this->repository->delete_selected($request->ids);
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
         $callback = $this->repository->callbackAfterDeleteSelected($model, request()->id);
         if (!($callback instanceof \Illuminate\Database\Eloquent\Model)) {
             return $callback;
@@ -210,13 +213,13 @@ trait BaseTrait
 
     private function getPermission()
     {
-        $auth_user = auth()->user();
+        $auth_user = Auth::user();
         return [
             "can" => [
-                "Add" => $auth_user->can($this->permission_main . " Add"),
-                "Edit" => $auth_user->can($this->permission_main . " Edit"),
-                "Delete" => $auth_user->can($this->permission_main . " Delete"),
-                "Detail" => $auth_user->can($this->permission_main . " Detail"),
+                "Add" => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . " Add") : false,
+                "Edit" => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . " Edit") : false,
+                "Delete" => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . " Delete") : false,
+                "Detail" => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . " Detail") : false,
             ],
         ];
     }

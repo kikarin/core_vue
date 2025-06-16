@@ -1,129 +1,41 @@
+<!-- components/DataTable.vue -->
 <script setup lang="ts">
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+  Table, TableBody, TableCaption, TableCell, TableFooter,
+  TableHead, TableHeader, TableRow,
+} from '@/components/ui/table'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import RowActions from '@/pages/modules/components/tables/RowActions.vue'
+import * as LucideIcons from 'lucide-vue-next'
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import RowActions from '@/pages/modules/components/tables/RowActions.vue';
-import * as LucideIcons from 'lucide-vue-next';
-import { computed, type PropType } from 'vue';
+import type { Column, Sort } from './datatable/types'
+import { useDataTable } from './datatable/useDataTable'
+import { type PropType } from 'vue'
 
 const props = defineProps({
-    columns: {
-        type: Array as PropType<
-            {
-                key: string;
-                label: string;
-                className?: string;
-                searchable?: boolean;
-                orderable?: boolean;
-                visible?: boolean;
-                format?: (row: any) => any;
-            }[]
-        >,
-        required: true,
-    },
-    rows: {
-        type: Array as PropType<any[]>,
-        required: true,
-    },
-    actions: {
-        type: Function as PropType<(row: any) => { label: string; onClick: () => void; permission?: string }[]>,
-        default: () => [],
-    },
-    selected: {
-        type: Array as PropType<number[]>,
-        default: () => [],
-    },
-    baseUrl: {
-        type: String,
-        default: '',
-    },
-    total: { 
-        type: Number, 
-        required: true 
-    },
-    search: { 
-        type: String, 
-        default: '' 
-    },
-    sort: { 
-        type: Object as PropType<{ key: string; order: 'asc' | 'desc' }>, 
-        default: () => ({ key: '', order: 'asc' }) 
-    },
-    page: { 
-        type: Number, 
-        default: 1 
-    },
-    perPage: { 
-        type: Number, 
-        default: 10 
-    },
-});
+  columns: { type: Array as PropType<Column[]>, required: true },
+  rows: { type: Array as PropType<any[]>, required: true },
+  actions: { type: Function as PropType<(row: any) => { label: string; onClick: () => void; permission?: string }[]>, default: () => [] },
+  selected: { type: Array as PropType<number[]>, default: () => [] },
+  baseUrl: { type: String, default: '' },
+  total: { type: Number, required: true },
+  search: { type: String, default: '' },
+  sort: { type: Object as PropType<Sort>, default: () => ({ key: '', order: 'asc' }) },
+  page: { type: Number, default: 1 },
+  perPage: { type: Number, default: 10 },
+})
 
 const emit = defineEmits([
-  'update:selected',
-  'update:search',
-  'update:sort',
-  'update:page',
-  'update:perPage',
-  'deleted' 
-]);
+  'update:selected', 'update:search', 'update:sort',
+  'update:page', 'update:perPage', 'deleted'
+])
 
-const visibleColumns = computed(() => {
-    return props.columns.filter((col) => col.visible !== false);
-});
-
-const totalPages = computed(() => Math.ceil(props.total / props.perPage));
-
-const getPageNumbers = () => {
-    const pages = [];
-    const maxPages = 5;
-    let start = Math.max(1, props.page - Math.floor(maxPages / 2));
-    const end = Math.min(totalPages.value, start + maxPages - 1);
-
-    if (end - start + 1 < maxPages) {
-        start = Math.max(1, end - maxPages + 1);
-    }
-
-    for (let i = start; i <= end; i++) pages.push(i);
-    return pages;
-};
-
-const sortBy = (key: string) => {
-    const col = props.columns.find(c => c.key === key);
-    if (!col || col.orderable === false) return;
-
-    const order = props.sort.key === key && props.sort.order === 'asc' ? 'desc' : 'asc';
-    emit('update:sort', { key, order });
-};
-
-const toggleSelect = (rowId: number) => {
-    if (props.selected.includes(rowId)) {
-        emit('update:selected', props.selected.filter((id) => id !== rowId));
-    } else {
-        emit('update:selected', [...props.selected, rowId]);
-    }
-};
-
-const toggleSelectAll = (checked: boolean) => {
-    emit('update:selected', checked ? props.rows.map(row => row.id) : []);
-};
+const {
+  visibleColumns, totalPages, getPageNumbers,
+  sortBy, toggleSelect, toggleSelectAll
+} = useDataTable(props, emit)
 </script>
 
 <template>

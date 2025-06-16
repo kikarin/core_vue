@@ -2,6 +2,8 @@
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
 import { ref, getCurrentInstance } from 'vue'
+import axios from 'axios'
+import { useToast } from '@/components/ui/toast/useToast'
 
 const breadcrumbs = [
   { title: 'Users', href: '/users' },
@@ -28,9 +30,7 @@ const { emit } = getCurrentInstance()!
 
 const pageIndex = ref()
 
-const handleDeleteRow = (row: any) => {
-  
-}
+const { toast } = useToast()
 
 const actions = (row: any) => [
   {
@@ -47,14 +47,18 @@ const actions = (row: any) => [
   }
 ]
 
-const deleteSelected = () => {
-  if (confirm(`Are you sure you want to delete ${selected.value.length} items?`)) {
-    router.delete('/users/delete-selected', {
-      data: { ids: selected.value },
-      onSuccess: () => {
-        selected.value = []
-      }
+const deleteSelected = async () => {
+  if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
+  try {
+    await axios.post('/users/destroy-selected', {
+      ids: selected.value,
     })
+    selected.value = []
+    pageIndex.value.fetchData()
+    toast({ title: 'Data berhasil dihapus', variant: 'success' })
+  } catch (error) {
+    console.error('Gagal menghapus data:', error)
+    toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' })
   }
 }
 </script>
@@ -68,9 +72,11 @@ const deleteSelected = () => {
       :create-url="'/users/create'"
       :actions="actions"
       :selected="selected"
+      @update:selected="val => selected = val"
       :on-delete-selected="deleteSelected"
       api-endpoint="/api/users"
       ref="pageIndex"
+      :on-toast="toast"
     />
   </div>
 </template>

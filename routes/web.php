@@ -19,7 +19,7 @@ Route::get('/api/users', [UsersController::class, 'apiIndex']);
 Route::get('/api/users-menu', [UsersMenuController::class, 'getMenus'])->middleware(['auth', 'verified']);
 // Users Routes
 Route::resource('/users', UsersController::class)->names('users');
-Route::post('/users/destroy-selected', [UsersController::class, 'destroy_selected'])->name('users.destroy-selected');
+Route::post('/users/destroy-selected', [UsersController::class, 'destroy_selected'])->name('users.destroy_selected');
 
 // Teams Routes
 Route::middleware(['auth', 'verified'])->group(function () {

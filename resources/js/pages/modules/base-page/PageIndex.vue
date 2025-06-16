@@ -17,6 +17,9 @@ import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { onMounted, watch } from 'vue'
 import debounce from 'lodash.debounce'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const rows = ref<any[]>([])
 const total = ref(0)
@@ -108,22 +111,13 @@ const handleSearch = (params: {
 }
 
 const handleDeleteSelected = () => {
-  const selectedIds = selected.value.map(index => rows.value[index]?.id).filter(Boolean)
-  if (!selectedIds.length) return alert('Pilih data yang akan dihapus')
-
-  // router.delete('/users/destroy-selected', {
-  //   data: { id: selectedIds },
-  //   onSuccess: () => {
-  //     selected.value = []
-  //     showConfirm.value = false
-  //     router.reload()
-  //   },
-  //   onError: (errors) => {
-  //     console.error(errors)
-  //     alert('Gagal menghapus data yang dipilih')
-  //   },
-  // })
+  if (!selected.value.length) return
+  if (props.onDeleteSelected) {
+    props.onDeleteSelected()
+  }
+  showConfirm.value = false
 }
+
 
 const handleDeleteRow = (row: any) => {
   rowToDelete.value = row
@@ -137,13 +131,16 @@ const confirmDeleteRow = () => {
       showDeleteDialog.value = false
       rowToDelete.value = null
       fetchData()
+      toast({ title: 'Data berhasil dihapus', variant: 'success' }) 
     },
     onError: () => {
       showDeleteDialog.value = false
       rowToDelete.value = null
+      toast({ title: 'Gagal menghapus data.', variant: 'destructive' }) 
     }
   })
 }
+
 
 const localActions = (row: any) => {
   const base = props.actions ? props.actions(row) : []
@@ -157,6 +154,8 @@ const localActions = (row: any) => {
     return action
   })
 }
+
+defineExpose({ fetchData })
 </script>
 
 <template>
@@ -166,25 +165,14 @@ const localActions = (row: any) => {
     <div class="p-4 space-y-4">
       <HeaderActions :title="title" :selected="selected" :on-delete-selected="() => (showConfirm = true)"
         v-bind="createUrl ? { createUrl } : {}" />
-<DataTable 
-  :columns="columns" 
-  :rows="rows" 
-  :actions="localActions" 
-  :total="total" 
-  :loading="loading"
-  v-model:selected="selected" 
-  :search="search"
-  :sort="sort"
-  :page="page"
-  :per-page="limit"
-  @update:search="(val) => handleSearch({ search: val })"
-  @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
-  @update:page="(val) => handleSearch({ page: val })"
-  @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })"
-  @deleted="fetchData()"
-  :on-delete-row="handleDeleteRow"
-/>
-      
+      <DataTable :columns="columns" :rows="rows" :actions="localActions" :total="total" :loading="loading"
+        v-model:selected="selected" :search="search" :sort="sort" :page="page" :per-page="limit"
+        @update:search="(val) => handleSearch({ search: val })"
+        @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
+        @update:page="(val) => handleSearch({ page: val })"
+        @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })" @deleted="fetchData()"
+        :on-delete-row="handleDeleteRow" />
+
 
       <Dialog v-model:open="showConfirm">
         <DialogContent>
