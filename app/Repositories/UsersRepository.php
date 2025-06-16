@@ -216,7 +216,7 @@ class UsersRepository
                 ->pluck('name')
                 ->toArray();
 
-            $model->syncRoles($roleNames);
+            $model->syncRoles([(int) $model->current_role_id]);
 
             // Set roles di tabel users_role
             $this->usersRoleRepository->setRole($model->id, $data['role_id']);
