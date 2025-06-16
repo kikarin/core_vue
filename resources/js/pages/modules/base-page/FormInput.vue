@@ -9,17 +9,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import ButtonsForm from './ButtonsForm.vue'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { Eye, EyeOff, X } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import * as LucideIcons from 'lucide-vue-next'
 import { useForm } from '@inertiajs/vue3'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 
 const props = defineProps<{
   formInputs: {
     name: string
     label: string
-    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'number' | 'radio' | 'icon' | 'checkbox'
+    type: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'multi-select' | 'number' | 'radio' | 'icon' | 'checkbox'
     placeholder?: string
     required?: boolean
     help?: string
@@ -33,6 +34,9 @@ const emit = defineEmits(['save', 'cancel'])
 
 // Inisialisasi form menggunakan useForm dengan data awal
 const form = useForm(props.initialData || {})
+
+// State untuk multi-select dropdown
+const multiSelectOpen = ref<Record<string, boolean>>({})
 
 // Memisahkan icon options ke computed property
 const iconOptions = computed(() => {
@@ -53,16 +57,88 @@ const handleSubmit = (e: Event) => {
 const togglePassword = (field: { value: boolean }) => {
   field.value = !field.value
 }
+
+// Multi-select functions
+const toggleMultiSelect = (fieldName: string) => {
+  multiSelectOpen.value[fieldName] = !multiSelectOpen.value[fieldName]
+}
+
+const selectMultiOption = (fieldName: string, value: string | number) => {
+  const currentValues = form[fieldName] || []
+  if (currentValues.includes(value)) {
+    form[fieldName] = currentValues.filter((v: any) => v !== value)
+  } else {
+    form[fieldName] = [...currentValues, value]
+  }
+}
+
+const removeMultiOption = (fieldName: string, value: string | number) => {
+  const currentValues = form[fieldName] || []
+  form[fieldName] = currentValues.filter((v: any) => v !== value)
+}
+
+const getSelectedLabels = (fieldName: string, options: { value: string | number; label: string }[]) => {
+  const selectedValues = form[fieldName] || []
+  return options.filter(option => selectedValues.includes(option.value))
+}
 </script>
 
 <template>
   <div class="w-full">
     <form @submit="handleSubmit" class="space-y-6">
-      <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-12 gap-4 items-center">
-        <label class="col-span-3 text-sm font-medium">{{ input.label }}</label>
+      <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-12 gap-4 items-start">
+        <label class="col-span-3 text-sm font-medium pt-2">{{ input.label }}</label>
         <div class="col-span-9">
+          <!-- MULTI-SELECT -->
+          <div v-if="input.type === 'multi-select'" class="relative">
+            <div 
+              @click="toggleMultiSelect(input.name)"
+              class="w-full min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer flex flex-wrap gap-1 items-center"
+              :class="{ 'border-ring ring-2 ring-ring ring-offset-2': multiSelectOpen[input.name] }"
+            >
+              <!-- Selected badges -->
+              <div v-if="form[input.name] && form[input.name].length > 0" class="flex flex-wrap gap-1">
+                <Badge 
+                  v-for="selected in getSelectedLabels(input.name, input.options || [])" 
+                  :key="selected.value"
+                  variant="secondary"
+                  class="text-xs flex items-center gap-1"
+                >
+                  {{ selected.label }}
+                  <X 
+                    class="h-3 w-3 cursor-pointer hover:text-destructive" 
+                    @click.stop="removeMultiOption(input.name, selected.value)"
+                  />
+                </Badge>
+              </div>
+              <!-- Placeholder -->
+              <div v-else class="text-muted-foreground">
+                {{ input.placeholder }}
+              </div>
+            </div>
+            
+            <!-- Dropdown options -->
+            <div 
+              v-if="multiSelectOpen[input.name]" 
+              class="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-lg"
+            >
+              <div
+                v-for="option in input.options"
+                :key="option.value"
+                @click="selectMultiOption(input.name, option.value)"
+                class="flex items-center space-x-2 rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+              >
+                <Checkbox 
+                  :checked="(form[input.name] || []).includes(option.value)"
+                  class="pointer-events-none"
+                />
+                <span>{{ option.label }}</span>
+              </div>
+            </div>
+          </div>
+
           <!-- ICON SELECT -->
-          <Select v-if="input.type === 'icon'" :required="input.required" :model-value="form[input.name]"
+          <Select v-else-if="input.type === 'icon'" :required="input.required" :model-value="form[input.name]"
             @update:modelValue="val => form[input.name] = val">
             <SelectTrigger class="w-full">
               <SelectValue :placeholder="input.placeholder">
@@ -161,4 +237,11 @@ const togglePassword = (field: { value: boolean }) => {
       </div>
     </form>
   </div>
+
+  <!-- Overlay untuk menutup multi-select dropdown -->
+  <div 
+    v-if="Object.values(multiSelectOpen).some(Boolean)"
+    @click="multiSelectOpen = {}"
+    class="fixed inset-0 z-40"
+  ></div>
 </template>

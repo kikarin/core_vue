@@ -38,10 +38,10 @@ class LoginController extends Controller
                 Auth::logout();
                 return redirect('login')->withError("Account has not been verified!");
             }
-            // if ($user->is_active == 0) {
-            //     Auth::logout();
-            //     return redirect('login')->withError("Your account is not active!");
-            // }
+            if ($user->is_active == 0) {
+                Auth::logout();
+                return redirect('login')->withError("Your account is not active!");
+            }
             activity()->event('Login')->performedOn(User::find($user->id))->log("Auth");
             User::where('id', $user->id)->update(['last_login' => now()]);
             // return redirect('dashboard')->withSuccess("Login Successful");

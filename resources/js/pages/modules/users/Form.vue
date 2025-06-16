@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue';
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 
 const props = defineProps<{
     mode: 'create' | 'edit';
     initialData?: Record<string, any>;
     roles: Record<number, string>;
+    selectedRoles?: number[]; // Tambahan untuk selected roles di mode edit
 }>();
 
 const roleOptions = Object.entries(props.roles).map(([id, name]) => ({
@@ -16,15 +17,19 @@ const roleOptions = Object.entries(props.roles).map(([id, name]) => ({
 }));
 
 // Inisialisasi formData dengan data awal jika mode edit
-const formData = ref<Record<string, any>>({
-    name: props.initialData?.name || '',
-    email: props.initialData?.email || '',
-    password: '',
-    password_confirmation: '',
-    no_hp: props.initialData?.no_hp || '',
-    role: props.initialData?.current_role_id || '',
-    is_active: props.initialData?.is_active || 1,
-    id: props.initialData?.id || undefined
+const formData = computed(() => {
+    const base = {
+        name: props.initialData?.name || '',
+        email: props.initialData?.email || '',
+        password: '',
+        password_confirmation: '',
+        no_hp: props.initialData?.no_hp || '',
+        role_id: props.selectedRoles || [], // Multi-role menggunakan array
+        is_active: props.initialData?.is_active !== undefined ? props.initialData.is_active : 1,
+        id: props.initialData?.id || undefined
+    };
+    
+    return base;
 });
 
 // State untuk toggle password visibility
@@ -72,12 +77,13 @@ const formInputs = [
         required: true,
     },
     {
-        name: 'role',
+        name: 'role_id',
         label: 'Role',
-        type: 'select' as const,
-        placeholder: 'Pilih Role',
+        type: 'multi-select' as const, // Ganti ke multi-select
+        placeholder: 'Pilih Role (bisa lebih dari 1)',
         required: true,
         options: roleOptions,
+        help: 'Pilih satu atau lebih role untuk user ini'
     },
     {
         name: 'is_active',
@@ -92,30 +98,51 @@ const formInputs = [
     },
 ];
 
-const handleSave = (data: Record<string, any>) => {
-    // Konversi role menjadi role_id array untuk backend
-    const roleId = Number(data.role);
+const handleSave = (form: any) => {
+    // Validasi role_id harus array dan tidak kosong
+    if (!Array.isArray(form.role_id) || form.role_id.length === 0) {
+        alert('Role harus dipilih minimal 1');
+        return;
+    }
+
+    // Prepare data untuk backend
     const formData = {
-        ...data,
-        role_id: [roleId],
-        role: roleId
+        name: form.name,
+        email: form.email,
+        no_hp: form.no_hp,
+        role_id: form.role_id, // Kirim sebagai array
+        is_active: form.is_active,
     };
+
+    // Tambahkan password jika diisi
+    if (form.password) {
+        formData.password = form.password;
+        formData.password_confirmation = form.password_confirmation;
+    }
 
     // Tambahkan id jika mode edit
     if (props.mode === 'edit' && props.initialData?.id) {
         formData.id = props.initialData.id;
     }
     
+    console.log('Sending data:', formData); // Debug log
+    
     if (props.mode === 'create') {
         router.post('/users', formData, {
             onSuccess: () => {
                 router.visit('/users')
+            },
+            onError: (errors) => {
+                console.error('Create errors:', errors);
             }
         });
     } else {
         router.put(`/users/${props.initialData?.id}`, formData, {
             onSuccess: () => {
                 router.visit('/users')
+            },
+            onError: (errors) => {
+                console.error('Update errors:', errors);
             }
         });
     }
