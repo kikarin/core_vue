@@ -8,7 +8,7 @@ const props = defineProps<{
     mode: 'create' | 'edit';
     initialData?: Record<string, any>;
     roles: Record<number, string>;
-    selectedRoles?: number[]; // Tambahan untuk selected roles di mode edit
+    selectedRoles?: number[]; 
 }>();
 
 const roleOptions = Object.entries(props.roles).map(([id, name]) => ({
@@ -16,7 +16,6 @@ const roleOptions = Object.entries(props.roles).map(([id, name]) => ({
     label: name,
 }));
 
-// Inisialisasi formData dengan data awal jika mode edit
 const formData = computed(() => {
     const base = {
         name: props.initialData?.name || '',

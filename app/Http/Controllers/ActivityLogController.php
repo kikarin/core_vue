@@ -52,4 +52,40 @@ class ActivityLogController extends Controller implements HasMiddleware
             ],
         ]);
     }
+
+    public function show($id)
+    {
+        $item = $this->repository->getDetailWithUserTrack($id);
+        if (!$item) {
+            return redirect()->back()->with('error', 'Log not found');
+        }
+        $fields = [
+            [ 'label' => 'Module', 'value' => $item->log_name ],
+            [ 'label' => 'Event', 'value' => $item->event ],
+            [ 'label' => 'Subject Type', 'value' => class_basename($item->subject_type) ],
+            [ 'label' => 'Subject ID', 'value' => $item->subject_id ],
+            [ 'label' => 'Data', 'value' => $item->description ],
+        ];
+        $actionFields = [
+            [ 'label' => 'Created At', 'value' => $item->created_at ],
+            [ 'label' => 'Created By', 'value' => optional($item->causer)->name ?? '-' ],
+            [ 'label' => 'Role', 'value' => optional(optional($item->causer)->role)->name ?? '-' ],
+        ];
+        return inertia('modules/activity-logs/Show', [
+            'fields' => $fields,
+            'actionFields' => $actionFields,
+            'backUrl' => '/menu-permissions/logs',
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $log = $this->repository->getById($id);
+        if ($log) {
+            $log->delete();
+            return redirect()->route('access-control.logs.index')->with('success', 'Log deleted successfully');
+        }
+        return redirect()->back()->with('error', 'Log not found');
+    }
+
 }

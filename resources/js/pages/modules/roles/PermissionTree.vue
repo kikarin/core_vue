@@ -7,6 +7,9 @@ const props = defineProps<{
   modelValue: number[]
 }>()
 
+console.log('PermissionTree.vue groups:', props.groups)
+console.log('PermissionTree.vue modelValue:', props.modelValue)
+
 const emit = defineEmits(['update:modelValue'])
 
 const isChecked = (id: number) => props.modelValue.includes(id)
@@ -20,7 +23,7 @@ const toggle = (id: number) => {
 
 // Optional: Toggle entire group
 const isGroupChecked = (group: typeof props.groups[0]) =>
-  group.children.every(perm => isChecked(perm.id))
+  group.children.length > 0 && group.children.every(perm => isChecked(perm.id))
 
 const toggleGroup = (group: typeof props.groups[0]) => {
   const allIds = group.children.map(p => p.id)
@@ -32,7 +35,7 @@ const toggleGroup = (group: typeof props.groups[0]) => {
 </script>
 
 <template>
-  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <div v-if="groups.length" class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
     <div
       v-for="group in groups"
       :key="group.label"
@@ -46,9 +49,9 @@ const toggleGroup = (group: typeof props.groups[0]) => {
           class="form-checkbox scale-125 accent-primary"
           :checked="isGroupChecked(group)"
           @change="() => toggleGroup(group)"
+          :disabled="!group.children.length"
         />
       </div>
-
       <!-- Permissions List -->
       <ul class="divide-y">
         <li
@@ -64,7 +67,9 @@ const toggleGroup = (group: typeof props.groups[0]) => {
           />
           <span>{{ perm.label }}</span>
         </li>
+        <li v-if="!group.children.length" class="px-4 py-2 text-muted-foreground text-xs">Tidak ada permission</li>
       </ul>
     </div>
   </div>
+  <div v-else class="text-center text-muted-foreground py-8">Tidak ada permission group tersedia.</div>
 </template>

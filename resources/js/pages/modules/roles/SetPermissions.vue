@@ -12,8 +12,14 @@ const props = defineProps<{
   selectedPermissions: number[],
 }>()
 
+console.log('SetPermissions.vue props.permissionGroups:', props.permissionGroups)
+console.log('SetPermissions.vue props.selectedPermissions:', props.selectedPermissions)
+
 const roleId = props.item.id
 const selectedPermissions = ref<number[]>([...props.selectedPermissions])
+const loading = ref(false)
+const success = ref(false)
+const error = ref('')
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },
@@ -21,10 +27,17 @@ const breadcrumbs = [
   { title: 'Set Permissions', href: '#' },
 ]
 
-const savePermissions = () => {
-  router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
+const savePermissions = async () => {
+  loading.value = true
+  success.value = false
+  error.value = ''
+  await router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
     id: roleId,
     permission_id: selectedPermissions.value,
+  }, {
+    onSuccess: () => { success.value = true },
+    onError: (e) => { error.value = 'Gagal menyimpan permission.' },
+    onFinish: () => { loading.value = false },
   })
 }
 </script>
@@ -48,8 +61,13 @@ const savePermissions = () => {
       </div>
 
       <!-- Save Button -->
-      <div class="flex justify-center">
-        <Button @click="savePermissions">Save</Button>
+      <div class="flex justify-center gap-2">
+        <Button :disabled="loading" @click="savePermissions">
+          <span v-if="loading">Saving...</span>
+          <span v-else>Save</span>
+        </Button>
+        <span v-if="success" class="text-green-600 font-semibold">Berhasil disimpan!</span>
+        <span v-if="error" class="text-red-600 font-semibold">{{ error }}</span>
       </div>
 
       <!-- Permissions -->
