@@ -91,7 +91,7 @@ const {
                             </TableHead>
                             <TableHead class="w-28 text-center">Actions</TableHead>
                             <TableHead v-for="col in visibleColumns" :key="col.key" class="cursor-pointer select-none"
-                                @click="sortBy(col.key)">
+                                @click="col.sortable === false ? null : sortBy(col.key)">
                                 <div class="flex items-center gap-1">
                                     {{ col.label }}
                                     <span v-if="props.sort.key === col.key">
