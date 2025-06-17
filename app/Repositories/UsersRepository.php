@@ -41,32 +41,28 @@ class UsersRepository
         }
 
         // Apply sorting - FIX: Handle relationship sorting
-if (request('sort')) {
-    $order = request('order', 'asc');
-    $sortField = request('sort');
-
-    // Cegah sorting all_roles
-    if ($sortField === 'all_roles') {
-        // Skip sorting
-        // Bisa juga return error jika ingin
-    } elseif ($sortField === 'role') {
-        // Join roles table for sorting by role name
-        $query->leftJoin('roles', 'users.current_role_id', '=', 'roles.id')
-              ->orderBy('roles.name', $order)
-              ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active');
-    } else {
-        // Only allow sorting on known columns
-        $validColumns = ['id', 'name', 'email', 'current_role_id', 'is_active', 'created_at', 'updated_at'];
-        if (in_array($sortField, $validColumns)) {
-            $query->orderBy('users.' . $sortField, $order);
+        if (request('sort')) {
+            $order = request('order', 'asc');
+            $sortField = request('sort');
+            
+            // Handle role sorting by joining with roles table
+            if ($sortField === 'role') {
+                $query->leftJoin('roles', 'users.current_role_id', '=', 'roles.id')
+                      ->orderBy('roles.name', $order)
+                      ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active');
+            } else {
+                // For other fields, check if it's a valid column in users table
+                $validColumns = ['id', 'name', 'email', 'current_role_id', 'is_active', 'created_at', 'updated_at'];
+                if (in_array($sortField, $validColumns)) {
+                    $query->orderBy('users.' . $sortField, $order);
+                } else {
+                    // Default sorting if invalid sort field
+                    $query->orderBy('users.id', 'desc');
+                }
+            }
         } else {
-            $query->orderBy('users.id', 'desc'); // Fallback sort
+            $query->orderBy('users.id', 'desc');
         }
-    }
-} else {
-    $query->orderBy('users.id', 'desc');
-}
-
 
         // --- PAGINATION FIX ---
         $perPage = (int) request('per_page', 10);
