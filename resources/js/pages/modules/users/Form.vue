@@ -23,7 +23,7 @@ const formData = computed(() => {
         password: '',
         password_confirmation: '',
         no_hp: props.initialData?.no_hp || '',
-        role_id: props.selectedRoles || [], // Multi-role menggunakan array
+        role_id: props.selectedRoles || [], 
         is_active: props.initialData?.is_active !== undefined ? props.initialData.is_active : 1,
         id: props.initialData?.id || undefined
     };
@@ -78,7 +78,7 @@ const formInputs = [
     {
         name: 'role_id',
         label: 'Role',
-        type: 'multi-select' as const, // Ganti ke multi-select
+        type: 'multi-select' as const,
         placeholder: 'Pilih Role (bisa lebih dari 1)',
         required: true,
         options: roleOptions,

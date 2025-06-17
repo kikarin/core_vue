@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import {
   DropdownMenu,
@@ -8,6 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { MoreVertical, Lock } from 'lucide-vue-next'
+import { useToast } from '@/components/ui/toast/useToast'
+import ConfirmDialog from '../ConfirmDialog.vue'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   category: {
@@ -17,18 +22,34 @@ const props = defineProps<{
   }
 }>()
 
+const confirmDeleteCategory = ref(false)
+const permissionToDelete = ref<{ id: number; name: string } | null>(null)
+
 const goTo = (path: string) => router.visit(path)
 
 const handleDeleteCategory = () => {
-  if (window.confirm(`Are you sure you want to delete category "${props.category.name}"?`)) {
-    router.delete(`/menu-permissions/permissions/${props.category.id}`)
-  }
+  confirmDeleteCategory.value = true
+}
+
+const confirmCategoryDelete = () => {
+  router.delete(`/menu-permissions/permissions/${props.category.id}`, {
+    onSuccess: () => toast({ title: 'Kategori berhasil dihapus', variant: 'success' }),
+    onError: () => toast({ title: 'Gagal menghapus kategori', variant: 'destructive' })
+  })
+  confirmDeleteCategory.value = false
 }
 
 const handleDeletePermission = (permission: { id: number; name: string }) => {
-  if (window.confirm(`Are you sure you want to delete permission "${permission.name}"?`)) {
-    router.delete(`/menu-permissions/permissions/delete-permission/${permission.id}`)
-  }
+  permissionToDelete.value = permission
+}
+
+const confirmPermissionDelete = () => {
+  if (!permissionToDelete.value) return
+  router.delete(`/menu-permissions/permissions/delete-permission/${permissionToDelete.value.id}`, {
+    onSuccess: () => toast({ title: 'Permission berhasil dihapus', variant: 'success' }),
+    onError: () => toast({ title: 'Gagal menghapus permission', variant: 'destructive' })
+  })
+  permissionToDelete.value = null
 }
 </script>
 
@@ -96,4 +117,22 @@ const handleDeletePermission = (permission: { id: number; name: string }) => {
       </li>
     </ul>
   </div>
+
+  <!-- Confirm Delete Category -->
+  <ConfirmDialog
+    :show="confirmDeleteCategory"
+    title="Hapus Kategori"
+    :description="`Yakin ingin menghapus kategori '${category.name}'?`"
+    @confirm="confirmCategoryDelete"
+    @cancel="confirmDeleteCategory = false"
+  />
+
+  <!-- Confirm Delete Permission -->
+  <ConfirmDialog
+    :show="permissionToDelete !== null"
+    title="Hapus Permission"
+    :description="`Yakin ingin menghapus permission '${permissionToDelete?.name}'?`"
+    @confirm="confirmPermissionDelete"
+    @cancel="permissionToDelete = null"
+  />
 </template>

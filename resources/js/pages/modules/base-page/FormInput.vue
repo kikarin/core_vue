@@ -91,24 +91,16 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
         <div class="col-span-9">
           <!-- MULTI-SELECT -->
           <div v-if="input.type === 'multi-select'" class="relative">
-            <div 
-              @click="toggleMultiSelect(input.name)"
+            <div @click="toggleMultiSelect(input.name)"
               class="w-full min-h-[40px] rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer flex flex-wrap gap-1 items-center"
-              :class="{ 'border-ring ring-2 ring-ring ring-offset-2': multiSelectOpen[input.name] }"
-            >
+              :class="{ 'border-ring ring-2 ring-ring ring-offset-2': multiSelectOpen[input.name] }">
               <!-- Selected badges -->
               <div v-if="form[input.name] && form[input.name].length > 0" class="flex flex-wrap gap-1">
-                <Badge 
-                  v-for="selected in getSelectedLabels(input.name, input.options || [])" 
-                  :key="selected.value"
-                  variant="secondary"
-                  class="text-xs flex items-center gap-1"
-                >
+                <Badge v-for="selected in getSelectedLabels(input.name, input.options || [])" :key="selected.value"
+                  variant="secondary" class="text-xs flex items-center gap-1">
                   {{ selected.label }}
-                  <X 
-                    class="h-3 w-3 cursor-pointer hover:text-destructive" 
-                    @click.stop="removeMultiOption(input.name, selected.value)"
-                  />
+                  <X class="h-3 w-3 cursor-pointer hover:text-destructive"
+                    @click.stop="removeMultiOption(input.name, selected.value)" />
                 </Badge>
               </div>
               <!-- Placeholder -->
@@ -116,22 +108,21 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
                 {{ input.placeholder }}
               </div>
             </div>
-            
+
             <!-- Dropdown options -->
-            <div 
-              v-if="multiSelectOpen[input.name]" 
-              class="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-lg"
-            >
-              <div
-                v-for="option in input.options"
-                :key="option.value"
+            <div v-if="multiSelectOpen[input.name]"
+              class="absolute top-full left-0 right-0 z-50 mt-1 max-h-60 overflow-auto rounded-md border bg-popover p-1 shadow-lg">
+              <div v-for="option in input.options" :key="option.value"
                 @click="selectMultiOption(input.name, option.value)"
-                class="flex items-center space-x-2 rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
-              >
-                <Checkbox 
-                  :checked="(form[input.name] || []).includes(option.value)"
-                  class="pointer-events-none"
-                />
+                class="flex items-center space-x-2 rounded-sm px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground">
+                <Checkbox :model-value="(form[input.name] || []).includes(option.value)" @update:modelValue="checked => {
+                  const selected = form[input.name] || []
+                  if (checked) {
+                    form[input.name] = [...selected, option.value]
+                  } else {
+                    form[input.name] = selected.filter((v: any) => v !== option.value)
+                  }
+                }" />
                 <span>{{ option.label }}</span>
               </div>
             </div>
@@ -239,9 +230,6 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
   </div>
 
   <!-- Overlay untuk menutup multi-select dropdown -->
-  <div 
-    v-if="Object.values(multiSelectOpen).some(Boolean)"
-    @click="multiSelectOpen = {}"
-    class="fixed inset-0 z-40"
-  ></div>
+  <div v-if="Object.values(multiSelectOpen).some(Boolean)" @click="multiSelectOpen = {}" class="fixed inset-0 z-40">
+  </div>
 </template>

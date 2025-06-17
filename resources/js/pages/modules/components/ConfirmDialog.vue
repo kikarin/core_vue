@@ -1,35 +1,39 @@
 <script setup lang="ts">
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { ref, watch } from 'vue'
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
-defineProps<{
+const props = defineProps<{
+  show: boolean
   title?: string
   description?: string
-  modelValue: boolean
 }>()
 
+const emit = defineEmits<{
+  (e: 'confirm'): void
+  (e: 'cancel'): void
+}>()
 
-const emit = defineEmits(['update:modelValue', 'confirm'])
+const internalShow = ref(false)
 
-const close = () => emit('update:modelValue', false)
-const confirm = () => {
-  emit('confirm')
-  close()
-}
+watch(
+  () => props.show,
+  (val) => (internalShow.value = val)
+)
 </script>
 
 <template>
-  <Dialog :open="modelValue" @update:open="val => emit('update:modelValue', val)">
-    <DialogContent class="sm:max-w-md">
+  <Dialog v-model:open="internalShow">
+    <DialogContent class="max-w-sm">
       <DialogHeader>
-        <DialogTitle>{{ title || 'Are you sure?' }}</DialogTitle>
+        <DialogTitle>{{ props.title || 'Konfirmasi' }}</DialogTitle>
         <p class="text-sm text-muted-foreground">
-          {{ description || 'This action cannot be undone.' }}
+          {{ props.description || 'Apakah kamu yakin ingin melanjutkan?' }}
         </p>
       </DialogHeader>
       <DialogFooter class="mt-4">
-        <Button variant="outline" @click="close">Cancel</Button>
-        <Button variant="destructive" @click="confirm">Confirm</Button>
+        <Button variant="outline" @click="emit('cancel')">Batal</Button>
+        <Button variant="destructive" @click="emit('confirm')">Ya, Hapus</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

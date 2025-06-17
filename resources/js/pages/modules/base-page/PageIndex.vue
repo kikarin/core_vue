@@ -205,9 +205,9 @@ defineExpose({ fetchData })
       <Dialog v-model:open="showDeleteDialog">
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus data ini?</DialogTitle>
+            <DialogTitle>Hapus data ini!</DialogTitle>
             <DialogDescription>
-              Anda akan menghapus user <b>{{ rowToDelete?.name }}</b>. Tindakan ini tidak dapat dibatalkan.
+              Apakah Anda yakin?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
