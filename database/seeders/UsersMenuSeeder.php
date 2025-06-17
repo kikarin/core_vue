@@ -29,28 +29,6 @@ class UsersMenuSeeder extends Seeder
                 'permission_id' => 'Management Show',
                 'children' => [
                     [
-                        'nama' => 'Teams',
-                        'kode' => 'TEAMS',
-                        'url' => '/management/teams',
-                        'icon' => 'Users',
-                        'urutan' => 1,
-                        'permission_id' => 'Teams Show',
-                        'children' => [
-                            [
-                                'nama' => 'List Team',
-                                'kode' => 'TEAMS-LIST',
-                                'url' => '/management/teams',
-                                'urutan' => 1,
-                                'permission_id' => 'Teams List Show',
-                            ],
-                            [
-                                'nama' => 'Member',
-                                'kode' => 'TEAMS-MEMBER',
-                                'url' => '/management/members',
-                                'urutan' => 2,
-                                'permission_id' => 'Teams Member Show',
-                            ],
-                        ],
                     ],
                 ],
             ],

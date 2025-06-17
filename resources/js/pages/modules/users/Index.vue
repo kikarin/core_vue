@@ -22,6 +22,7 @@ const columns = [
   { 
     key: 'all_roles', 
     label: 'All Roles',
+    sortable: false,
     format: (row: any) => {
       if (!row.all_roles) return '-'
       

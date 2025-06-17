@@ -40,12 +40,28 @@ class UsersRepository
             });
         }
 
-        // Apply sorting
+        // Apply sorting - FIX: Handle relationship sorting
         if (request('sort')) {
             $order = request('order', 'asc');
-            $query->orderBy(request('sort'), $order);
+            $sortField = request('sort');
+            
+            // Handle role sorting by joining with roles table
+            if ($sortField === 'role') {
+                $query->leftJoin('roles', 'users.current_role_id', '=', 'roles.id')
+                      ->orderBy('roles.name', $order)
+                      ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active');
+            } else {
+                // For other fields, check if it's a valid column in users table
+                $validColumns = ['id', 'name', 'email', 'current_role_id', 'is_active', 'created_at', 'updated_at'];
+                if (in_array($sortField, $validColumns)) {
+                    $query->orderBy('users.' . $sortField, $order);
+                } else {
+                    // Default sorting if invalid sort field
+                    $query->orderBy('users.id', 'desc');
+                }
+            }
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('users.id', 'desc');
         }
 
         // --- PAGINATION FIX ---
@@ -76,7 +92,8 @@ class UsersRepository
             return $data;
         }
 
-        $pageForPaginate = $page < 1 ? 1 : $page + 1;
+        // Fix pagination calculation
+        $pageForPaginate = $page < 1 ? 1 : $page;
         $users = $query->paginate($perPage, ['*'], 'page', $pageForPaginate)->withQueryString();
 
         $transformedUsers = collect($users->items())->map(function ($user) {
@@ -138,6 +155,7 @@ class UsersRepository
 
         return $data;
     }
+    
     public function customDataCreateUpdate($data, $record = null)
     {
         $userId = Auth::id();
@@ -177,7 +195,6 @@ class UsersRepository
 
         return $data;
     }
-
 
     public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
     {

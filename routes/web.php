@@ -72,32 +72,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/menu-permissions/logs/destroy-selected', [ActivityLogController::class, 'destroy_selected'])->name('access-control.logs.destroy-selected');
 });
 
-// Teams Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('/team-names', TeamNameController::class)->names('team-names');
-    Route::get('/api/team-names', [TeamNameController::class, 'apiIndex']);
-    Route::post('/team-names/destroy-selected', [TeamNameController::class, 'destroy_selected'])->name('users.destroy_selected');
-});
-
-// Members Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/management/members', function () {
-        return Inertia::render('modules/members/Index');
-    })->name('management.members.index');
-
-    Route::get('/management/members/create', function () {
-        return Inertia::render('modules/members/Create');
-    })->name('management.members.create');
-
-    Route::get('/management/members/{id}', function () {
-        return Inertia::render('modules/members/Show');
-    })->name('management.members.show');
-
-    Route::get('/management/members/{id}/edit', function () {
-        return Inertia::render('modules/members/Edit');
-    })->name('management.members.edit');
-});
-
 // Team Names Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/data-master/team-names', function () {

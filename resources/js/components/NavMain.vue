@@ -138,7 +138,7 @@ watch(() => page.url, () => {
                   {{ child.title }}
                 </Link>
               </li>
-            </template>
+          </template>
           </ul>
         </li>
 

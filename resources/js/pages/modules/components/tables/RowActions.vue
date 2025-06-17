@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { MoreHorizontal } from 'lucide-vue-next'
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
 const props = defineProps<{
   id: string | number
@@ -14,22 +20,16 @@ const props = defineProps<{
   onDelete?: () => void
 }>()
 
-const showMenu = ref(false)
-const menuRef = ref<HTMLElement | null>(null)
-
-const closeMenu = () => {
-  showMenu.value = false
+const items = computed(() => {
+if (props.actions && props.actions.length > 0) {
+  return props.actions.map(action => ({
+    label: action.label,
+    action: action.onClick,
+    icon: undefined,
+  }))
 }
 
-const items = computed(() => {
-  if (props.actions && props.actions.length > 0) {
-    return props.actions.map(action => ({
-      label: action.label,
-      action: action.onClick,
-    }))
-  }
-
-  const links: { label: string; action: () => void }[] = []
+const links: { label: string; action: () => void; icon?: any }[] = []
 
   if (props.show !== false) {
     links.push({
@@ -54,40 +54,22 @@ const items = computed(() => {
 
   return links
 })
-
-const handleClickOutside = (event: MouseEvent) => {
-  if (showMenu.value && menuRef.value && !menuRef.value.contains(event.target as Node)) {
-    closeMenu()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
 </script>
 
 <template>
-  <div class="relative inline-block text-left" ref="menuRef">
-    <Button variant="ghost" size="icon" @click.stop="showMenu = !showMenu">
-      <MoreHorizontal class="w-4 h-4" />
-    </Button>
+  <DropdownMenu>
+    <DropdownMenuTrigger as-child>
+      <Button variant="ghost" size="icon">
+        <MoreHorizontal class="w-4 h-4" />
+      </Button>
+    </DropdownMenuTrigger>
 
-    <div
-      v-if="showMenu"
-      class="absolute right-0 z-10 mt-2 w-36 rounded-md border border-border bg-popover shadow-lg dark:border-border dark:bg-popover"
-    >
-      <button
-        v-for="item in items"
-        :key="item.label"
-        @click="() => { item.action(); closeMenu() }"
-        class="block w-full text-left px-3 py-2 hover:bg-muted text-sm text-foreground"
-      >
+    <DropdownMenuContent class="w-40">
+      <DropdownMenuItem v-for="item in items" :key="item.label" @click="item.action" class="flex items-center gap-2">
+        <component :is="item.icon" class="w-4 h-4" v-if="item.icon" />
         {{ item.label }}
-      </button>
-    </div>
-  </div>
+      </DropdownMenuItem>
+
+    </DropdownMenuContent>
+  </DropdownMenu>
 </template>
