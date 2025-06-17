@@ -108,7 +108,7 @@ class UsersMenuRepository
                 'parent' => 'rel',
                 'order' => 'urutan'
             ];
-            
+
             $sortColumn = $sortMapping[request('sort')] ?? 'urutan';
             $query->orderBy($sortColumn, $order);
         } else {
@@ -119,7 +119,7 @@ class UsersMenuRepository
         $perPage = (int) request('per_page', 10);
         $page = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
-        
+
         $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
 
         // Transform data
@@ -162,7 +162,7 @@ class UsersMenuRepository
         return $data;
     }
 
-public function getMenus()
+    public function getMenus()
     {
         return $this->model
             ->with('children.children.children')
@@ -185,14 +185,14 @@ public function getMenus()
             return null;
         }
         return $this->model->
-        with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])
-        ->find($id);
+            with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])
+            ->find($id);
     }
 
     public function customDataCreateUpdate($data, $record = null)
     {
         $result = [];
-        
+
         if ($record == null) {
             // Create
             $result['created_by'] = Auth::id();
@@ -203,7 +203,7 @@ public function getMenus()
         $result['rel'] = isset($data['rel']) ? (int) $data['rel'] : 0;
         $result['permission_id'] = isset($data['permission_id']) ? (int) $data['permission_id'] : null;
         $result['urutan'] = isset($data['urutan']) ? (int) $data['urutan'] : 1;
-        
+
         // Tambahkan field lain
         $result['nama'] = $data['nama'] ?? '';
         $result['kode'] = $data['kode'] ?? '';
@@ -222,10 +222,10 @@ public function getMenus()
     {
         // Hapus cache setelah store/update
         $this->forgetCache();
-        
+
         // Update cache dengan data terbaru
         $this->updateCache();
-        
+
         return $model;
     }
 
