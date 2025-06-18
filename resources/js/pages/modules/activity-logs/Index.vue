@@ -2,7 +2,6 @@
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import { getCurrentInstance as vueGetCurrentInstance } from 'vue'
 import axios from 'axios'
 import { useToast } from '@/components/ui/toast/useToast'
 
@@ -23,8 +22,6 @@ const columns = [
 
 const selected = ref<number[]>([])
 
-const { emit } = getCurrentInstance()!
-
 const pageIndex = ref()
 
 const { toast } = useToast()
@@ -40,11 +37,6 @@ const actions = (row: any) => [
     },
 ]
 
-function getCurrentInstance() {
-  const instance = vueGetCurrentInstance()
-  if (!instance) throw new Error('getCurrentInstance must be called within setup')
-  return instance
-}
 
 const deleteSelected = async () => {
   if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })

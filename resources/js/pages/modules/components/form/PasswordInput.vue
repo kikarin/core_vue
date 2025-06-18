@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
-const props = defineProps<{
+defineProps<{
   modelValue: string
   placeholder?: string
   required?: boolean

@@ -29,7 +29,11 @@ export function useHandleFormSave() {
             ? router.post(url, data, {
                 onSuccess: () => {
                     toast({ title: successMessage, variant: 'success' })
-                    onSuccess ? onSuccess() : router.visit(redirectUrl)
+                    if (onSuccess) {
+                        onSuccess()
+                    } else {
+                        router.visit(redirectUrl)
+                    }
                 },
                 onError: (errors) => {
                     console.error('Create Error:', errors)
@@ -39,7 +43,11 @@ export function useHandleFormSave() {
             : router.put(`${url}/${id}`, data, {
                 onSuccess: () => {
                     toast({ title: successMessage, variant: 'success' })
-                    onSuccess ? onSuccess() : router.visit(redirectUrl)
+                    if (onSuccess) {
+                        onSuccess()
+                    } else {
+                        router.visit(redirectUrl)
+                    }
                 },
                 onError: (errors) => {
                     for (const key in errors) {
@@ -54,3 +62,4 @@ export function useHandleFormSave() {
 
     return { save }
 }
+

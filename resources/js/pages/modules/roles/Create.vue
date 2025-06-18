@@ -2,7 +2,7 @@
 import PageCreate from '@/pages/modules/base-page/PageCreate.vue'
 import Form from './Form.vue'
 
-const props = defineProps<{
+defineProps<{
   listBg: Record<string, string>,
   listInitPage: Record<string, string>,
 }>()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
-import { ref, getCurrentInstance } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import { useToast } from '@/components/ui/toast/useToast'
 
@@ -47,8 +47,6 @@ const columns = [
 ]
 
 const selected = ref<number[]>([])
-
-const { emit } = getCurrentInstance()!
 
 const pageIndex = ref()
 

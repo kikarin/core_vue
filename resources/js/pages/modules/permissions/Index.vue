@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import PermissionCard from '@/pages/modules/components/permissions/PermissionCard.vue'
 import { Button } from '@/components/ui/button'
 
-const props = defineProps<{
+defineProps<{
   categories: Array<{
     id: number
     name: string

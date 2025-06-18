@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/select'
 import * as LucideIcons from 'lucide-vue-next'
 
-const props = defineProps<{
+defineProps<{
   modelValue: string
   placeholder?: string
   required?: boolean
@@ -25,34 +25,20 @@ const iconOptions = Object.keys(LucideIcons)
 </script>
 
 <template>
-  <Select
-    :model-value="modelValue"
-    @update:modelValue="emit('update:modelValue', $event)"
-    :required="required"
-  >
+  <Select :model-value="modelValue" @update:modelValue="emit('update:modelValue', $event)" :required="required">
     <SelectTrigger class="w-full">
       <SelectValue :placeholder="placeholder">
         <template v-if="modelValue">
-          <component
-            :is="LucideIcons[modelValue as keyof typeof LucideIcons]"
-            class="h-4 w-4 inline-block mr-2"
-          />
+          <component :is="LucideIcons[modelValue as keyof typeof LucideIcons]" class="h-4 w-4 inline-block mr-2" />
           {{ modelValue }}
         </template>
       </SelectValue>
     </SelectTrigger>
     <SelectContent class="max-h-[300px]">
       <div class="grid grid-cols-4 gap-2 p-2">
-        <SelectItem
-          v-for="option in iconOptions"
-          :key="option.value"
-          :value="option.value"
-          class="flex items-center gap-2 p-2 hover:bg-accent rounded-md cursor-pointer"
-        >
-          <component
-            :is="LucideIcons[option.icon as keyof typeof LucideIcons]"
-            class="h-4 w-4"
-          />
+        <SelectItem v-for="option in iconOptions" :key="option.value" :value="option.value"
+          class="flex items-center gap-2 p-2 hover:bg-accent rounded-md cursor-pointer">
+          <component :is="LucideIcons[option.icon as keyof typeof LucideIcons]" class="h-4 w-4" />
           <span class="text-sm">{{ option.label }}</span>
         </SelectItem>
       </div>

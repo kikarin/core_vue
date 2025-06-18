@@ -14,9 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/toast/useToast'
 
-const { toast } = useToast()
 
 const props = defineProps<{
   title: string

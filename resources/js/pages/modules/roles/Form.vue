@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
-import { router } from '@inertiajs/vue3'
 import { useHandleFormSave } from '@/composables/useHandleFormSave'
 
 const { save } = useHandleFormSave()

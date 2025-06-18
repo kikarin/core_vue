@@ -3,9 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { ChevronDown } from 'lucide-vue-next'
 import { type NavItem } from '@/types'
-import { useSidebar } from '@/components/ui/sidebar/utils'
 
-const sidebar = useSidebar()
 const props = defineProps<{
   items: NavItem[]
   sectionTitle?: string

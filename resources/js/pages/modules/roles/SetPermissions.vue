@@ -18,11 +18,9 @@ const props = defineProps<{
 console.log('SetPermissions.vue props.permissionGroups:', props.permissionGroups)
 console.log('SetPermissions.vue props.selectedPermissions:', props.selectedPermissions)
 
-const roleId = props.item.id
 const selectedPermissions = ref<number[]>([...props.selectedPermissions])
 const loading = ref(false)
 const success = ref(false)
-const error = ref('')
 
 const breadcrumbs = [
   { title: 'Menu & Permissions', href: '#' },

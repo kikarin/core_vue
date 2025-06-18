@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input'
 
-const props = defineProps<{
+defineProps<{
   modelValue: string | number
   placeholder?: string
   required?: boolean
   type?: 'text' | 'email' | 'number'
 }>()
 
-const emit = defineEmits(['update:modelValue'])
 </script>
 
 <template>

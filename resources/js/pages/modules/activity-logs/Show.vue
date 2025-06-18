@@ -31,7 +31,7 @@ const formattedFields = computed(() => {
           formattedValue = JSON.stringify(parsed, null, 2)
           className = 'font-mono text-xs bg-muted p-3 rounded border overflow-x-auto whitespace-pre-wrap'
         }
-      } catch (e) {
+      } catch {
         // Jika bukan JSON, tampilkan as is
         formattedValue = field.value
         className = 'font-mono text-xs bg-muted p-3 rounded border'

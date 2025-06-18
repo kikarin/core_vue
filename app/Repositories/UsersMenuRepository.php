@@ -131,7 +131,7 @@ class UsersMenuRepository
                 'code'       => $menu->kode,
                 'icon'       => $menu->icon,
                 'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
-                'permission' => optional($menu->permission)->name     ?? '-',
+                'permission' => optional($menu->permission)->name ?? '-',
                 'url'        => $menu->url,
                 'order'      => $menu->urutan,
             ];
@@ -169,27 +169,28 @@ class UsersMenuRepository
      */
     public function getMenus()
     {
+        $menus = $this->model
+            ->with('children.children.children', 'permission')
+            ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
+            ->where('rel', 0)
+            ->orderBy('urutan')
+            ->get();
+
+        // Get current user role
         $user = Auth::user();
-        if (!$user || !$user->role) {
+        if (!$user) {
             return collect([]);
         }
 
-        $roleId = $user->role->id;
+        $role = $user->role;
+        if (!$role) {
+            return collect([]);
+        }
 
-        $cacheKey = "menus_for_role_{$roleId}";
+        // Filter menus based on permission
+        $filteredMenus = $this->filterMenusByPermission($menus, $role);
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($roleId) {
-            $menus = $this->model
-                ->with('children.children.children', 'permission')
-                ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
-                ->where('rel', 0)
-                ->orderBy('urutan')
-                ->get();
-
-            $role = Auth::user()->role;
-
-            return $this->filterMenusByPermission($menus, $role);
-        });
+        return $filteredMenus;
     }
 
     /**

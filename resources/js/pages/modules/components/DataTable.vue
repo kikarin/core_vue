@@ -1,7 +1,7 @@
 <!-- components/DataTable.vue -->
 <script setup lang="ts">
 import {
-  Table, TableBody, TableCaption, TableCell, TableFooter,
+  Table, TableBody,  TableCell, 
   TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'

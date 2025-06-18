@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
 import { router } from '@inertiajs/vue3'
-import * as LucideIcons from 'lucide-vue-next'
 import { ref } from 'vue'
-import { getCurrentInstance as vueGetCurrentInstance } from 'vue'
 import axios from 'axios'
 import { useToast } from '@/components/ui/toast/useToast'
 
@@ -16,11 +14,11 @@ const columns = [
   { key: 'name', label: 'Name', searchable: true, orderable: true, visible: true },
   { key: 'code', label: 'Code', searchable: true, orderable: true, visible: true },
   { key: 'icon', label: 'Icon', searchable: false, orderable: false, visible: true },
-  { 
-    key: 'parent', 
-    label: 'Parent', 
-    searchable: false, 
-    orderable: true, 
+  {
+    key: 'parent',
+    label: 'Parent',
+    searchable: false,
+    orderable: true,
     visible: true,
     format: (row: any) => {
       return row.parent === '-' ? 'Menu Utama' : row.parent
@@ -30,8 +28,6 @@ const columns = [
 ]
 
 const selected = ref<number[]>([])
-
-const { emit } = getCurrentInstance()!
 
 const pageIndex = ref()
 
@@ -55,13 +51,6 @@ const actions = (row: any) => [
     },
   },
 ]
-
-
-function getCurrentInstance() {
-  const instance = vueGetCurrentInstance()
-  if (!instance) throw new Error('getCurrentInstance must be called within setup')
-  return instance
-}
 
 const deleteSelected = async () => {
   if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
@@ -93,18 +82,8 @@ const deleteMenu = async (row: any) => {
 </script>
 
 <template>
-    <PageIndex
-      title="Menus"
-      :breadcrumbs="breadcrumbs"
-      :columns="columns"
-      :create-url="'/menu-permissions/menus/create'"
-      :actions="actions"
-      :selected="selected"
-      @update:selected="val => selected = val"
-      :on-delete-selected="deleteSelected"
-      api-endpoint="/api/menus"
-      ref="pageIndex"
-      :on-toast="toast"
-      :on-delete-row-confirm="deleteMenu"
-    />
+  <PageIndex title="Menus" :breadcrumbs="breadcrumbs" :columns="columns" :create-url="'/menu-permissions/menus/create'"
+    :actions="actions" :selected="selected" @update:selected="val => selected = val"
+    :on-delete-selected="deleteSelected" api-endpoint="/api/menus" ref="pageIndex" :on-toast="toast"
+    :on-delete-row-confirm="deleteMenu" />
 </template>

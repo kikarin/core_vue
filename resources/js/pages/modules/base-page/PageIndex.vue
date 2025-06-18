@@ -21,7 +21,7 @@ import { useToast } from '@/components/ui/toast/useToast'
 
 const { toast } = useToast()
 
-const rows = ref<any[]>([])
+const tableRows = ref<any[]>([])
 const total = ref(0)
 const loading = ref(false)
 
@@ -43,7 +43,7 @@ const fetchData = async () => {
       },
     })
 
-    rows.value = response.data.data
+    tableRows.value = response.data.data
     const meta = response.data.meta || {}
     total.value = Number(meta.total) || 0
     page.value = Number(meta.current_page) || 1
@@ -72,7 +72,6 @@ const props = defineProps<{
   title: string
   breadcrumbs: BreadcrumbItem[]
   columns: { key: string; label: string }[]
-  rows?: any[]
   actions?: (row: any) => { label: string; onClick: () => void }[]
   createUrl: string
   selected?: number[]
@@ -83,13 +82,13 @@ const props = defineProps<{
 
 const emit = defineEmits(['search', 'update:selected'])
 
-const selected = ref<number[]>([])
+const localSelected = ref<number[]>([])
 
 watch(() => props.selected, (val) => {
-  if (val) selected.value = val
+  if (val) localSelected.value = val
 })
 
-watch(selected, (val) => {
+watch(localSelected, (val) => {
   emit('update:selected', val)
 })
 
@@ -112,7 +111,7 @@ const handleSearch = (params: {
 }
 
 const handleDeleteSelected = () => {
-  if (!selected.value.length) return
+  if (!localSelected.value.length) return
   if (props.onDeleteSelected) {
     props.onDeleteSelected()
   }
@@ -176,10 +175,10 @@ defineExpose({ fetchData })
   <Head :title="title" />
   <AppLayout :breadcrumbs="breadcrumbs">
     <div class="p-4 space-y-4">
-      <HeaderActions :title="title" :selected="selected" :on-delete-selected="() => (showConfirm = true)"
+      <HeaderActions :title="title" :selected="localSelected" :on-delete-selected="() => (showConfirm = true)"
         v-bind="createUrl ? { createUrl } : {}" />
-      <DataTable :columns="columns" :rows="rows" :actions="localActions" :total="total" :loading="loading"
-        v-model:selected="selected" :search="search" :sort="sort" :page="page" :per-page="limit"
+      <DataTable :columns="columns" :rows="tableRows" :actions="localActions" :total="total" :loading="loading"
+        v-model:selected="localSelected" :search="search" :sort="sort" :page="page" :per-page="limit"
         @update:search="(val) => handleSearch({ search: val })"
         @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
         @update:page="(val) => handleSearch({ page: val })"
@@ -192,7 +191,7 @@ defineExpose({ fetchData })
           <DialogHeader>
             <DialogTitle>Hapus data terpilih?</DialogTitle>
             <DialogDescription>
-              Anda akan menghapus {{ selected.length }} data. Tindakan ini tidak dapat dibatalkan.
+              Anda akan menghapus {{ localSelected.length }} data. Tindakan ini tidak dapat dibatalkan.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

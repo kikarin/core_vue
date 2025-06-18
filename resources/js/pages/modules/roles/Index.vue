@@ -4,8 +4,6 @@ import { router } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { useToast } from '@/components/ui/toast/useToast'
 import axios from 'axios'
-import { getCurrentInstance as vueGetCurrentInstance } from 'vue'
-
 
 const breadcrumbs = [
     { title: 'Menu & Permissions', href: '#' },
@@ -19,8 +17,6 @@ const columns = [
 ]
 
 const selected = ref<number[]>([])
-
-const { emit } = getCurrentInstance()!
 
 const pageIndex = ref()
 
@@ -44,12 +40,6 @@ const actions = (row: any) => [
         onClick: () => router.visit(`/menu-permissions/roles/set-permissions/${row.id}`)
     }
 ]
-
-function getCurrentInstance() {
-  const instance = vueGetCurrentInstance()
-  if (!instance) throw new Error('getCurrentInstance must be called within setup')
-  return instance
-}
 
 const deleteSelected = async () => {
   if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
