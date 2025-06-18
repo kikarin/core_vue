@@ -169,28 +169,31 @@ class UsersMenuRepository
      */
     public function getMenus()
     {
-        $menus = $this->model
-            ->with('children.children.children', 'permission')
-            ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
-            ->where('rel', 0)
-            ->orderBy('urutan')
-            ->get();
-
-        // Get current user role
         $user = Auth::user();
-        if (!$user) {
+        if (!$user || !$user->role) {
             return collect([]);
         }
 
-        $role = $user->role;
-        if (!$role) {
-            return collect([]);
-        }
+        $roleId = $user->role->id;
 
-        // Filter menus based on permission
-        $filteredMenus = $this->filterMenusByPermission($menus, $role);
+        // Cache key berdasarkan role agar tiap role punya cache menu sendiri
+        $cacheKey = "menus_for_role_{$roleId}";
 
-        return $filteredMenus;
+        // Cache selama 30 menit
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($roleId) {
+            $menus = $this->model
+                ->with('children.children.children', 'permission')
+                ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
+                ->where('rel', 0)
+                ->orderBy('urutan')
+                ->get();
+
+            // Ambil kembali role user (jika kamu butuh model lengkap)
+            $role = Auth::user()->role;
+
+            // Filter menu berdasarkan permission
+            return $this->filterMenusByPermission($menus, $role);
+        });
     }
 
     /**
@@ -237,8 +240,7 @@ class UsersMenuRepository
         if (!$item) {
             return null;
         }
-        return $this->model->
-            with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])
+        return $this->model->with(['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'])
             ->find($id);
     }
 
