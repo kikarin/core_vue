@@ -8,7 +8,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -19,7 +18,7 @@ class DatabaseSeeder extends Seeder
         ini_set('memory_limit', '-1');
         ini_set('max_execution_time', 0);
         try {
-			DB::beginTransaction();
+            DB::beginTransaction();
             $this->call(CategoryIdentitySeeder::class);
             $this->call(IdentitySeeder::class);
 
@@ -30,10 +29,10 @@ class DatabaseSeeder extends Seeder
             $this->call(SetRolePermissionSeeder::class);
 
             DB::commit();
-		} catch (Exception $e) {
-			DB::rollback();
+        } catch (Exception $e) {
+            DB::rollback();
             throw $e;
-		}   
+        }
         $this->call(ImportSqlSeeder::class);
 
     }

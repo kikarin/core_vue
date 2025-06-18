@@ -19,17 +19,17 @@ class CategoryPermissionRepository
     {
         if ($record == null) {
             if (empty($data['sequence'])) {
-                $last_sequence = $this->getLastSequence();
-                $last_sequence = ($last_sequence == null) ? 1 : $last_sequence->sequence + 1;
+                $last_sequence    = $this->getLastSequence();
+                $last_sequence    = ($last_sequence == null) ? 1 : $last_sequence->sequence + 1;
                 $data['sequence'] = $last_sequence;
             }
         }
         return $data;
     }
 
-    public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
+    public function callbackAfterStoreOrUpdate($model, $data, $method = 'store', $record_sebelumnya = null)
     {
-        return redirect()->route('permissions.index')->with('success', ($method == "store") ? trans('message.success_add') : trans('message.success_update'));
+        return redirect()->route('permissions.index')->with('success', ($method == 'store') ? trans('message.success_add') : trans('message.success_update'));
     }
 
     public function callbackAfterDelete($model, $request)
@@ -48,13 +48,13 @@ class CategoryPermissionRepository
 
     public function getLastSequence()
     {
-        $record = $this->model::orderBy("sequence", "desc")->first();
+        $record = $this->model::orderBy('sequence', 'desc')->first();
         return $record;
     }
 
     public function getAll_OrderSequence()
     {
-        return $this->model::orderBy("sequence", "asc")->get();
+        return $this->model::orderBy('sequence', 'asc')->get();
     }
 
     public function customIndex($data)
@@ -66,12 +66,12 @@ class CategoryPermissionRepository
                 ->get()
                 ->map(function ($cat) {
                     return [
-                        'id' => $cat->id,
-                        'name' => $cat->name,
-                        'sequence' => $cat->sequence,
+                        'id'          => $cat->id,
+                        'name'        => $cat->name,
+                        'sequence'    => $cat->sequence,
                         'permissions' => $cat->permission->map(function ($perm) {
                             return [
-                                'id' => $perm->id,
+                                'id'   => $perm->id,
                                 'name' => $perm->name,
                             ];
                         }),

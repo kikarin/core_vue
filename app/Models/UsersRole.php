@@ -9,22 +9,24 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class UsersRole extends Model
 {
-	use HasFactory, Blameable, LogsActivity;
+    use HasFactory;
+    use Blameable;
+    use LogsActivity;
 
-	protected $guarded = [];
+    protected $guarded = [];
 
-	public function getActivitylogOptions(): LogOptions
-	{
-		return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn(string $eventName) => "Users Role");
-	}
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn (string $eventName) => 'Users Role');
+    }
 
-	public function users()
-	{
-		return $this->belongsTo(User::class, 'users_id');
-	}
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
 
-	public function role()
-	{
-		return $this->belongsTo(Role::class, 'role_id');
-	}
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
 }

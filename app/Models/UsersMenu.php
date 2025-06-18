@@ -10,39 +10,42 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class UsersMenu extends Model
 {
-	use HasFactory, Blameable, SoftDeletes, LogsActivity;
-	protected $guarded = [];
+    use HasFactory;
+    use Blameable;
+    use SoftDeletes;
+    use LogsActivity;
+    protected $guarded = [];
 
-	protected $fillable = [
-		'nama',
-		'kode',
-		'icon',
-		'rel',
-		'urutan',
-		'url',
-		'permission_id',
-		'created_by',
-		'updated_by',
-		'deleted_by',
-	];
+    protected $fillable = [
+        'nama',
+        'kode',
+        'icon',
+        'rel',
+        'urutan',
+        'url',
+        'permission_id',
+        'created_by',
+        'updated_by',
+        'deleted_by',
+    ];
 
-	public function getActivitylogOptions(): LogOptions
-	{
-		return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn(string $eventName) => "Users Menu");
-	}
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn (string $eventName) => 'Users Menu');
+    }
 
-	public function children()
-	{
-		return $this->hasMany(static::class, 'rel')->orderBy('urutan', 'asc');
-	}
+    public function children()
+    {
+        return $this->hasMany(static::class, 'rel')->orderBy('urutan', 'asc');
+    }
 
-	public function rel_users_menu()
-	{
-		return $this->belongsTo(UsersMenu::class, 'rel');
-	}
+    public function rel_users_menu()
+    {
+        return $this->belongsTo(UsersMenu::class, 'rel');
+    }
 
-	public function permission()
-	{
-		return $this->belongsTo(Permission::class, 'permission_id')->withDefault(["name" => null]);
-	}
+    public function permission()
+    {
+        return $this->belongsTo(Permission::class, 'permission_id')->withDefault(['name' => null]);
+    }
 }

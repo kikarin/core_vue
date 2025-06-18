@@ -12,37 +12,37 @@ class CategoryPermissionSeeder extends Seeder
     {
         $categoryPermissions = [
             [
-                'name' => 'Users',
+                'name'       => 'Users',
                 'permission' => 'CRUD',
             ],
             [
-                'name' => 'Users Menu',
+                'name'       => 'Users Menu',
                 'permission' => 'CRUD',
             ],
             [
-                'name' => 'Role',
-                'permission' => 'CRUD',
-                'permission_common' => ["Role Set Permission"],
+                'name'              => 'Role',
+                'permission'        => 'CRUD',
+                'permission_common' => ['Role Set Permission'],
             ],
             [
-                'name' => 'Permission',
-                'permission' => 'CRUD',
-            ],
-            [
-                'name' => 'Category Permission',
+                'name'       => 'Permission',
                 'permission' => 'CRUD',
             ],
             [
-                'name' => 'Activity Log',
+                'name'       => 'Category Permission',
+                'permission' => 'CRUD',
+            ],
+            [
+                'name'       => 'Activity Log',
                 'permission' => ['Activity Log Show', 'Activity Log Detail', 'Activity Log Delete'],
             ],
             [
-                'name' => 'Dashboard',
+                'name'       => 'Dashboard',
                 'permission' => ['Dashboard Show'],
             ],
         ];
 
-        $listCrud = ["Show", "Add", "Edit", "Detail", "Delete"];
+        $listCrud = ['Show', 'Add', 'Edit', 'Detail', 'Delete'];
 
         foreach ($categoryPermissions as $category) {
             $existingCategoryPermission = CategoryPermission::firstOrCreate(
@@ -73,7 +73,7 @@ class CategoryPermissionSeeder extends Seeder
                     ['name' => $permissionName],
                     [
                         'category_permission_id' => $existingCategoryPermission->id,
-                        'name' => $permissionName,
+                        'name'                   => $permissionName,
                     ]
                 );
             }

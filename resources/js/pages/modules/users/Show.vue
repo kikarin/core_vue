@@ -65,15 +65,15 @@ const handleEdit = () => {
 }
 
 const handleDelete = () => {
-  router.delete(`/users/${props.item.id}`, {
-    onSuccess: () => {
+    router.delete(`/users/${props.item.id}`, {
+      onSuccess: () => {
       toast({ title: 'User berhasil dihapus', variant: 'success' })
-      router.visit('/users')
+        router.visit('/users')
     },
     onError: () => {
       toast({ title: 'Gagal menghapus user', variant: 'destructive' })
-    }
-  })
+      }
+    })
 }
 
 // Debug untuk melihat data

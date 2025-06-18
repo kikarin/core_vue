@@ -35,16 +35,16 @@ class RegisterNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $data = $notifiable;
-        $notification = new ModelsNotification();
+        $data                          = $notifiable;
+        $notification                  = new ModelsNotification();
         $notification->notifiable_type = get_class($notifiable);
-        $notification->notifiable_id = $notifiable->id;
-        $notification->data = $data;
+        $notification->notifiable_id   = $notifiable->id;
+        $notification->data            = $data;
         $notification->save();
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Confirm your email')
-            ->greeting("Confirm your email")
-            ->line("Hey ".$notifiable->nama."!")
+            ->greeting('Confirm your email')
+            ->line('Hey '.$notifiable->nama.'!')
             ->line('Your account has been created')
             ->action('Confirm Account', url('/verify-email/'.$notifiable->verification_token))
             ->line('Thank you for signing up!');

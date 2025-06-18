@@ -21,12 +21,12 @@ class GeneralController extends Controller
     protected $perusahaanRepository;
 
     public function __construct(
-        UsersRepository $usersRepository, 
-        KelurahanRepository $kelurahanRepository, 
+        UsersRepository $usersRepository,
+        KelurahanRepository $kelurahanRepository,
         JenisPendidikanRepository $jenisPendidikanRepository,
         PencakerRepository $pencakerRepository,
         PerusahaanRepository $perusahaanRepository
-    ){
+    ) {
         $this->usersRepository           = $usersRepository;
         $this->kelurahanRepository       = $kelurahanRepository;
         $this->jenisPendidikanRepository = $jenisPendidikanRepository;
@@ -42,17 +42,17 @@ class GeneralController extends Controller
         } catch (ErrorDecryptException $e) {
             abort(404);
         }
-        abort_if(!in_array($direktori, ["users"]) || is_null($file_name), 404);
+        abort_if(!in_array($direktori, ['users']) || is_null($file_name), 404);
         $data = [
-            "direktori" => $direktori,
-            "file_name" => $file_name,
+            'direktori' => $direktori,
+            'file_name' => $file_name,
         ];
-        if (in_array($direktori, ["users"])) {
+        if (in_array($direktori, ['users'])) {
             if (Auth::user()->current_role_id == 100) {
                 $data['is_my_file'] = 1;
             }
-            $getFile = $this->usersRepository->getByFile($data);
-            $file_path = @$getFile["file_path"];
+            $getFile   = $this->usersRepository->getByFile($data);
+            $file_path = @$getFile['file_path'];
         }
         abort_if(!$getFile, 404);
         return response()->file($file_path);
@@ -60,42 +60,45 @@ class GeneralController extends Controller
 
     public function kelurahan(Request $request)
     {
-        $data = $this->kelurahanRepository->getAll(["kecamatan_id" => $request->kecamatan_id]);
+        $data = $this->kelurahanRepository->getAll(['kecamatan_id' => $request->kecamatan_id]);
         return response()->json([
             'error' => 0,
-            'data' => $data,
+            'data'  => $data,
         ]);
     }
 
     public function jenis_pendidikan(Request $request)
     {
-        $data = $this->jenisPendidikanRepository->getAll(["kategori_pendidikan_id" => $request->kategori_pendidikan_id]);
+        $data = $this->jenisPendidikanRepository->getAll(['kategori_pendidikan_id' => $request->kategori_pendidikan_id]);
         return response()->json([
             'error' => 0,
-            'data' => $data,
+            'data'  => $data,
         ]);
     }
 
-    public function detail_pencaker($pencaker_id) {
+    public function detail_pencaker($pencaker_id)
+    {
         $item = $this->pencakerRepository->getFind($pencaker_id);
         $data = [
-            "item" => $item,
+            'item' => $item,
         ];
         $result = view('pencaker.detail-pencaker.detail-tab', $data)->render();
         return response()->json([
             'error' => 0,
-            'html' => $result,
+            'html'  => $result,
         ]);
     }
 
-    public function search_pencaker(Request $request) {
+    public function search_pencaker(Request $request)
+    {
         $data = $this->pencakerRepository->search($request->all());
-        return response()->json(['results' => $data]); 
+        return response()->json(['results' => $data]);
     }
 
 
-    public function search_perusahaan(Request $request) {
+    public function search_perusahaan(Request $request)
+    {
         $data = $this->perusahaanRepository->search($request->all());
-        return response()->json(['results' => $data]); 
+        return response()->json(['results' => $data]);
     }
 }

@@ -6,7 +6,6 @@ use App\Traits\RepositoryTrait;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 
-
 class SitemapRepository
 {
     use RepositoryTrait;
@@ -18,8 +17,8 @@ class SitemapRepository
 
     public function generateSitemap()
     {
-        $sitemap = Sitemap::create();
-        $baseUrl = url('');
+        $sitemap   = Sitemap::create();
+        $baseUrl   = url('');
         $endpoints = [
         ];
         foreach ($endpoints as $endpoint) {

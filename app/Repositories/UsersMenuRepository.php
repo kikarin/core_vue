@@ -11,39 +11,39 @@ use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 class UsersMenuRepository
 {
     use RepositoryTrait;
-    private $cacheKey = "UsersMenu_cache";
+    private $cacheKey = 'UsersMenu_cache';
     protected $model;
     protected $permissionRepository;
 
     public function __construct(UsersMenu $model, PermissionRepository $permissionRepository)
     {
         $this->model = $model;
-        $this->with = [
-            "children",
-            "rel_users_menu",
-            "permission"
+        $this->with  = [
+            'children',
+            'rel_users_menu',
+            'permission',
         ];
 
         $this->permissionRepository = $permissionRepository;
-        $this->with = ['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'];
+        $this->with                 = ['rel_users_menu', 'permission', 'created_by_user', 'updated_by_user'];
     }
 
     public function getByRel($rel)
     {
-        return $this->model::with($this->with)->where("rel", $rel)->orderBy("urutan", "asc")->get();
+        return $this->model::with($this->with)->where('rel', $rel)->orderBy('urutan', 'asc')->get();
     }
 
     public function listDropdown()
     {
-        $list = [];
-        $list[0] = "Menu Utama";
-        $data = $this->getByRel(0);
+        $list    = [];
+        $list[0] = 'Menu Utama';
+        $data    = $this->getByRel(0);
         foreach ($data as $key => $value) {
             $list[$value->id] = $value->nama;
             foreach ($value->children as $k => $v) {
-                $list[$v->id] = "===" . $v->nama;
+                $list[$v->id] = '===' . $v->nama;
                 foreach ($v->children as $s => $d) {
-                    $list[$d->id] = "======" . $d->nama;
+                    $list[$d->id] = '======' . $d->nama;
                 }
             }
         }
@@ -73,7 +73,7 @@ class UsersMenuRepository
     public function getCacheByKode($kode)
     {
         $getCache = $this->getCache();
-        $getCache = $getCache->where("kode", $kode)->first();
+        $getCache = $getCache->where('kode', $kode)->first();
         return $getCache;
     }
 
@@ -107,7 +107,7 @@ class UsersMenuRepository
                 'code'   => 'kode',
                 'url'    => 'url',
                 'parent' => 'rel',
-                'order'  => 'urutan'
+                'order'  => 'urutan',
             ];
 
             $sortColumn = $sortMapping[request('sort')] ?? 'urutan';
@@ -117,8 +117,8 @@ class UsersMenuRepository
         }
 
         // Apply pagination
-        $perPage = (int) request('per_page', 10);
-        $page = (int) request('page', 0);
+        $perPage        = (int) request('per_page', 10);
+        $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
 
         $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
@@ -131,7 +131,7 @@ class UsersMenuRepository
                 'code'       => $menu->kode,
                 'icon'       => $menu->icon,
                 'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
-                'permission' => optional($menu->permission)->name ?? '-',
+                'permission' => optional($menu->permission)->name     ?? '-',
                 'url'        => $menu->url,
                 'order'      => $menu->urutan,
             ];
@@ -139,9 +139,9 @@ class UsersMenuRepository
 
         $data += [
             'listUsersMenu'  => $this->listDropdown(),
-            'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
+            'get_Permission' => $this->permissionRepository->getAll()->pluck('name', 'id'),
             'menus'          => $transformedMenus,
-            'meta' => [
+            'meta'           => [
                 'total'        => $menus->total(),
                 'current_page' => $menus->currentPage(),
                 'per_page'     => $menus->perPage(),
@@ -157,8 +157,8 @@ class UsersMenuRepository
     public function customCreateEdit($data, $item = null)
     {
         $data += [
-            'listUsersMenu' => $this->listDropdown(),
-            'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
+            'listUsersMenu'  => $this->listDropdown(),
+            'get_Permission' => $this->permissionRepository->getAll()->pluck('name', 'id'),
         ];
         return $data;
     }
@@ -252,15 +252,15 @@ class UsersMenuRepository
         $result['updated_by'] = Auth::id();
 
         // Pastikan nilai numerik
-        $result['rel'] = isset($data['rel']) ? (int) $data['rel'] : 0;
+        $result['rel']           = isset($data['rel']) ? (int) $data['rel'] : 0;
         $result['permission_id'] = isset($data['permission_id']) ? (int) $data['permission_id'] : null;
-        $result['urutan'] = isset($data['urutan']) ? (int) $data['urutan'] : 1;
+        $result['urutan']        = isset($data['urutan']) ? (int) $data['urutan'] : 1;
 
         // Tambahkan field lain
         $result['nama'] = $data['nama'] ?? '';
         $result['kode'] = $data['kode'] ?? '';
         $result['icon'] = $data['icon'] ?? '';
-        $result['url'] = $data['url'] ?? '';
+        $result['url']  = $data['url']  ?? '';
 
         // Tambahkan id jika mode update
         if ($record !== null) {
@@ -270,7 +270,7 @@ class UsersMenuRepository
         return $result;
     }
 
-    public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
+    public function callbackAfterStoreOrUpdate($model, $data, $method = 'store', $record_sebelumnya = null)
     {
         // Hapus cache setelah store/update
         $this->forgetCache();

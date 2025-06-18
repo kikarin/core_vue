@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,12 +16,12 @@ return new class extends Migration
                     $table->text('slug')->nullable();
                     $table->text('deskripsi')->nullable();
                     $table->string('verification_token')->nullable();
-                    $table->boolean("is_verifikasi")->default(true);
+                    $table->boolean('is_verifikasi')->default(true);
                     $table->string('reset_password_token')->nullable()->unique();
-                    $table->unsignedBigInteger("current_role_id")->nullable();
-                    $table->foreign("current_role_id")
-                        ->references("id")
-                        ->on("roles");
+                    $table->unsignedBigInteger('current_role_id')->nullable();
+                    $table->foreign('current_role_id')
+                        ->references('id')
+                        ->on('roles');
                 });
             }
         }

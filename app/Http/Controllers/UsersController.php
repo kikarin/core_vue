@@ -19,15 +19,15 @@ class UsersController extends Controller implements HasMiddleware
 
     public function __construct(Request $request, UsersRepository $repository, RoleRepository $roleRepository)
     {
-        $this->repository = $repository;
+        $this->repository     = $repository;
         $this->roleRepository = $roleRepository;
-        $this->request = UsersRequest::createFromBase($request);
+        $this->request        = UsersRequest::createFromBase($request);
         $this->initialize();
     }
 
     public static function middleware(): array
     {
-        $className = class_basename(__CLASS__);
+        $className  = class_basename(__CLASS__);
         $permission = str_replace('Controller', '', $className);
         $permission = trim(implode(' ', preg_split('/(?=[A-Z])/', $permission)));
         return [
@@ -40,9 +40,9 @@ class UsersController extends Controller implements HasMiddleware
 
     public function login_as($users_id = '')
     {
-        $user = $this->repository->loginAs($users_id);
-        $init_page_login = ($user->role->init_page_login != "") ? $user->role->init_page_login : 'dashboard';
-        return redirect($init_page_login)->withSuccess("Login As successfully.");
+        $user            = $this->repository->loginAs($users_id);
+        $init_page_login = ($user->role->init_page_login != '') ? $user->role->init_page_login : 'dashboard';
+        return redirect($init_page_login)->withSuccess('Login As successfully.');
     }
 
     public function apiIndex()
@@ -52,12 +52,12 @@ class UsersController extends Controller implements HasMiddleware
         return response()->json([
             'data' => $data['users'],
             'meta' => [
-                'total' => $data['total'],
+                'total'        => $data['total'],
                 'current_page' => $data['currentPage'],
-                'per_page' => $data['perPage'],
-                'search' => $data['search'],
-                'sort' => $data['sort'],
-                'order' => $data['order'],
+                'per_page'     => $data['perPage'],
+                'search'       => $data['search'],
+                'sort'         => $data['sort'],
+                'order'        => $data['order'],
             ],
         ]);
     }

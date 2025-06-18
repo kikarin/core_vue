@@ -9,21 +9,23 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class CategoryPermission extends Model
 {
-	use HasFactory, Blameable, LogsActivity;
+    use HasFactory;
+    use Blameable;
+    use LogsActivity;
 
-	protected $table = 'category_permissions';
-	protected $fillable = [
-		'name',
-		'sequence',
-	];
+    protected $table    = 'category_permissions';
+    protected $fillable = [
+        'name',
+        'sequence',
+    ];
 
-	public function getActivitylogOptions(): LogOptions
-	{
-		return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn(string $eventName) => "Category Permission");
-	}
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn (string $eventName) => 'Category Permission');
+    }
 
-	public function permission()
-	{
-		return $this->hasMany(Permission::class, 'category_permission_id');
-	}
+    public function permission()
+    {
+        return $this->hasMany(Permission::class, 'category_permission_id');
+    }
 }

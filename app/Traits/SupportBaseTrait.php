@@ -2,13 +2,11 @@
 
 namespace App\Traits;
 
-use App\Models\Role;
-
 trait SupportBaseTrait
 {
     public function getControllerName()
     {
-        $class = get_class($this);
+        $class     = get_class($this);
         $className = (new \ReflectionClass($class))->getShortName();
         $className = str_replace('Controller', '', $className);
         $className = $this->convertToDashSeparated($className);

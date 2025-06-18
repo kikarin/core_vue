@@ -17,8 +17,8 @@ class VerificationController extends Controller
             'is_verifikasi'      => 1,
         ]);
         Auth::login($user);
-        $init_page_login = ($user->role->init_page_login != "") ? $user->role->init_page_login : 'dashboard';
-        return redirect($init_page_login)->withSuccess("Login Successful");
+        $init_page_login = ($user->role->init_page_login != '') ? $user->role->init_page_login : 'dashboard';
+        return redirect($init_page_login)->withSuccess('Login Successful');
     }
 
     public function resend(Request $request)

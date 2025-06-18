@@ -24,8 +24,15 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, LogsActivity, HasSlug, InteractsWithMedia;
-    use Blameable, SoftDeletes;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use HasRoles;
+    use LogsActivity;
+    use HasSlug;
+    use InteractsWithMedia;
+    use Blameable;
+    use SoftDeletes;
 
     protected $guarded = [];
 
@@ -75,7 +82,7 @@ class User extends Authenticatable implements HasMedia
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -92,7 +99,7 @@ class User extends Authenticatable implements HasMedia
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn(string $eventName) => "User");
+        return LogOptions::defaults()->logOnly(['*'])->logOnlyDirty()->setDescriptionForEvent(fn (string $eventName) => 'User');
     }
 
     public function getSlugOptions(): SlugOptions
@@ -120,12 +127,12 @@ class User extends Authenticatable implements HasMedia
     // Todo: Relation
     public function role()
     {
-        return $this->belongsTo(Role::class, 'current_role_id')->select(['id', 'name', 'init_page_login', 'is_allow_login', 'bg', 'is_vertical_menu'])->withDefault(["name" => null]);
+        return $this->belongsTo(Role::class, 'current_role_id')->select(['id', 'name', 'init_page_login', 'is_allow_login', 'bg', 'is_vertical_menu'])->withDefault(['name' => null]);
     }
 
     public function users_role()
     {
-        return $this->hasMany(UsersRole::class, "users_id");
+        return $this->hasMany(UsersRole::class, 'users_id');
     }
 
     public function created_by_user()
@@ -192,8 +199,8 @@ class User extends Authenticatable implements HasMedia
 
     public function getIsActiveBadgeAttribute()
     {
-        $text = ($this->is_active == 1) ? "Aktif" : "Nonaktif";
-        $badge_bg = ($this->is_active == 0) ? "bg-label-danger" : "bg-label-primary";
+        $text     = ($this->is_active == 1) ? 'Aktif' : 'Nonaktif';
+        $badge_bg = ($this->is_active == 0) ? 'bg-label-danger' : 'bg-label-primary';
         return "<span class='badge $badge_bg'>$text</span>";
     }
 
@@ -204,7 +211,7 @@ class User extends Authenticatable implements HasMedia
 
     public function getUsersRoleIdArrayAttribute()
     {
-        return $this->users_role()->pluck("role_id")->toArray();
+        return $this->users_role()->pluck('role_id')->toArray();
     }
 
     public function getListRoleNameStrAttribute()
@@ -221,21 +228,21 @@ class User extends Authenticatable implements HasMedia
     // Todo: Scope
     public function scopeIdInNotIn($query, $data)
     {
-        if (isset($data["id_not_in"])) {
-            $query->whereNotIn("id", $data["id_not_in"]);
+        if (isset($data['id_not_in'])) {
+            $query->whereNotIn('id', $data['id_not_in']);
         }
-        if (isset($data["id_in"])) {
-            $query->whereIn("id", $data["id_in"]);
+        if (isset($data['id_in'])) {
+            $query->whereIn('id', $data['id_in']);
         }
     }
 
     public function scopeFilterUsersRole($query, $role_id)
     {
-        $query->whereHas("users_role", function ($query) use ($role_id) {
+        $query->whereHas('users_role', function ($query) use ($role_id) {
             if (is_array($role_id)) {
-                $query->whereIn("role_id", $role_id);
+                $query->whereIn('role_id', $role_id);
             } else {
-                $query->where("role_id", $role_id);
+                $query->where('role_id', $role_id);
             }
         });
     }
@@ -247,14 +254,14 @@ class User extends Authenticatable implements HasMedia
         }
 
         if (@$data['filter_start_date'] != null and @$data['filter_end_date'] != null) {
-            $query->whereBetween("created_at", [$data['filter_start_date'], $data['filter_end_date']]);
+            $query->whereBetween('created_at', [$data['filter_start_date'], $data['filter_end_date']]);
         }
     }
     // Todo: End Scope
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new RegisterNotification); // Ini akan mengirim email verifikasi
+        $this->notify(new RegisterNotification()); // Ini akan mengirim email verifikasi
     }
 
     public function sendPasswordResetNotification($token)

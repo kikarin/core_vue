@@ -16,14 +16,14 @@ class RoleRepository
     public function __construct(Role $model)
     {
         $this->model = $model;
-        $this->with = ['created_by_user', 'updated_by_user'];
+        $this->with  = ['created_by_user', 'updated_by_user'];
 
     }
 
     public function customCreateEdit($data, $item = null)
     {
         $data += [
-            'listBg' => $this->model->listBg(),
+            'listBg'       => $this->model->listBg(),
             'listInitPage' => $this->model->listInitPage(),
         ];
         return $data;
@@ -45,11 +45,11 @@ class RoleRepository
         $record = $this->getById($id);
         try {
             DB::beginTransaction();
-            $properties['old'] = $record->permissions()->pluck('name')->toArray();
+            $properties['old']   = $record->permissions()->pluck('name')->toArray();
             $permission_id_array = array_map('intval', $permission_id_array);
             $record->syncPermissions($permission_id_array);
             $properties['attributes'] = $record->permissions()->pluck('name')->toArray();
-            activity()->event('Set Permission')->performedOn($record)->withProperties($properties)->log("User");
+            activity()->event('Set Permission')->performedOn($record)->withProperties($properties)->log('User');
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
@@ -76,10 +76,10 @@ class RoleRepository
             $order = request('order', 'asc');
             // Mapping nama kolom frontend ke nama kolom database
             $sortMapping = [
-                'name' => 'name',
-                'init_page_login' => 'init_page_login',
-                'is_allow_login' => 'is_allow_login',
-                'is_vertical_menu' => 'is_vertical_menu'
+                'name'             => 'name',
+                'init_page_login'  => 'init_page_login',
+                'is_allow_login'   => 'is_allow_login',
+                'is_vertical_menu' => 'is_vertical_menu',
             ];
 
             $sortColumn = $sortMapping[request('sort')] ?? 'name';
@@ -89,8 +89,8 @@ class RoleRepository
         }
 
         // Apply pagination
-        $perPage = (int) request('per_page', 10);
-        $page = (int) request('page', 0);
+        $perPage        = (int) request('per_page', 10);
+        $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
 
         $roles = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
@@ -98,24 +98,24 @@ class RoleRepository
         // Transform data
         $transformedRoles = $roles->getCollection()->map(function ($role) {
             return [
-                'id' => $role->id,
-                'name' => $role->name,
-                'bg' => $role->bg,
-                'init_page_login' => $role->init_page_login,
-                'is_allow_login' => $role->is_allow_login ? 'Ya' : 'Tidak',
+                'id'               => $role->id,
+                'name'             => $role->name,
+                'bg'               => $role->bg,
+                'init_page_login'  => $role->init_page_login,
+                'is_allow_login'   => $role->is_allow_login ? 'Ya' : 'Tidak',
                 'is_vertical_menu' => $role->is_vertical_menu ? 'Vertical' : 'Horizontal',
             ];
         });
 
         $data += [
             'roles' => $transformedRoles,
-            'meta' => [
-                'total' => $roles->total(),
+            'meta'  => [
+                'total'        => $roles->total(),
                 'current_page' => $roles->currentPage(),
-                'per_page' => $roles->perPage(),
-                'search' => request('search', ''),
-                'sort' => request('sort', ''),
-                'order' => request('order', 'asc'),
+                'per_page'     => $roles->perPage(),
+                'search'       => request('search', ''),
+                'sort'         => request('sort', ''),
+                'order'        => request('order', 'asc'),
             ],
         ];
 

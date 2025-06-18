@@ -14,7 +14,7 @@ class PermissionRepository
 
     public function __construct(Permission $model, CategoryPermissionRepository $categoryPermissionRepository)
     {
-        $this->model = $model;
+        $this->model                        = $model;
         $this->categoryPermissionRepository = $categoryPermissionRepository;
     }
 
@@ -26,10 +26,10 @@ class PermissionRepository
                 ->get()
                 ->map(function ($perm) {
                     return [
-                        'id' => $perm->id,
-                        'name' => $perm->name,
+                        'id'                     => $perm->id,
+                        'name'                   => $perm->name,
                         'category_permission_id' => $perm->category_permission_id,
-                        'category_permission' => optional($perm->category_permission)->name,
+                        'category_permission'    => optional($perm->category_permission)->name,
                     ];
                 }),
         ];
@@ -40,7 +40,7 @@ class PermissionRepository
     {
         $data += [
             'category_permission_id' => request()->input('category_permission_id'),
-            'get_CategoryPermission' => $this->categoryPermissionRepository->getAll_OrderSequence()->pluck("name", "id"),
+            'get_CategoryPermission' => $this->categoryPermissionRepository->getAll_OrderSequence()->pluck('name', 'id'),
         ];
         return $data;
     }
@@ -53,7 +53,7 @@ class PermissionRepository
         try {
             DB::beginTransaction();
             $record = $this->getById($id);
-            $model = $record;
+            $model  = $record;
             $model->delete();
             DB::commit();
             return $record;
@@ -63,9 +63,9 @@ class PermissionRepository
         }
     }
 
-    public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
+    public function callbackAfterStoreOrUpdate($model, $data, $method = 'store', $record_sebelumnya = null)
     {
-        return redirect()->route('permissions.index')->with('success', ($method == "store") ? trans('message.success_add') : trans('message.success_update'));
+        return redirect()->route('permissions.index')->with('success', ($method == 'store') ? trans('message.success_add') : trans('message.success_update'));
     }
 
     public function callbackAfterDelete($model, $request)

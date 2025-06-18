@@ -51,7 +51,7 @@ const confirmDelete = () => {
         <!-- Only show if onEdit is provided -->
         <button
           v-if="onEdit"
-          class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
+          class="inline-flex items-center gap-1 px-3 py-2 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
           @click="onEdit"
         >
           <Pencil class="w-4 h-4" />
@@ -61,7 +61,7 @@ const confirmDelete = () => {
         <!-- Always show Delete -->
         <button
           v-if="onDelete"
-          class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
+          class="inline-flex items-center gap-1 px-3 py-2 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
           @click="handleDelete"
         >
           <Trash2 class="w-4 h-4 text-red-500" />
@@ -70,7 +70,7 @@ const confirmDelete = () => {
 
         <!-- Back -->
         <button
-          class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
+          class="inline-flex items-center gap-1 px-3 py-2 text-sm border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
           @click="() => router.visit(backUrl || '#')"
         >
           <ArrowLeft class="w-4 h-4" />
@@ -82,8 +82,8 @@ const confirmDelete = () => {
       <div class="grid grid-cols-12 gap-6">
         <!-- Information Panel -->
         <div class="col-span-12 md:col-span-8">
-          <div class="bg-card border shadow-sm rounded-2xl">
-            <div class="border-b px-6 py-4 flex items-center gap-2">
+          <div class="bg-card border border-border shadow-sm rounded-2xl">
+            <div class="border-b border-border px-6 py-4 flex items-center gap-2">
               <Info class="w-4 h-4 text-muted-foreground" />
               <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                 Information
@@ -95,9 +95,10 @@ const confirmDelete = () => {
                 v-for="field in fields"
                 :key="field.label"
                 class="space-y-1"
+                :class="field.label === 'Data' ? 'sm:col-span-2' : ''"
               >
                 <div class="text-xs text-muted-foreground">{{ field.label }}</div>
-                <div :class="['text-sm font-semibold text-foreground whitespace-pre-wrap', field.className]">
+                <div :class="['text-sm font-semibold text-foreground whitespace-pre-wrap break-words', field.className]">
                   {{ field.value }}
                 </div>
               </div>
@@ -107,8 +108,8 @@ const confirmDelete = () => {
 
         <!-- Action Time Panel -->
         <div class="col-span-12 md:col-span-4">
-          <div class="bg-card border shadow-sm rounded-2xl">
-            <div class="border-b px-6 py-4 flex items-center gap-2">
+          <div class="bg-card border border-border shadow-sm rounded-2xl">
+            <div class="border-b border-border px-6 py-4 flex items-center gap-2">
               <Clock class="w-4 h-4 text-muted-foreground" />
               <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                 Action Time
@@ -122,7 +123,7 @@ const confirmDelete = () => {
                 class="space-y-1"
               >
                 <div class="text-xs text-muted-foreground">{{ field.label }}</div>
-                <div class="text-sm font-semibold text-foreground whitespace-pre-wrap">
+                <div class="text-sm font-semibold text-foreground whitespace-pre-wrap break-words">
                   {{ field.value }}
                 </div>
               </div>

@@ -10,12 +10,12 @@ trait RepositoryTrait
 {
     public $with                = [];
     public $withCount           = [];
-    public $orderDefault        = "created_at";
-    public $orderDefaultSort    = "desc";
+    public $orderDefault        = 'created_at';
+    public $orderDefaultSort    = 'desc';
     public $orderByColumnsArray = [];
     public $selectColumn        = [];
-    public $whereHas = [];
-    public $limit = null;
+    public $whereHas            = [];
+    public $limit               = null;
 
     public function getInstanceModel()
     {
@@ -75,8 +75,9 @@ trait RepositoryTrait
         return $record;
     }
 
-    public function getBySlug($slug) {
-        $record = $this->model::with($this->with)->withCount($this->withCount)->where("slug", $slug)->first();
+    public function getBySlug($slug)
+    {
+        $record = $this->model::with($this->with)->withCount($this->withCount)->where('slug', $slug)->first();
         return $record;
     }
 
@@ -112,16 +113,16 @@ trait RepositoryTrait
     {
         try {
             DB::beginTransaction();
-            $record = $this->getById($id);
+            $record            = $this->getById($id);
             $record_sebelumnya = clone $record;
-            $data = $this->customDataCreateUpdate($data, $record);
+            $data              = $this->customDataCreateUpdate($data, $record);
 
             // $data = array_map(function($value) {
             //     return is_string($value) ? trim($value) : $value;
             // }, $data);
 
             $record->update($data);
-            $record = $this->callbackAfterStoreOrUpdate($record, $data, "update", $record_sebelumnya);
+            $record = $this->callbackAfterStoreOrUpdate($record, $data, 'update', $record_sebelumnya);
             DB::commit();
             return $record;
         } catch (Exception $e) {
@@ -135,7 +136,7 @@ trait RepositoryTrait
         try {
             DB::beginTransaction();
             $record = $this->getById($id);
-            $model = $record;
+            $model  = $record;
             $model->delete();
             DB::commit();
             return $record;
@@ -150,7 +151,7 @@ trait RepositoryTrait
         if (!is_array($array_id)) {
             $array_id = [];
         }
-        
+
         if (empty($array_id)) {
             return;
         }
@@ -165,8 +166,8 @@ trait RepositoryTrait
 
     public function getDataTable($data = [])
     {
-        $data = $this->customDataDatatable($data);
-        $record = $this->model::select([$this->model->getTable() . ".*"])->with($this->with)->withCount($this->withCount);
+        $data   = $this->customDataDatatable($data);
+        $record = $this->model::select([$this->model->getTable() . '.*'])->with($this->with)->withCount($this->withCount);
         if (@$data['orderDefault'] == null) {
             if (count($this->orderByColumnsArray) > 0) {
                 foreach ($this->orderByColumnsArray as $column => $direction) {
@@ -215,8 +216,9 @@ trait RepositoryTrait
     {
         return $data;
     }
-    
-    public function customProperty($function=null, $data=[]) {
+
+    public function customProperty($function = null, $data = [])
+    {
         return true;
     }
 
@@ -228,8 +230,8 @@ trait RepositoryTrait
     public function callbackBeforeStoreOrUpdate($data, $method)
     {
         return [
-            "error" => 0,
-            "data" => $data,
+            'error' => 0,
+            'data'  => $data,
         ];
     }
 
@@ -254,7 +256,7 @@ trait RepositoryTrait
         return $record;
     }
 
-    public function callbackAfterStoreOrUpdate($model, $data, $method = "store", $record_sebelumnya = null)
+    public function callbackAfterStoreOrUpdate($model, $data, $method = 'store', $record_sebelumnya = null)
     {
         return $model;
     }
@@ -273,7 +275,7 @@ trait RepositoryTrait
     {
         if ($files = $file) {
             $destinationPath = "public/$direktori";
-            $profileImage = date('YmdHis') . "-" . RandomString(20) . "." . $files->getClientOriginalExtension();
+            $profileImage    = date('YmdHis') . '-' . RandomString(20) . '.' . $files->getClientOriginalExtension();
             $file->storeAs($destinationPath, $profileImage);
             $data_file['filename']  = $profileImage;
             $data_file['type_file'] = $files->getClientOriginalExtension();
@@ -299,7 +301,8 @@ trait RepositoryTrait
         return $this->getAll($data);
     }
 
-    public function dropdown($data=[]) {
+    public function dropdown($data = [])
+    {
         return $this->getAll($data)->pluck('nama', 'id')->toArray();
     }
 }

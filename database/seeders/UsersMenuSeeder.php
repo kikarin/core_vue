@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -11,82 +12,82 @@ class UsersMenuSeeder extends Seeder
     {
         $usersMenus = [
             [
-                'nama' => 'Dashboard',
-                'kode' => 'DASHBOARD',
-                'url' => '/dashboard',
-                'icon' => 'LayoutGrid',
-                'rel' => 0,
-                'urutan' => 1,
+                'nama'          => 'Dashboard',
+                'kode'          => 'DASHBOARD',
+                'url'           => '/dashboard',
+                'icon'          => 'LayoutGrid',
+                'rel'           => 0,
+                'urutan'        => 1,
                 'permission_id' => 'Dashboard Show',
             ],
             [
-                'nama' => 'Management',
-                'kode' => 'MANAGEMENT',
-                'url' => '/management',
-                'icon' => 'FolderKanban',
-                'rel' => 0,
-                'urutan' => 2,
+                'nama'          => 'Management',
+                'kode'          => 'MANAGEMENT',
+                'url'           => '/management',
+                'icon'          => 'FolderKanban',
+                'rel'           => 0,
+                'urutan'        => 2,
                 'permission_id' => '',
-                'children' => [
+                'children'      => [
                     [
                     ],
                 ],
             ],
             [
-                'nama' => 'Data Master',
-                'kode' => 'DATA-MASTER',
-                'url' => '/data-master',
-                'icon' => 'FileStack',
-                'rel' => 0,
-                'urutan' => 11,
+                'nama'          => 'Data Master',
+                'kode'          => 'DATA-MASTER',
+                'url'           => '/data-master',
+                'icon'          => 'FileStack',
+                'rel'           => 0,
+                'urutan'        => 11,
                 'permission_id' => '',
-                'children' => [
+                'children'      => [
                 ],
             ],
             [
-                'nama' => 'Users',
-                'kode' => 'USERS',
-                'url' => '/users',
-                'icon' => 'Users',
-                'rel' => 0,
-                'urutan' => 12,
+                'nama'          => 'Users',
+                'kode'          => 'USERS',
+                'url'           => '/users',
+                'icon'          => 'Users',
+                'rel'           => 0,
+                'urutan'        => 12,
                 'permission_id' => 'Users Show',
             ],
             [
-                'nama' => 'Menu & Permissions',
-                'kode' => 'USERS-MANAGEMENT',
-                'url' => '/menu-permissions',
-                'icon' => 'ShieldCheck',
-                'rel' => 0,
-                'urutan' => 13,
+                'nama'          => 'Menu & Permissions',
+                'kode'          => 'USERS-MANAGEMENT',
+                'url'           => '/menu-permissions',
+                'icon'          => 'ShieldCheck',
+                'rel'           => 0,
+                'urutan'        => 13,
                 'permission_id' => '',
-                'children' => [
+                'children'      => [
                     [
-                        'nama' => 'Menu',
-                        'kode' => 'USERS-MENU',
-                        'url' => '/menu-permissions/menus',
-                        'urutan' => 1,
+                        'nama'          => 'Menu',
+                        'kode'          => 'USERS-MENU',
+                        'url'           => '/menu-permissions/menus',
+                        'urutan'        => 1,
                         'permission_id' => 'Users Menu Show',
                     ],
                     [
-                        'nama' => 'Role',
-                        'kode' => 'USERS-ROLE',
-                        'url' => '/menu-permissions/roles',
-                        'urutan' => 2,
+                        'nama'          => 'Role',
+                        'kode'          => 'USERS-ROLE',
+                        'url'           => '/menu-permissions/roles',
+                        'urutan'        => 2,
                         'permission_id' => 'Role Show',
                     ],
                     [
-                        'nama' => 'Permission',
-                        'kode' => 'USERS-PERMISSION',
-                        'url' => '/menu-permissions/permissions',
-                        'urutan' => 3,
+                        'nama'          => 'Permission',
+                        'kode'          => 'USERS-PERMISSION',
+                        'url'           => '/menu-permissions/permissions',
+                        'urutan'        => 3,
                         'permission_id' => 'Permission Show',
                     ],
                     [
-                        'nama' => 'Activity Log',
-                        'kode' => 'USERS-LOG',
-                        'url' => '/menu-permissions/logs',
-                        'urutan' => 4,
+                        'nama'          => 'Activity Log',
+                        'kode'          => 'USERS-LOG',
+                        'url'           => '/menu-permissions/logs',
+                        'urutan'        => 4,
                         'permission_id' => 'Activity Log Show',
                     ],
                 ],
@@ -121,11 +122,11 @@ class UsersMenuSeeder extends Seeder
             // Cek permission_id
             if (isset($menuData['permission_id'])) {
                 if (is_string($menuData['permission_id'])) {
-                    $permission = Permission::where("name", $menuData['permission_id'])->first();
+                    $permission                = Permission::where('name', $menuData['permission_id'])->first();
                     $menuData['permission_id'] = $permission?->id;
                 }
             } else {
-                $permission = Permission::where("name", $menuData['nama'] . " Show")->first();
+                $permission                = Permission::where('name', $menuData['nama'] . ' Show')->first();
                 $menuData['permission_id'] = $permission?->id;
             }
 
@@ -137,7 +138,7 @@ class UsersMenuSeeder extends Seeder
                 $menuId = $existingMenu->id;
             } else {
                 $newMenu = UsersMenu::create($menuData);
-                $menuId = $newMenu->id;
+                $menuId  = $newMenu->id;
             }
 
             // Recursive ke children kalau ada

@@ -21,7 +21,7 @@ class ProfileController extends Controller
         $this->initialize();
     }
 
-    public function edit($id = "")
+    public function edit($id = '')
     {
         $data = $this->commonData + [];
         return view("$this->route.edit", $data);

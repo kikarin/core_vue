@@ -19,11 +19,11 @@ class PermissionController extends Controller implements HasMiddleware
 
     public function __construct(PermissionRepository $repository, CategoryPermissionRepository $categoryPermissionRepository, Request $request)
     {
-        $this->repository                     = $repository;
-        $this->categoryPermissionRepository   = $categoryPermissionRepository;
-        $this->request                        = PermissionRequest::createFromBase($request);
+        $this->repository                   = $repository;
+        $this->categoryPermissionRepository = $categoryPermissionRepository;
+        $this->request                      = PermissionRequest::createFromBase($request);
         $this->initialize();
-        $this->commonData['kode_first_menu']  = "USERS-MANAGEMENT";
+        $this->commonData['kode_first_menu']  = 'USERS-MANAGEMENT';
         $this->commonData['kode_second_menu'] = $this->kode_menu;
     }
 
@@ -44,7 +44,7 @@ class PermissionController extends Controller implements HasMiddleware
     {
         $this->repository->customProperty(__FUNCTION__);
         $data = $this->commonData + [
-            "item" => null,
+            'item' => null,
         ];
         if ($this->check_permission == true) {
             $data = array_merge($data, $this->getPermission());
@@ -56,9 +56,9 @@ class PermissionController extends Controller implements HasMiddleware
         return inertia('modules/permissions/PermissionCreate', $data);
     }
 
-    public function edit($id = "")
+    public function edit($id = '')
     {
-        $this->repository->customProperty(__FUNCTION__, ["id" => $id]);
+        $this->repository->customProperty(__FUNCTION__, ['id' => $id]);
         $item = $this->repository->getById($id);
         $data = $this->commonData + [
             'item' => $item,
@@ -73,9 +73,9 @@ class PermissionController extends Controller implements HasMiddleware
         return inertia('modules/permissions/PermissionEdit', $data);
     }
 
-    public function show($id = "")
+    public function show($id = '')
     {
-        $this->repository->customProperty(__FUNCTION__, ["id" => $id]);
+        $this->repository->customProperty(__FUNCTION__, ['id' => $id]);
         $item = $this->repository->getById($id);
         $data = $this->commonData + [
             'item' => $item,

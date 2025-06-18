@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SignupRequest;
-use App\Notifications\RegisterNotification;
 use App\Repositories\SingupRepository;
 use App\Repositories\UsersRoleRepository;
-use Illuminate\Http\Request;
 
 class SignupController extends Controller
 {
@@ -21,10 +19,10 @@ class SignupController extends Controller
 
     public function index()
     {
-        $data = array(
+        $data = [
             'titlePage' => 'Sign Up',
-            'jenis'     => request()->input('jenis', null), 
-        );
+            'jenis'     => request()->input('jenis', null),
+        ];
         return view('signup.index', $data);
     }
 
@@ -33,9 +31,9 @@ class SignupController extends Controller
         $data = $request->validated();
         $user = $this->repository->signUp($data);
         if ($user->is_verifikasi == 0) {
-            return redirect("login")->with("success_register_and_verify", trans('message.success_register_and_verify'));
-        }else{
-            return redirect("login")->with("success", trans('message.success_register'));
+            return redirect('login')->with('success_register_and_verify', trans('message.success_register_and_verify'));
+        } else {
+            return redirect('login')->with('success', trans('message.success_register'));
         }
     }
 }

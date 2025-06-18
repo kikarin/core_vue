@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Traits\RepositoryTrait;
-use Illuminate\Support\Facades\Cache;
 
 class DashboardRepository
 {

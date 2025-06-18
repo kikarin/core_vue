@@ -19,11 +19,11 @@ class IdentityController extends Controller implements HasMiddleware
 
     public function __construct(IdentityRepository $repository, CategoryIdentityRepository $categoryIdentityRepository, Request $request)
     {
-        $this->repository                     = $repository;
-        $this->categoryIdentityRepository     = $categoryIdentityRepository;
-        $this->request                        = IdentityReqeust::createFromBase($request);
+        $this->repository                 = $repository;
+        $this->categoryIdentityRepository = $categoryIdentityRepository;
+        $this->request                    = IdentityReqeust::createFromBase($request);
         $this->initialize();
-        $this->commonData['kode_first_menu']  = "MASTER";
+        $this->commonData['kode_first_menu']  = 'MASTER';
         $this->commonData['kode_second_menu'] = $this->kode_menu;
     }
 

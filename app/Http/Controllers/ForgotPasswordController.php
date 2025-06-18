@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendPasswordResetEmail;
 use App\Repositories\UsersRepository;
-use App\Services\UsersService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -22,9 +21,9 @@ class ForgotPasswordController extends Controller
 
     public function index()
     {
-        $data = array(
-            'titlePage' => 'Forgot Password'
-        );
+        $data = [
+            'titlePage' => 'Forgot Password',
+        ];
         return view('auth.forgot-password', $data);
     }
 
@@ -35,17 +34,17 @@ class ForgotPasswordController extends Controller
 
         $lastResetTime = Cache::get("password_reset_$email");
         if ($lastResetTime) {
-            $now = Carbon::now();
+            $now            = Carbon::now();
             $timeDifference = $now->diffInMinutes($lastResetTime);
             if ($timeDifference < 5) {
-                return back()->withErrors("Harap tunggu sebelum mencoba lagi");
+                return back()->withErrors('Harap tunggu sebelum mencoba lagi');
             }
         }
         Cache::put("password_reset_$email", Carbon::now(), 5); // Cache for 5 minutes
 
         $user = $this->usersRepository->getByEmail($email);
         if (!$user) {
-            return back()->withSuccess("We have emailed your password reset link.");
+            return back()->withSuccess('We have emailed your password reset link.');
         }
 
         // Dispatch job to send password reset email
@@ -80,7 +79,7 @@ class ForgotPasswordController extends Controller
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ])->save();
 
                 event(new PasswordReset($user));

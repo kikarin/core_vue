@@ -17,6 +17,6 @@ class DashboardController extends Controller
         $this->repository = $repository;
         $this->request    = $request;
         $this->initialize();
-        $this->commonData['kode_first_menu']  = $this->kode_menu;
+        $this->commonData['kode_first_menu'] = $this->kode_menu;
     }
 }
