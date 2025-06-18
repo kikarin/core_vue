@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
 import { router } from '@inertiajs/vue3'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   mode: 'create' | 'edit'
@@ -31,11 +34,32 @@ const formInputs = [
 
 const handleSave = (data: Record<string, any>) => {
   if (props.mode === 'create') {
-    router.post('/menu-permissions/permissions/store-permission', data)
+    router.post('/menu-permissions/permissions/store-permission', data, {
+      onSuccess: () => {
+        toast({ title: 'Berhasil menambahkan permission', variant: 'success' })
+        router.visit('/menu-permissions/permissions')
+      },
+      onError: (errors) => {
+        Object.entries(errors).forEach(([field, message]) => {
+          toast({ title: `${field}: ${message}`, variant: 'destructive' })
+        })
+      },
+    })
   } else {
-    router.put(`/menu-permissions/permissions/update-permission/${props.initialData?.id}`, data)
+    router.put(`/menu-permissions/permissions/update-permission/${props.initialData?.id}`, data, {
+      onSuccess: () => {
+        toast({ title: 'Berhasil memperbarui permission', variant: 'success' })
+        router.visit('/menu-permissions/permissions')
+      },
+      onError: (errors) => {
+        Object.entries(errors).forEach(([field, message]) => {
+          toast({ title: `${field}: ${message}`, variant: 'destructive' })
+        })
+      },
+    })
   }
 }
+
 </script>
 
 <template>

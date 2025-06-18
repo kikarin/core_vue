@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
 import { router } from '@inertiajs/vue3'
+import { useHandleFormSave } from '@/composables/useHandleFormSave'
+
+const { save } = useHandleFormSave()
 
 const props = defineProps<{
   mode: 'create' | 'edit'
@@ -37,11 +40,14 @@ const formInputs = [
 ]
 
 const handleSave = (data: Record<string, any>) => {
-  if (props.mode === 'create') {
-    router.post('/menu-permissions/permissions', data)
-  } else {
-    router.put(`/menu-permissions/permissions/${props.initialData?.id}`, data)
-  }
+  save(data, {
+    url: '/menu-permissions/permissions',
+    mode: props.mode,
+    id: props.initialData?.id,
+    successMessage: props.mode === 'create' ? 'Kategori Permission berhasil ditambahkan' : 'Kategori Permission berhasil diperbarui',
+    errorMessage: props.mode === 'create' ? 'Kategori Gagal menambahkan permission' : 'Kategori Gagal memperbarui permission',
+    redirectUrl: '/menu-permissions/permissions',
+  })
 }
 </script>
 

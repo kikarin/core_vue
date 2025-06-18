@@ -2,6 +2,9 @@
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
 import { router } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
+import { useHandleFormSave } from '@/composables/useHandleFormSave'
+
+const { save } = useHandleFormSave();
 
 // Icon yang sering digunakan
 const COMMON_ICONS = [
@@ -142,42 +145,26 @@ const formInputs = [
 ]
 
 const handleSave = (data: Record<string, any>) => {
-  // Pastikan semua nilai numerik dikonversi ke number
-  const formData = {
+  const formData: Record<string, any> = {
     ...data,
-    rel: data.rel === '' ? 0 : Number(data.rel), // Konversi ke number, default 0 jika kosong
+    rel: data.rel === '' ? 0 : Number(data.rel),
     permission_id: Number(data.permission_id),
     urutan: Number(data.urutan),
-    icon: data.icon || null // Set icon ke null jika kosong
+    icon: data.icon || null
   }
 
-  if (props.mode === 'create') {
-    router.post('/menu-permissions/menus', formData, {
-      onSuccess: () => {
-        router.visit('/menu-permissions/menus')
-      },
-      onError: (errors) => {
-        console.error('Error:', errors)
-        // Tampilkan error ke user
-        Object.entries(errors).forEach(([field, message]) => {
-          alert(`${field}: ${message}`)
-        })
-      }
-    })
-  } else {
-    router.put(`/menu-permissions/menus/${props.initialData?.id}`, formData, {
-      onSuccess: () => {
-        router.visit('/menu-permissions/menus')
-      },
-      onError: (errors) => {
-        console.error('Error:', errors)
-        // Tampilkan error ke user
-        Object.entries(errors).forEach(([field, message]) => {
-          alert(`${field}: ${message}`)
-        })
-      }
-    })
+  if (props.mode === 'edit' && props.initialData?.id) {
+    formData.id = props.initialData.id // dibutuhkan untuk validasi update
   }
+
+  save(formData, {
+    url: '/menu-permissions/menus',
+    mode: props.mode,
+    id: props.initialData?.id,
+    redirectUrl: '/menu-permissions/menus',
+    successMessage: props.mode === 'create' ? 'Menu berhasil ditambahkan' : 'Menu berhasil diperbarui',
+    errorMessage: 'Gagal menyimpan menu',
+  })
 }
 </script>
 

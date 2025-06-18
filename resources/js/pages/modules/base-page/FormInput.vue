@@ -135,7 +135,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
               <SelectValue :placeholder="input.placeholder">
                 <template v-if="form[input.name]">
                   <component :is="LucideIcons[form[input.name] as keyof typeof LucideIcons]"
-                    class="h-4 w-4 inline-block mr-2" />
+                    class="h-4 w-4 inline-block mr-2" v-bind="$attrs" />
                   {{ form[input.name] }}
                 </template>
               </SelectValue>
@@ -144,7 +144,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
               <div class="grid grid-cols-4 gap-2 p-2">
                 <SelectItem v-for="option in iconOptions" :key="option.value" :value="option.value"
                   class="flex items-center gap-2 p-2 hover:bg-accent rounded-md cursor-pointer">
-                  <component :is="LucideIcons[option.icon as keyof typeof LucideIcons]" class="h-4 w-4" />
+                  <component :is="LucideIcons[option.icon as keyof typeof LucideIcons]" class="h-4 w-4" v-bind="$attrs" />
                   <span class="text-sm">{{ option.label }}</span>
                 </SelectItem>
               </div>
@@ -183,7 +183,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
           <div v-else-if="input.type === 'checkbox' && Array.isArray(input.options)" class="flex flex-col gap-2">
             <div v-for="option in input.options" :key="option.value" class="flex items-center space-x-2">
               <Checkbox :id="`${input.name}-${option.value}`" :value="option.value"
-                :checked="Array.isArray(form[input.name]) && form[input.name].includes(option.value)" @update:checked="checked => {
+                :checked="Array.isArray(form[input.name]) && form[input.name].includes(option.value)" @update:checked="(checked: boolean) => {
                   const selected = form[input.name] || []
                   if (checked) {
                     form[input.name] = [...selected, option.value]

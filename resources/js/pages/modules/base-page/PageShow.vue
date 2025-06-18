@@ -4,8 +4,21 @@ import HeaderShow from './HeaderShow.vue'
 import { Head, router } from '@inertiajs/vue3'
 import { type BreadcrumbItem } from '@/types'
 import { Info, Clock, Pencil, Trash2, ArrowLeft } from 'lucide-vue-next'
+import { ref } from 'vue'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/toast/useToast'
 
-defineProps<{
+const { toast } = useToast()
+
+const props = defineProps<{
   title: string
   breadcrumbs: BreadcrumbItem[]
   fields: { label: string; value: string; className?: string }[]
@@ -14,6 +27,19 @@ defineProps<{
   onDelete?: () => void
   onEdit?: () => void
 }>()
+
+const showDeleteDialog = ref(false)
+
+const handleDelete = () => {
+  showDeleteDialog.value = true
+}
+
+const confirmDelete = () => {
+  if (props.onDelete) {
+    props.onDelete()
+  }
+  showDeleteDialog.value = false
+}
 </script>
 
 <template>
@@ -36,7 +62,7 @@ defineProps<{
         <button
           v-if="onDelete"
           class="inline-flex items-center gap-1 px-3 py-2 text-sm border rounded-md hover:bg-muted"
-          @click="onDelete"
+          @click="handleDelete"
         >
           <Trash2 class="w-4 h-4 text-red-500" />
           Delete
@@ -105,5 +131,21 @@ defineProps<{
         </div>
       </div>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <Dialog v-model:open="showDeleteDialog">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Hapus data ini!</DialogTitle>
+          <DialogDescription>
+            Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" @click="showDeleteDialog = false">Batal</Button>
+          <Button variant="destructive" @click="confirmDelete">Hapus</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </AppLayout>
 </template>

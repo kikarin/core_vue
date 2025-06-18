@@ -2,6 +2,9 @@
 import PageShow from '@/pages/modules/base-page/PageShow.vue'
 import { router } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   item: {
@@ -62,13 +65,15 @@ const handleEdit = () => {
 }
 
 const handleDelete = () => {
-  if (confirm(`Are you sure you want to delete ${props.item.nama}?`)) {
-    router.delete(`/menu-permissions/menus/${props.item.id}`, {
-      onSuccess: () => {
-        router.visit('/menu-permissions/menus')
-      }
-    })
-  }
+  router.delete(`/menu-permissions/menus/${props.item.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Menu berhasil dihapus', variant: 'success' })
+      router.visit('/menu-permissions/menus')
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus menu', variant: 'destructive' })
+    }
+  })
 }
 </script>
 

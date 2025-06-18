@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import PageShow from '@/pages/modules/base-page/PageShow.vue'
 import { router } from '@inertiajs/vue3'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   item: {
@@ -47,10 +50,17 @@ const actionFields = [
 const handleEdit = () => {
   router.visit(`/menu-permissions/roles/${props.item.id}/edit`)
 }
+
 const handleDelete = () => {
-  if (confirm('Are you sure you want to delete this role?')) {
-    router.delete(`/menu-permissions/roles/${props.item.id}`)
-  }
+  router.delete(`/menu-permissions/roles/${props.item.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Role berhasil dihapus', variant: 'success' })
+      router.visit('/menu-permissions/roles')
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus role', variant: 'destructive' })
+    }
+  })
 }
 </script>
 

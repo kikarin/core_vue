@@ -33,8 +33,8 @@ const handleDeleteCategory = () => {
 
 const confirmCategoryDelete = () => {
   router.delete(`/menu-permissions/permissions/${props.category.id}`, {
-    onSuccess: () => toast({ title: 'Kategori berhasil dihapus', variant: 'success' }),
-    onError: () => toast({ title: 'Gagal menghapus kategori', variant: 'destructive' })
+    onSuccess: () => toast({ title: 'Kategori Permission berhasil dihapus', variant: 'success' }),
+    onError: () => toast({ title: 'Gagal menghapus kategori Permission', variant: 'destructive' })
   })
   confirmDeleteCategory.value = false
 }

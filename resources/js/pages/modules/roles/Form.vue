@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import FormInput from '@/pages/modules/base-page/FormInput.vue'
 import { router } from '@inertiajs/vue3'
+import { useHandleFormSave } from '@/composables/useHandleFormSave'
+
+const { save } = useHandleFormSave()
 
 const props = defineProps<{
   mode: 'create' | 'edit',
@@ -59,16 +62,24 @@ const formInputs = [
 ]
 
 const handleSave = (data: Record<string, any>) => {
-  const formData = {
+  const formData: Record<string, any> = {
     ...data,
     is_allow_login: data.is_allow_login === '1',
     is_vertical_menu: data.is_vertical_menu === '1',
   }
-  if (props.mode === 'create') {
-    router.post('/menu-permissions/roles', formData)
-  } else {
-    router.put(`/menu-permissions/roles/${props.initialData?.id}`, formData)
+
+  if (props.mode === 'edit' && props.initialData?.id) {
+    formData.id = props.initialData.id
   }
+
+  save(formData, {
+    url: '/menu-permissions/roles',
+    mode: props.mode,
+    id: props.initialData?.id,
+    redirectUrl: '/menu-permissions/roles',
+    successMessage: props.mode === 'create' ? 'Role berhasil ditambahkan' : 'Role berhasil diperbarui',
+    errorMessage: 'Gagal menyimpan role',
+  })
 }
 </script>
 

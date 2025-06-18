@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import PageShow from '@/pages/modules/base-page/PageShow.vue'
 import { router } from '@inertiajs/vue3'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   item: Record<string, any>
@@ -28,9 +31,15 @@ const handleEdit = () => {
 }
 
 const handleDelete = () => {
-  if (confirm('Are you sure you want to delete this permission?')) {
-    router.delete(`/menu-permissions/permissions/delete-permission/${props.item.id}`)
-  }
+  router.delete(`/menu-permissions/permissions/delete-permission/${props.item.id}`, {
+    onSuccess: () => {
+      toast({ title: 'Permission berhasil dihapus', variant: 'success' })
+      router.visit('/menu-permissions/permissions')
+    },
+    onError: () => {
+      toast({ title: 'Gagal menghapus permission', variant: 'destructive' })
+    }
+  })
 }
 </script>
 

@@ -28,7 +28,7 @@ const columns = [
       
       // Split roles dan buat badges
       const roles = row.all_roles.split(', ')
-      const badges = roles.map(role => 
+      const badges = roles.map((role: string) => 
         `<span class="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mr-1 mb-1">${role.trim()}</span>`
       ).join('')
       

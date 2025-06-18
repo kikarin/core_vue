@@ -5,6 +5,9 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import PermissionTree from '@/pages/modules/roles/PermissionTree.vue'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-vue-next'
+import { useHandleFormSave } from '@/composables/useHandleFormSave'
+
+const { save } = useHandleFormSave()
 
 const props = defineProps<{
   item: Record<string, any>,
@@ -27,19 +30,21 @@ const breadcrumbs = [
   { title: 'Set Permissions', href: '#' },
 ]
 
-const savePermissions = async () => {
-  loading.value = true
-  success.value = false
-  error.value = ''
-  await router.post(`/menu-permissions/roles/set-permissions/${roleId}`, {
-    id: roleId,
+const savePermissions = () => {
+  save({
+    id: props.item.id,
     permission_id: selectedPermissions.value,
   }, {
-    onSuccess: () => { success.value = true },
-    onError: (e) => { error.value = 'Gagal menyimpan permission.' },
-    onFinish: () => { loading.value = false },
+    url: `/menu-permissions/roles/set-permissions/${props.item.id}`,
+    mode: 'create', // tetap pakai 'create' karena router.post
+    successMessage: 'Permission berhasil disimpan. Silakan kembali untuk melihat perubahan.',
+    errorMessage: 'Gagal menyimpan permission.',
+    onSuccess: () => {
+      success.value = true
+    },
   })
 }
+
 </script>
 
 <template>
@@ -66,8 +71,6 @@ const savePermissions = async () => {
           <span v-if="loading">Saving...</span>
           <span v-else>Save</span>
         </Button>
-        <span v-if="success" class="text-green-600 font-semibold">Berhasil disimpan!</span>
-        <span v-if="error" class="text-red-600 font-semibold">{{ error }}</span>
       </div>
 
       <!-- Permissions -->

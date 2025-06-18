@@ -16,7 +16,7 @@ class CategoryPermissionSeeder extends Seeder
                 'permission' => 'CRUD',
             ],
             [
-                'name' => 'Menu',
+                'name' => 'Users Menu',
                 'permission' => 'CRUD',
             ],
             [
@@ -35,10 +35,6 @@ class CategoryPermissionSeeder extends Seeder
             [
                 'name' => 'Activity Log',
                 'permission' => ['Activity Log Show', 'Activity Log Detail', 'Activity Log Delete'],
-            ],
-            [
-                'name' => 'Team Name',
-                'permission' => 'CRUD',
             ],
             [
                 'name' => 'Dashboard',

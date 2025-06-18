@@ -3,12 +3,15 @@ import FormInput from '@/pages/modules/base-page/FormInput.vue';
 import { router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
+import { useHandleFormSave } from '@/composables/useHandleFormSave'
+
+const { save } = useHandleFormSave();
 
 const props = defineProps<{
     mode: 'create' | 'edit';
     initialData?: Record<string, any>;
     roles: Record<number, string>;
-    selectedRoles?: number[]; 
+    selectedRoles?: number[];
 }>();
 
 const roleOptions = Object.entries(props.roles).map(([id, name]) => ({
@@ -23,11 +26,11 @@ const formData = computed(() => {
         password: '',
         password_confirmation: '',
         no_hp: props.initialData?.no_hp || '',
-        role_id: props.selectedRoles || [], 
+        role_id: props.selectedRoles || [],
         is_active: props.initialData?.is_active !== undefined ? props.initialData.is_active : 1,
         id: props.initialData?.id || undefined
     };
-    
+
     return base;
 });
 
@@ -98,56 +101,40 @@ const formInputs = [
 ];
 
 const handleSave = (form: any) => {
-    // Validasi role_id harus array dan tidak kosong
     if (!Array.isArray(form.role_id) || form.role_id.length === 0) {
-        alert('Role harus dipilih minimal 1');
-        return;
+        alert('Role harus dipilih minimal 1')
+        return
     }
 
-    // Prepare data untuk backend
-    const formData = {
+    const formData: Record<string, any> = {
         name: form.name,
         email: form.email,
         no_hp: form.no_hp,
-        role_id: form.role_id, // Kirim sebagai array
+        role_id: form.role_id,
         is_active: form.is_active,
-    };
+    }
 
-    // Tambahkan password jika diisi
     if (form.password) {
-        formData.password = form.password;
-        formData.password_confirmation = form.password_confirmation;
+        formData.password = form.password
+        formData.password_confirmation = form.password_confirmation
     }
 
-    // Tambahkan id jika mode edit
     if (props.mode === 'edit' && props.initialData?.id) {
-        formData.id = props.initialData.id;
+        formData.id = props.initialData.id
     }
-    
-    console.log('Sending data:', formData); // Debug log
-    
-    if (props.mode === 'create') {
-        router.post('/users', formData, {
-            onSuccess: () => {
-                router.visit('/users')
-            },
-            onError: (errors) => {
-                console.error('Create errors:', errors);
-            }
-        });
-    } else {
-        router.put(`/users/${props.initialData?.id}`, formData, {
-            onSuccess: () => {
-                router.visit('/users')
-            },
-            onError: (errors) => {
-                console.error('Update errors:', errors);
-            }
-        });
-    }
-};
+
+    save(formData, {
+        url: '/users',
+        mode: props.mode,
+        id: props.initialData?.id,
+        successMessage: props.mode === 'create' ? 'User berhasil ditambahkan' : 'User berhasil diperbarui',
+        errorMessage: props.mode === 'create' ? 'Gagal menyimpan user' : 'Gagal memperbarui user',
+        redirectUrl: '/users',
+    })
+}
+
 </script>
 
 <template>
-    <FormInput :form-inputs="formInputs" :initial-data="formData" @save="handleSave"/>
+    <FormInput :form-inputs="formInputs" :initial-data="formData" @save="handleSave" />
 </template>

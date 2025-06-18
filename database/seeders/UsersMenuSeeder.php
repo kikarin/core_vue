@@ -41,13 +41,6 @@ class UsersMenuSeeder extends Seeder
                 'urutan' => 11,
                 'permission_id' => '',
                 'children' => [
-                    [
-                        'nama' => 'Nama Team',
-                        'kode' => 'TEAM-NAMES',
-                        'url' => '/data-master/team-names',
-                        'urutan' => 1,
-                        'permission_id' => 'Team Name Show',
-                    ],
                 ],
             ],
             [
@@ -73,7 +66,7 @@ class UsersMenuSeeder extends Seeder
                         'kode' => 'USERS-MENU',
                         'url' => '/menu-permissions/menus',
                         'urutan' => 1,
-                        'permission_id' => 'Menu Show',
+                        'permission_id' => 'Users Menu Show',
                     ],
                     [
                         'nama' => 'Role',

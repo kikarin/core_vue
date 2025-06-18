@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import PageShow from '@/pages/modules/base-page/PageShow.vue'
+import { router } from '@inertiajs/vue3'
+import { useToast } from '@/components/ui/toast/useToast'
+
+const { toast } = useToast()
 
 const props = defineProps<{
   fields: Array<{ label: string, value: string }>,
@@ -14,9 +18,18 @@ const breadcrumbs = [
 ]
 
 const handleDelete = () => {
-  if (confirm('Delete this log entry?')) {
-    // Logic for deleting the log entry
-    console.log('Log entry deleted')
+  // Extract log ID from the URL or props if available
+  const logId = window.location.pathname.split('/').pop()
+  if (logId) {
+    router.delete(`/menu-permissions/logs/${logId}`, {
+      onSuccess: () => {
+        toast({ title: 'Log berhasil dihapus', variant: 'success' })
+        router.visit('/menu-permissions/logs')
+      },
+      onError: () => {
+        toast({ title: 'Gagal menghapus log', variant: 'destructive' })
+      }
+    })
   }
 }
 </script>
