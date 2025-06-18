@@ -1,79 +1,79 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import AppLayout from '@/layouts/AppLayout.vue'
-import PermissionTree from '@/pages/modules/roles/PermissionTree.vue'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-vue-next'
-import { useHandleFormSave } from '@/composables/useHandleFormSave'
+import { Button } from '@/components/ui/button';
+import { useHandleFormSave } from '@/composables/useHandleFormSave';
+import AppLayout from '@/layouts/AppLayout.vue';
+import PermissionTree from '@/pages/modules/roles/PermissionTree.vue';
+import { router } from '@inertiajs/vue3';
+import { ArrowLeft } from 'lucide-vue-next';
+import { ref } from 'vue';
 
-const { save } = useHandleFormSave()
+const { save } = useHandleFormSave();
 
 const props = defineProps<{
-  item: Record<string, any>,
-  permissionGroups: Array<{ label: string, children: Array<{ id: number, label: string }> }>,
-  selectedPermissions: number[],
-}>()
+    item: Record<string, any>;
+    permissionGroups: Array<{ label: string; children: Array<{ id: number; label: string }> }>;
+    selectedPermissions: number[];
+}>();
 
-console.log('SetPermissions.vue props.permissionGroups:', props.permissionGroups)
-console.log('SetPermissions.vue props.selectedPermissions:', props.selectedPermissions)
+console.log('SetPermissions.vue props.permissionGroups:', props.permissionGroups);
+console.log('SetPermissions.vue props.selectedPermissions:', props.selectedPermissions);
 
-const selectedPermissions = ref<number[]>([...props.selectedPermissions])
-const loading = ref(false)
-const success = ref(false)
+const selectedPermissions = ref<number[]>([...props.selectedPermissions]);
+const loading = ref(false);
+const success = ref(false);
 
 const breadcrumbs = [
-  { title: 'Menu & Permissions', href: '#' },
-  { title: 'Roles', href: '/menu-permissions/roles' },
-  { title: 'Set Permissions', href: '#' },
-]
+    { title: 'Menu & Permissions', href: '#' },
+    { title: 'Roles', href: '/menu-permissions/roles' },
+    { title: 'Set Permissions', href: '#' },
+];
 
 const savePermissions = () => {
-  save({
-    id: props.item.id,
-    permission_id: selectedPermissions.value,
-  }, {
-    url: `/menu-permissions/roles/set-permissions/${props.item.id}`,
-    mode: 'create', // tetap pakai 'create' karena router.post
-    successMessage: 'Permission berhasil disimpan. Silakan kembali untuk melihat perubahan.',
-    errorMessage: 'Gagal menyimpan permission.',
-    onSuccess: () => {
-      success.value = true
-    },
-  })
-}
-
+    save(
+        {
+            id: props.item.id,
+            permission_id: selectedPermissions.value,
+        },
+        {
+            url: `/menu-permissions/roles/set-permissions/${props.item.id}`,
+            mode: 'create', // tetap pakai 'create' karena router.post
+            successMessage: 'Permission berhasil disimpan. Silakan kembali untuk melihat perubahan.',
+            errorMessage: 'Gagal menyimpan permission.',
+            onSuccess: () => {
+                success.value = true;
+            },
+        },
+    );
+};
 </script>
 
 <template>
-  <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="p-6 space-y-6">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="space-y-6 p-6">
+            <!-- Back Button -->
+            <div>
+                <Button variant="secondary" @click="router.visit('/menu-permissions/roles')">
+                    <ArrowLeft class="mr-2 h-4 w-4" />
+                    Back
+                </Button>
+            </div>
 
-      <!-- Back Button -->
-      <div>
-        <Button variant="secondary" @click="router.visit('/menu-permissions/roles')">
-          <ArrowLeft class="w-4 h-4 mr-2" />
-          Back
-        </Button>
-      </div>
+            <!-- Role Name -->
+            <div class="bg-muted rounded border px-4 py-3 text-center font-medium">
+                <span>Name: </span>
+                <span class="text-foreground">{{ props.item.name }}</span>
+            </div>
 
-      <!-- Role Name -->
-      <div class="border px-4 py-3 rounded bg-muted font-medium text-center">
-        <span>Name: </span>
-        <span class="text-foreground">{{ props.item.name }}</span>
-      </div>
+            <!-- Save Button -->
+            <div class="flex justify-center gap-2">
+                <Button :disabled="loading" @click="savePermissions">
+                    <span v-if="loading">Saving...</span>
+                    <span v-else>Save</span>
+                </Button>
+            </div>
 
-      <!-- Save Button -->
-      <div class="flex justify-center gap-2">
-        <Button :disabled="loading" @click="savePermissions">
-          <span v-if="loading">Saving...</span>
-          <span v-else>Save</span>
-        </Button>
-      </div>
-
-      <!-- Permissions -->
-      <PermissionTree :groups="props.permissionGroups" v-model="selectedPermissions" />
-
-    </div>
-  </AppLayout>
+            <!-- Permissions -->
+            <PermissionTree :groups="props.permissionGroups" v-model="selectedPermissions" />
+        </div>
+    </AppLayout>
 </template>

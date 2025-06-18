@@ -4,10 +4,10 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import * as LucideIcons from 'lucide-vue-next';
-import AppLogo from './AppLogo.vue';
-import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+import * as LucideIcons from 'lucide-vue-next';
+import { onMounted, onUnmounted, ref } from 'vue';
+import AppLogo from './AppLogo.vue';
 
 const mainNavItems = ref<NavItem[]>([]);
 const settingNavItems = ref<NavItem[]>([]);
@@ -15,43 +15,43 @@ const isLoading = ref(false);
 
 // Mapping icon names to components
 const iconMap: Record<string, any> = {
-    'LayoutGrid': LucideIcons.LayoutGrid,
-    'FolderKanban': LucideIcons.FolderKanban,
-    'FileStack': LucideIcons.FileStack,
-    'Users': LucideIcons.Users,
-    'Settings': LucideIcons.Settings,
-    'FileText': LucideIcons.FileText,
-    'Folder': LucideIcons.Folder,
-    'Shield': LucideIcons.Shield,
-    'User': LucideIcons.User,
-    'List': LucideIcons.List,
-    'Plus': LucideIcons.Plus,
-    'Edit': LucideIcons.Edit,
-    'Trash': LucideIcons.Trash,
-    'Search': LucideIcons.Search,
-    'Filter': LucideIcons.Filter,
-    'Download': LucideIcons.Download,
-    'Upload': LucideIcons.Upload,
-    'Menu': LucideIcons.Menu,
-    'Home': LucideIcons.Home,
-    'BarChart': LucideIcons.BarChart,
-    'PieChart': LucideIcons.PieChart,
-    'Calendar': LucideIcons.Calendar,
-    'ShieldCheck': LucideIcons.ShieldCheck,
+    LayoutGrid: LucideIcons.LayoutGrid,
+    FolderKanban: LucideIcons.FolderKanban,
+    FileStack: LucideIcons.FileStack,
+    Users: LucideIcons.Users,
+    Settings: LucideIcons.Settings,
+    FileText: LucideIcons.FileText,
+    Folder: LucideIcons.Folder,
+    Shield: LucideIcons.Shield,
+    User: LucideIcons.User,
+    List: LucideIcons.List,
+    Plus: LucideIcons.Plus,
+    Edit: LucideIcons.Edit,
+    Trash: LucideIcons.Trash,
+    Search: LucideIcons.Search,
+    Filter: LucideIcons.Filter,
+    Download: LucideIcons.Download,
+    Upload: LucideIcons.Upload,
+    Menu: LucideIcons.Menu,
+    Home: LucideIcons.Home,
+    BarChart: LucideIcons.BarChart,
+    PieChart: LucideIcons.PieChart,
+    Calendar: LucideIcons.Calendar,
+    ShieldCheck: LucideIcons.ShieldCheck,
 };
 
 const fetchMenus = async () => {
     if (isLoading.value) return;
-    
+
     try {
         isLoading.value = true;
         const response = await axios.get('/api/users-menu');
-        
+
         console.log('API Response:', response.data);
-        
+
         // Handle different response formats
         let menus = response.data;
-        
+
         // If response has data property
         if (menus.data && Array.isArray(menus.data)) {
             menus = menus.data;
@@ -89,7 +89,7 @@ const fetchMenus = async () => {
             const urutan = menu.urutan || 0;
             return urutan <= 10;
         });
-        
+
         const settingMenus = menus.filter((menu: any) => {
             const urutan = menu.urutan || 0;
             return urutan > 10;
@@ -100,14 +100,13 @@ const fetchMenus = async () => {
 
         console.log('Main Menus:', mainNavItems.value);
         console.log('Setting Menus:', settingNavItems.value);
-        
     } catch (error) {
         console.error('Error fetching menus:', error);
-        
+
         // Set empty arrays on error
         mainNavItems.value = [];
         settingNavItems.value = [];
-        
+
         // You might want to show a notification to user here
         // toast.error('Failed to load menu items');
     } finally {
@@ -149,30 +148,18 @@ onUnmounted(() => {
 
         <SidebarContent>
             <!-- Show loading state if needed -->
-            <div v-if="isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" 
-                 class="px-4 py-2 text-sm text-muted-foreground">
+            <div v-if="isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" class="text-muted-foreground px-4 py-2 text-sm">
                 Loading menus...
             </div>
-            
+
             <!-- Main navigation -->
-            <NavMain 
-                v-if="mainNavItems.length > 0" 
-                :items="mainNavItems" 
-                section-title="Menu" 
-                section-id="main" 
-            />
-            
+            <NavMain v-if="mainNavItems.length > 0" :items="mainNavItems" section-title="Menu" section-id="main" />
+
             <!-- Settings navigation -->
-            <NavMain 
-                v-if="settingNavItems.length > 0" 
-                :items="settingNavItems" 
-                section-title="Settings" 
-                section-id="setting" 
-            />
-            
+            <NavMain v-if="settingNavItems.length > 0" :items="settingNavItems" section-title="Settings" section-id="setting" />
+
             <!-- Empty state -->
-            <div v-if="!isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" 
-                 class="px-4 py-2 text-sm text-muted-foreground">
+            <div v-if="!isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" class="text-muted-foreground px-4 py-2 text-sm">
                 No menu items available
             </div>
         </SidebarContent>

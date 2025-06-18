@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, Building2, Calendar, ArrowUpRight, ArrowDownRight, Plus, Bell, Settings, Search } from 'lucide-vue-next';
+import { ArrowDownRight, ArrowUpRight, Bell, Building2, Calendar, Plus, Search, Settings, Users } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -119,11 +119,11 @@ const quickActions = [
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="relative">
-                        <Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Search class="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                         <input
                             type="text"
                             placeholder="Search..."
-                            class="h-10 w-[300px] rounded-md border border-input bg-background pl-9 pr-4 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-10 w-[300px] rounded-md border pr-4 pl-9 text-sm focus-visible:ring-2 focus-visible:outline-none"
                         />
                     </div>
                 </div>
@@ -151,8 +151,8 @@ const quickActions = [
                     <CardContent>
                         <div class="text-2xl font-bold">{{ stat.value }}</div>
                         <div class="flex items-center space-x-2 text-xs">
-                            <component 
-                                :is="stat.trend === 'up' ? ArrowUpRight : ArrowDownRight" 
+                            <component
+                                :is="stat.trend === 'up' ? ArrowUpRight : ArrowDownRight"
                                 :class="stat.trend === 'up' ? 'text-green-500' : 'text-red-500'"
                                 class="h-4 w-4"
                             />
@@ -182,16 +182,14 @@ const quickActions = [
                                 </Avatar>
                                 <div class="flex-1 space-y-1">
                                     <p class="text-sm font-medium">{{ activity.title }}</p>
-                                    <p class="text-sm text-muted-foreground">{{ activity.description }}</p>
-                                    <p class="text-xs text-muted-foreground">{{ activity.time }}</p>
+                                    <p class="text-muted-foreground text-sm">{{ activity.description }}</p>
+                                    <p class="text-muted-foreground text-xs">{{ activity.time }}</p>
                                 </div>
                             </div>
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button variant="outline" class="w-full">
-                            View All Activities
-                        </Button>
+                        <Button variant="outline" class="w-full"> View All Activities </Button>
                     </CardFooter>
                 </Card>
 
@@ -212,8 +210,8 @@ const quickActions = [
                                         </Badge>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <Users class="h-4 w-4 text-muted-foreground" />
-                                        <span class="text-sm text-muted-foreground">{{ team.members }} members</span>
+                                        <Users class="text-muted-foreground h-4 w-4" />
+                                        <span class="text-muted-foreground text-sm">{{ team.members }} members</span>
                                     </div>
                                 </div>
                                 <Progress :value="team.progress" class="h-2" />
@@ -221,9 +219,7 @@ const quickActions = [
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button variant="outline" class="w-full">
-                            View All Teams
-                        </Button>
+                        <Button variant="outline" class="w-full"> View All Teams </Button>
                     </CardFooter>
                 </Card>
             </div>
@@ -236,13 +232,7 @@ const quickActions = [
                 </CardHeader>
                 <CardContent>
                     <div class="flex flex-wrap gap-4">
-                        <Button 
-                            v-for="action in quickActions" 
-                            :key="action.title"
-                            variant="outline" 
-                            class="gap-2"
-                            :href="action.href"
-                        >
+                        <Button v-for="action in quickActions" :key="action.title" variant="outline" class="gap-2" :href="action.href">
                             <component :is="action.icon" class="h-4 w-4" />
                             {{ action.title }}
                         </Button>

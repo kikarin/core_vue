@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import PageIndex from '@/pages/modules/base-page/PageIndex.vue'
-import { router } from '@inertiajs/vue3'
-import { ref } from 'vue'
-import axios from 'axios'
-import { useToast } from '@/components/ui/toast/useToast'
+import { useToast } from '@/components/ui/toast/useToast';
+import PageIndex from '@/pages/modules/base-page/PageIndex.vue';
+import { router } from '@inertiajs/vue3';
+import axios from 'axios';
+import { ref } from 'vue';
 
 const breadcrumbs = [
     { title: 'Menu & Permissions', href: '#' },
     { title: 'Activity Logs', href: '/menu-permissions/logs' },
-]
+];
 
 const columns = [
     { key: 'event', label: 'Event', searchable: true, orderable: true, visible: true },
@@ -18,13 +18,13 @@ const columns = [
     { key: 'causer_name', label: 'Causer', searchable: false, orderable: false, visible: true },
     { key: 'causer_role', label: 'Causer Role', searchable: false, orderable: false, visible: true },
     { key: 'created_at', label: 'Created At', searchable: false, orderable: true, visible: true },
-]
+];
 
-const selected = ref<number[]>([])
+const selected = ref<number[]>([]);
 
-const pageIndex = ref()
+const pageIndex = ref();
 
-const { toast } = useToast()
+const { toast } = useToast();
 
 const actions = (row: any) => [
     {
@@ -35,41 +35,47 @@ const actions = (row: any) => [
         label: 'Delete',
         onClick: () => pageIndex.value.handleDeleteRow(row),
     },
-]
-
+];
 
 const deleteSelected = async () => {
-  if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
-  try {
-    await axios.post('/menu-permissions/logs/destroy-selected', {
-      ids: selected.value,
-    })
-    selected.value = []
-    pageIndex.value.fetchData()
-    toast({ title: 'Data berhasil dihapus', variant: 'success' })
-  } catch (error) {
-    console.error('Gagal menghapus data:', error)
-    toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' })
-  }
-}
+    if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
+    try {
+        await axios.post('/menu-permissions/logs/destroy-selected', {
+            ids: selected.value,
+        });
+        selected.value = [];
+        pageIndex.value.fetchData();
+        toast({ title: 'Data berhasil dihapus', variant: 'success' });
+    } catch (error) {
+        console.error('Gagal menghapus data:', error);
+        toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' });
+    }
+};
 
 const deleteLog = async (row: any) => {
-  await router.delete(`/menu-permissions/logs/${row.id}`, {
-    onSuccess: () => {
-      toast({ title: 'Data berhasil dihapus', variant: 'success' })
-      pageIndex.value.fetchData()
-    },
-    onError: () => {
-      toast({ title: 'Gagal menghapus data.', variant: 'destructive' })
-    }
-  })
-}
-
+    await router.delete(`/menu-permissions/logs/${row.id}`, {
+        onSuccess: () => {
+            toast({ title: 'Data berhasil dihapus', variant: 'success' });
+            pageIndex.value.fetchData();
+        },
+        onError: () => {
+            toast({ title: 'Gagal menghapus data.', variant: 'destructive' });
+        },
+    });
+};
 </script>
 
 <template>
-    <PageIndex title="Activity Logs" :breadcrumbs="breadcrumbs" :columns="columns" :actions="actions"
-        api-endpoint="/api/activity-logs" ref="pageIndex" :selected="selected"
-        @update:selected="val => selected = val" :on-delete-selected="deleteSelected"
-        :on-delete-row-confirm="deleteLog" />
+    <PageIndex
+        title="Activity Logs"
+        :breadcrumbs="breadcrumbs"
+        :columns="columns"
+        :actions="actions"
+        api-endpoint="/api/activity-logs"
+        ref="pageIndex"
+        :selected="selected"
+        @update:selected="(val) => (selected = val)"
+        :on-delete-selected="deleteSelected"
+        :on-delete-row-confirm="deleteLog"
+    />
 </template>

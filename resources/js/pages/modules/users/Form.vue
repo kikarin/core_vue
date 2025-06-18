@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useHandleFormSave } from '@/composables/useHandleFormSave';
 import FormInput from '@/pages/modules/base-page/FormInput.vue';
-import { ref, computed } from 'vue';
-import { useHandleFormSave } from '@/composables/useHandleFormSave'
+import { computed, ref } from 'vue';
 
 const { save } = useHandleFormSave();
 
@@ -26,7 +26,7 @@ const formData = computed(() => {
         no_hp: props.initialData?.no_hp || '',
         role_id: props.selectedRoles || [],
         is_active: props.initialData?.is_active !== undefined ? props.initialData.is_active : 1,
-        id: props.initialData?.id || undefined
+        id: props.initialData?.id || undefined,
     };
 
     return base;
@@ -83,7 +83,7 @@ const formInputs = [
         placeholder: 'Pilih Role (bisa lebih dari 1)',
         required: true,
         options: roleOptions,
-        help: 'Pilih satu atau lebih role untuk user ini'
+        help: 'Pilih satu atau lebih role untuk user ini',
     },
     {
         name: 'is_active',
@@ -100,8 +100,8 @@ const formInputs = [
 
 const handleSave = (form: any) => {
     if (!Array.isArray(form.role_id) || form.role_id.length === 0) {
-        alert('Role harus dipilih minimal 1')
-        return
+        alert('Role harus dipilih minimal 1');
+        return;
     }
 
     const formData: Record<string, any> = {
@@ -110,15 +110,15 @@ const handleSave = (form: any) => {
         no_hp: form.no_hp,
         role_id: form.role_id,
         is_active: form.is_active,
-    }
+    };
 
     if (form.password) {
-        formData.password = form.password
-        formData.password_confirmation = form.password_confirmation
+        formData.password = form.password;
+        formData.password_confirmation = form.password_confirmation;
     }
 
     if (props.mode === 'edit' && props.initialData?.id) {
-        formData.id = props.initialData.id
+        formData.id = props.initialData.id;
     }
 
     save(formData, {
@@ -128,9 +128,8 @@ const handleSave = (form: any) => {
         successMessage: props.mode === 'create' ? 'User berhasil ditambahkan' : 'User berhasil diperbarui',
         errorMessage: props.mode === 'create' ? 'Gagal menyimpan user' : 'Gagal memperbarui user',
         redirectUrl: '/users',
-    })
-}
-
+    });
+};
 </script>
 
 <template>
