@@ -26,7 +26,7 @@ class UsersMenuSeeder extends Seeder
                 'icon' => 'FolderKanban',
                 'rel' => 0,
                 'urutan' => 2,
-                'permission_id' => 'Management Show',
+                'permission_id' => '',
                 'children' => [
                     [
                     ],
@@ -39,14 +39,14 @@ class UsersMenuSeeder extends Seeder
                 'icon' => 'FileStack',
                 'rel' => 0,
                 'urutan' => 11,
-                'permission_id' => 'Data Master Show',
+                'permission_id' => '',
                 'children' => [
                     [
                         'nama' => 'Nama Team',
                         'kode' => 'TEAM-NAMES',
                         'url' => '/data-master/team-names',
                         'urutan' => 1,
-                        'permission_id' => 'Team Names Show',
+                        'permission_id' => 'Team Name Show',
                     ],
                 ],
             ],
@@ -66,35 +66,35 @@ class UsersMenuSeeder extends Seeder
                 'icon' => 'ShieldCheck',
                 'rel' => 0,
                 'urutan' => 13,
-                'permission_id' => 'Users Management Show',
+                'permission_id' => '',
                 'children' => [
                     [
                         'nama' => 'Menu',
                         'kode' => 'USERS-MENU',
                         'url' => '/menu-permissions/menus',
                         'urutan' => 1,
-                        'permission_id' => '',
+                        'permission_id' => 'Menu Show',
                     ],
                     [
                         'nama' => 'Role',
                         'kode' => 'USERS-ROLE',
                         'url' => '/menu-permissions/roles',
                         'urutan' => 2,
-                        'permission_id' => 'Users Role Show',
+                        'permission_id' => 'Role Show',
                     ],
                     [
                         'nama' => 'Permission',
                         'kode' => 'USERS-PERMISSION',
                         'url' => '/menu-permissions/permissions',
                         'urutan' => 3,
-                        'permission_id' => 'Users Permission Show',
+                        'permission_id' => 'Permission Show',
                     ],
                     [
                         'nama' => 'Activity Log',
                         'kode' => 'USERS-LOG',
                         'url' => '/menu-permissions/logs',
                         'urutan' => 4,
-                        'permission_id' => 'Users Log Show',
+                        'permission_id' => 'Activity Log Show',
                     ],
                 ],
             ],
@@ -106,6 +106,10 @@ class UsersMenuSeeder extends Seeder
     private function insertMenus(array $menus, $parentId = 0)
     {
         foreach ($menus as $menuData) {
+            if (!isset($menuData['nama'])) {
+                continue;
+            }
+
             $children = $menuData['children'] ?? null;
             unset($menuData['children']);
 

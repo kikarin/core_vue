@@ -44,12 +44,12 @@ class UsersRepository
         if (request('sort')) {
             $order = request('order', 'asc');
             $sortField = request('sort');
-            
+
             // Handle role sorting by joining with roles table
             if ($sortField === 'role') {
                 $query->leftJoin('roles', 'users.current_role_id', '=', 'roles.id')
-                      ->orderBy('roles.name', $order)
-                      ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active');
+                    ->orderBy('roles.name', $order)
+                    ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active');
             } else {
                 // For other fields, check if it's a valid column in users table
                 $validColumns = ['id', 'name', 'email', 'current_role_id', 'is_active', 'created_at', 'updated_at'];
@@ -155,7 +155,7 @@ class UsersRepository
 
         return $data;
     }
-    
+
     public function customDataCreateUpdate($data, $record = null)
     {
         $userId = Auth::id();

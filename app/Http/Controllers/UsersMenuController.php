@@ -16,6 +16,7 @@ class UsersMenuController extends Controller implements HasMiddleware
     private $request;
     private $repository;
     private $permissionRepository;
+    
     public function __construct(Request $request, UsersMenuRepository $repository, PermissionRepository $permissionRepository)
     {
         $this->repository = $repository;
@@ -39,28 +40,59 @@ class UsersMenuController extends Controller implements HasMiddleware
             new Middleware("can:$permission Delete", only: ['destroy', 'destroy_selected']),
         ];
     }
+
+    /**
+     * Get menus for API with permission filtering
+     * This endpoint is used by the sidebar component
+     */
     public function getMenus()
     {
-        return response()->json($this->repository->getMenus());
+        try {
+            $menus = $this->repository->getMenus();
+            
+            return response()->json([
+                'success' => true,
+                'data' => $menus,
+                'message' => 'Menus retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'data' => [],
+                'message' => 'Failed to retrieve menus: ' . $e->getMessage()
+            ], 500);
+        }
     }
     
+    /**
+     * API endpoint for data table (admin interface)
+     * This shows all menus regardless of permission for management purposes
+     */
     public function apiIndex()
     {
-        $data = $this->repository->customIndex([]);
+        try {
+            $data = $this->repository->customIndex([]);
 
-        return response()->json([
-            'data' => $data['menus'],
-            'meta' => [
-                'total' => $data['meta']['total'],
-                'current_page' => $data['meta']['current_page'],
-                'per_page' => $data['meta']['per_page'],
-                'search' => $data['meta']['search'],
-                'sort' => $data['meta']['sort'],
-                'order' => $data['meta']['order'],
-            ],
-            'listUsersMenu' => $data['listUsersMenu'],
-            'permissions' => $data['get_Permission'],
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $data['menus'],
+                'meta' => [
+                    'total' => $data['meta']['total'],
+                    'current_page' => $data['meta']['current_page'],
+                    'per_page' => $data['meta']['per_page'],
+                    'search' => $data['meta']['search'],
+                    'sort' => $data['meta']['sort'],
+                    'order' => $data['meta']['order'],
+                ],
+                'listUsersMenu' => $data['listUsersMenu'],
+                'permissions' => $data['get_Permission'],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve menu data: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 }

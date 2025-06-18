@@ -6,6 +6,7 @@ use App\Models\UsersMenu;
 use App\Traits\RepositoryTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class UsersMenuRepository
 {
@@ -162,14 +163,66 @@ class UsersMenuRepository
         return $data;
     }
 
+    /**
+     * Get menus with permission filtering
+     * Mengecek permission "Show" untuk setiap menu
+     */
     public function getMenus()
     {
-        return $this->model
-            ->with('children.children.children')
+        $menus = $this->model
+            ->with('children.children.children', 'permission')
             ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
             ->where('rel', 0)
             ->orderBy('urutan')
             ->get();
+
+        // Get current user role
+        $user = Auth::user();
+        if (!$user) {
+            return collect([]);
+        }
+
+        $role = $user->role;
+        if (!$role) {
+            return collect([]);
+        }
+
+        // Filter menus based on permission
+        $filteredMenus = $this->filterMenusByPermission($menus, $role);
+
+        return $filteredMenus;
+    }
+
+    /**
+     * Recursively filter menus based on permission
+     */
+    private function filterMenusByPermission($menus, $role)
+    {
+        return $menus->filter(function ($menu) use ($role) {
+            // Check if menu has permission requirement
+            if ($menu->permission) {
+                $permissionName = $menu->permission->name;
+                try {
+                    $hasPermission = $role->hasPermissionTo($permissionName);
+                    if (!$hasPermission) {
+                        return false;
+                    }
+                } catch (PermissionDoesNotExist $e) {
+                    // If permission doesn't exist, allow access
+                }
+            }
+
+            // If menu has children, filter them recursively
+            if ($menu->children && $menu->children->count() > 0) {
+                $filteredChildren = $this->filterMenusByPermission($menu->children, $role);
+                $menu->setRelation('children', $filteredChildren);
+                if ($filteredChildren->count() === 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        })->values();
     }
 
     public function deleteSelected(array $ids): void

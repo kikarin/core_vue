@@ -16,7 +16,7 @@ class CategoryPermissionSeeder extends Seeder
                 'permission' => 'CRUD',
             ],
             [
-                'name' => 'Users Menu',
+                'name' => 'Menu',
                 'permission' => 'CRUD',
             ],
             [
@@ -38,10 +38,6 @@ class CategoryPermissionSeeder extends Seeder
             ],
             [
                 'name' => 'Team Name',
-                'permission' => 'CRUD',
-            ],
-            [
-                'name' => 'Member',
                 'permission' => 'CRUD',
             ],
             [

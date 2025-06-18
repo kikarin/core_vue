@@ -6,11 +6,12 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import * as LucideIcons from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
 const mainNavItems = ref<NavItem[]>([]);
 const settingNavItems = ref<NavItem[]>([]);
+const isLoading = ref(false);
 
 // Mapping icon names to components
 const iconMap: Record<string, any> = {
@@ -40,46 +41,95 @@ const iconMap: Record<string, any> = {
 };
 
 const fetchMenus = async () => {
+    if (isLoading.value) return;
+    
     try {
+        isLoading.value = true;
         const response = await axios.get('/api/users-menu');
-        const menus = response.data;
+        
+        console.log('API Response:', response.data);
+        
+        // Handle different response formats
+        let menus = response.data;
+        
+        // If response has data property
+        if (menus.data && Array.isArray(menus.data)) {
+            menus = menus.data;
+        }
+        // If response has menus property
+        else if (menus.menus && Array.isArray(menus.menus)) {
+            menus = menus.menus;
+        }
+        // If response is not an array, wrap it or handle error
+        else if (!Array.isArray(menus)) {
+            console.error('Invalid menu data format:', menus);
+            // Set empty arrays if data is invalid
+            mainNavItems.value = [];
+            settingNavItems.value = [];
+            return;
+        }
 
         // Transform menu data to NavItem format
         const transformMenuToNavItem = (menu: any): NavItem => {
             const navItem: NavItem = {
-                title: menu.nama,
-                href: menu.url,
+                title: menu.nama || menu.name || 'Unknown',
+                href: menu.url || '#',
                 icon: menu.icon ? iconMap[menu.icon] : undefined,
             };
 
-            if (menu.children && menu.children.length > 0) {
+            if (menu.children && Array.isArray(menu.children) && menu.children.length > 0) {
                 navItem.children = menu.children.map(transformMenuToNavItem);
             }
 
             return navItem;
         };
 
-        // Split menus into main and settings
-        const mainMenus = menus.filter((menu: any) => menu.urutan <= 10);
-        const settingMenus = menus.filter((menu: any) => menu.urutan > 10);
+        // Split menus into main and settings based on urutan
+        const mainMenus = menus.filter((menu: any) => {
+            const urutan = menu.urutan || 0;
+            return urutan <= 10;
+        });
+        
+        const settingMenus = menus.filter((menu: any) => {
+            const urutan = menu.urutan || 0;
+            return urutan > 10;
+        });
 
-    mainNavItems.value = mainMenus.map(transformMenuToNavItem);
+        mainNavItems.value = mainMenus.map(transformMenuToNavItem);
         settingNavItems.value = settingMenus.map(transformMenuToNavItem);
 
         console.log('Main Menus:', mainNavItems.value);
         console.log('Setting Menus:', settingNavItems.value);
+        
     } catch (error) {
         console.error('Error fetching menus:', error);
+        
+        // Set empty arrays on error
+        mainNavItems.value = [];
+        settingNavItems.value = [];
+        
+        // You might want to show a notification to user here
+        // toast.error('Failed to load menu items');
+    } finally {
+        isLoading.value = false;
     }
 };
 
 // Refresh menu setiap 5 menit
 const refreshInterval = 5 * 60 * 1000; // 5 menit dalam milidetik
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
 onMounted(() => {
     fetchMenus();
     // Set interval untuk refresh menu
-    setInterval(fetchMenus, refreshInterval);
+    intervalId = setInterval(fetchMenus, refreshInterval);
+});
+
+// Cleanup interval on unmount
+onUnmounted(() => {
+    if (intervalId) {
+        clearInterval(intervalId);
+    }
 });
 </script>
 
@@ -90,7 +140,7 @@ onMounted(() => {
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="route('dashboard')">
-                        <AppLogo />
+                            <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -98,8 +148,33 @@ onMounted(() => {
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" section-title="Menu" section-id="main" />
-            <NavMain :items="settingNavItems" section-title="Settings" section-id="setting" />
+            <!-- Show loading state if needed -->
+            <div v-if="isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" 
+                 class="px-4 py-2 text-sm text-muted-foreground">
+                Loading menus...
+            </div>
+            
+            <!-- Main navigation -->
+            <NavMain 
+                v-if="mainNavItems.length > 0" 
+                :items="mainNavItems" 
+                section-title="Menu" 
+                section-id="main" 
+            />
+            
+            <!-- Settings navigation -->
+            <NavMain 
+                v-if="settingNavItems.length > 0" 
+                :items="settingNavItems" 
+                section-title="Settings" 
+                section-id="setting" 
+            />
+            
+            <!-- Empty state -->
+            <div v-if="!isLoading && mainNavItems.length === 0 && settingNavItems.length === 0" 
+                 class="px-4 py-2 text-sm text-muted-foreground">
+                No menu items available
+            </div>
         </SidebarContent>
 
         <SidebarFooter>

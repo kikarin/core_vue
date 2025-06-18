@@ -20,8 +20,14 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Menu API
-Route::get('/api/menus', [UsersMenuController::class, 'apiIndex']);
+// Menu API - This endpoint is used by sidebar and should be accessible to authenticated users
+Route::middleware(['auth', 'verified'])->group(function () {
+    // API endpoint for sidebar menu (with permission filtering)
+    Route::get('/api/users-menu', [UsersMenuController::class, 'getMenus'])->name('api.users-menu');
+    
+    // API endpoint for admin menu management (shows all menus)
+    Route::get('/api/menus', [UsersMenuController::class, 'apiIndex'])->name('api.menus');
+});
 
 // Users Routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -34,7 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/menu-permissions/menus', UsersMenuController::class)
         ->names('menus');
-    Route::get('/api/users-menu', [UsersMenuController::class, 'getMenus'])->middleware(['auth', 'verified']);
     Route::post('/menu-permissions/menus/destroy-selected', [UsersMenuController::class, 'destroy_selected'])->name('menu-permissions.menus.destroy-selected');
 });
 
@@ -94,4 +99,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
-
