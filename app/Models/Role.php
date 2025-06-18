@@ -23,10 +23,9 @@ class Role extends ModelsRole
 	const BG_DARK      = 'bg-dark';
 	const BG_LIGHT     = 'bg-light text-dark';
 
-	const INIT_PAGE_PROFILE        = 'profile';
-	const INIT_PAGE_PROFIL_SEKOLAH = 'profil-sekolah';
-	const INIT_PAGE_DASHBOARD      = 'dashboard';
-	const INIT_PAGE_USERS          = 'users';
+	const INIT_PAGE_PROFILE   = 'profile';
+	const INIT_PAGE_DASHBOARD = 'dashboard';
+	const INIT_PAGE_USERS     = 'users';
 
 	public function listBg(): array
 	{
@@ -45,10 +44,9 @@ class Role extends ModelsRole
 	public function listInitPage()
 	{
 		return [
-			self::INIT_PAGE_PROFILE        => self::INIT_PAGE_PROFILE,
-			self::INIT_PAGE_PROFIL_SEKOLAH => self::INIT_PAGE_PROFIL_SEKOLAH,
-			self::INIT_PAGE_DASHBOARD      => self::INIT_PAGE_DASHBOARD,
-			self::INIT_PAGE_USERS          => self::INIT_PAGE_USERS,
+			self::INIT_PAGE_PROFILE   => self::INIT_PAGE_PROFILE,
+			self::INIT_PAGE_DASHBOARD => self::INIT_PAGE_DASHBOARD,
+			self::INIT_PAGE_USERS     => self::INIT_PAGE_USERS,
 		];
 	}
 

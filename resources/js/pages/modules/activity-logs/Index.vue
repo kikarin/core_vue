@@ -12,7 +12,6 @@ const breadcrumbs = [
 ]
 
 const columns = [
-    { key: 'module', label: 'Module', searchable: true, orderable: true, visible: true },
     { key: 'event', label: 'Event', searchable: true, orderable: true, visible: true },
     { key: 'subject_type', label: 'Subject Type', searchable: true, orderable: true, visible: true },
     { key: 'subject_id', label: 'Subject ID', searchable: true, orderable: true, visible: true },

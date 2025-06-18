@@ -14,10 +14,8 @@ const breadcrumbs = [
 
 const columns = [
     { key: 'name', label: 'Name', searchable: true, orderable: true, visible: true },
-    { key: 'bg', label: 'BG', searchable: false, orderable: false, visible: true },
     { key: 'init_page_login', label: 'Default Page', searchable: true, orderable: true, visible: true },
     { key: 'is_allow_login', label: 'Can Login', searchable: false, orderable: true, visible: true },
-    { key: 'is_vertical_menu', label: 'Menu Type', searchable: false, orderable: true, visible: true },
 ]
 
 const selected = ref<number[]>([])

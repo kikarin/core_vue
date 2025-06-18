@@ -103,11 +103,11 @@ class UsersMenuRepository
             $order = request('order', 'asc');
             // Mapping nama kolom frontend ke nama kolom database
             $sortMapping = [
-                'name' => 'nama',
-                'code' => 'kode',
-                'url' => 'url',
+                'name'   => 'nama',
+                'code'   => 'kode',
+                'url'    => 'url',
                 'parent' => 'rel',
-                'order' => 'urutan'
+                'order'  => 'urutan'
             ];
 
             $sortColumn = $sortMapping[request('sort')] ?? 'urutan';
@@ -126,28 +126,28 @@ class UsersMenuRepository
         // Transform data
         $transformedMenus = $menus->getCollection()->map(function ($menu) {
             return [
-                'id' => $menu->id,
-                'name' => $menu->nama,
-                'code' => $menu->kode,
-                'icon' => $menu->icon,
-                'parent' => optional($menu->rel_users_menu)->nama ?? '-',
+                'id'         => $menu->id,
+                'name'       => $menu->nama,
+                'code'       => $menu->kode,
+                'icon'       => $menu->icon,
+                'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
                 'permission' => optional($menu->permission)->name ?? '-',
-                'url' => $menu->url,
-                'order' => $menu->urutan,
+                'url'        => $menu->url,
+                'order'      => $menu->urutan,
             ];
         });
 
         $data += [
-            'listUsersMenu' => $this->listDropdown(),
+            'listUsersMenu'  => $this->listDropdown(),
             'get_Permission' => $this->permissionRepository->getAll()->pluck("name", "id"),
-            'menus' => $transformedMenus,
+            'menus'          => $transformedMenus,
             'meta' => [
-                'total' => $menus->total(),
+                'total'        => $menus->total(),
                 'current_page' => $menus->currentPage(),
-                'per_page' => $menus->perPage(),
-                'search' => request('search', ''),
-                'sort' => request('sort', ''),
-                'order' => request('order', 'asc'),
+                'per_page'     => $menus->perPage(),
+                'search'       => request('search', ''),
+                'sort'         => request('sort', ''),
+                'order'        => request('order', 'asc'),
             ],
         ];
 
@@ -169,28 +169,27 @@ class UsersMenuRepository
      */
     public function getMenus()
     {
-        $menus = $this->model
-            ->with('children.children.children', 'permission')
-            ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
-            ->where('rel', 0)
-            ->orderBy('urutan')
-            ->get();
-
-        // Get current user role
         $user = Auth::user();
-        if (!$user) {
+        if (!$user || !$user->role) {
             return collect([]);
         }
 
-        $role = $user->role;
-        if (!$role) {
-            return collect([]);
-        }
+        $roleId = $user->role->id;
 
-        // Filter menus based on permission
-        $filteredMenus = $this->filterMenusByPermission($menus, $role);
+        $cacheKey = "menus_for_role_{$roleId}";
 
-        return $filteredMenus;
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($roleId) {
+            $menus = $this->model
+                ->with('children.children.children', 'permission')
+                ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
+                ->where('rel', 0)
+                ->orderBy('urutan')
+                ->get();
+
+            $role = Auth::user()->role;
+
+            return $this->filterMenusByPermission($menus, $role);
+        });
     }
 
     /**
