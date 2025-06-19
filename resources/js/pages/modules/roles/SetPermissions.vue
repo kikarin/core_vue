@@ -36,11 +36,14 @@ const savePermissions = () => {
         },
         {
             url: `/menu-permissions/roles/set-permissions/${props.item.id}`,
-            mode: 'create', // tetap pakai 'create' karena router.post
+            mode: 'create',
             successMessage: 'Permission berhasil disimpan. Silakan kembali untuk melihat perubahan.',
             errorMessage: 'Gagal menyimpan permission.',
             onSuccess: () => {
-                success.value = true;
+                router.visit(`/menu-permissions/roles/set-permissions/${props.item.id}`, {
+                    only: ['item', 'permissionGroups', 'selectedPermissions'], 
+                    preserveScroll: true,
+                });
             },
         },
     );

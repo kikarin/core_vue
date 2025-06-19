@@ -38,6 +38,29 @@ class PermissionRepository
 
     public function customCreateEdit($data, $item = null)
     {
+        // Jika POST dan is_crud == 'ya', generate CRUD
+        if (request()->isMethod('post') && request('is_crud') === 'ya') {
+            $baseName = request('name');
+            $categoryId = request('category_permission_id');
+            $crudList = ['Show', 'Detail', 'Add', 'Edit', 'Delete'];
+            foreach ($crudList as $crud) {
+                Permission::create([
+                    'name' => $baseName . ' ' . $crud,
+                    'category_permission_id' => $categoryId,
+                    'guard_name' => 'web',
+                ]);
+            }
+            return redirect()->route('permissions.index')->with('success', 'Berhasil generate permission CRUD!');
+        }
+        // Jika tidak, buat satu permission saja (POST)
+        if (request()->isMethod('post')) {
+            Permission::create([
+                'name' => request('name'),
+                'category_permission_id' => request('category_permission_id'),
+                'guard_name' => 'web',
+            ]);
+            return redirect()->route('permissions.index')->with('success', 'Berhasil menambah permission!');
+        }
         $data += [
             'category_permission_id' => request()->input('category_permission_id'),
             'get_CategoryPermission' => $this->categoryPermissionRepository->getAll_OrderSequence()->pluck('name', 'id'),

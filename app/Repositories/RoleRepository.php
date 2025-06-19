@@ -136,4 +136,13 @@ class RoleRepository
             with(['created_by_user', 'updated_by_user'])
             ->find($id);
     }
+
+    /**
+     * Validasi request role (create/edit) pakai rules dari RoleRequest
+     */
+    public function validateRoleRequest($request)
+    {
+        $rules = method_exists($request, 'rules') ? $request->rules() : [];
+        return $request->validate($rules);
+    }
 }

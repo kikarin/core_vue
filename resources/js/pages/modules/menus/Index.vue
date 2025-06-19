@@ -28,9 +28,8 @@ const columns = [
 ];
 
 const selected = ref<number[]>([]);
-
+const limit = ref(-1); // <= aktifkan non-paginated mode
 const pageIndex = ref();
-
 const { toast } = useToast();
 
 const actions = (row: any) => [
@@ -94,5 +93,7 @@ const deleteMenu = async (row: any) => {
         ref="pageIndex"
         :on-toast="toast"
         :on-delete-row-confirm="deleteMenu"
+        :hide-pagination="true"
+        :limit="limit"
     />
 </template>

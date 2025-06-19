@@ -14,6 +14,20 @@ type SaveOptions = {
 export function useHandleFormSave() {
     const { toast } = useToast();
 
+    const handleError = (errors: Record<string, any>, fallbackMessage: string) => {
+        if (!errors || Object.keys(errors).length === 0) {
+            toast({ title: fallbackMessage, variant: 'destructive' });
+            return;
+        }
+
+        Object.entries(errors).forEach(([field, message]) => {
+            toast({
+                title: `${field}: ${message}`,
+                variant: 'destructive',
+            });
+        });
+    };
+
     const save = (data: Record<string, any>, options: SaveOptions) => {
         const {
             url,
@@ -30,32 +44,16 @@ export function useHandleFormSave() {
                 ? router.post(url, data, {
                       onSuccess: () => {
                           toast({ title: successMessage, variant: 'success' });
-                          if (onSuccess) {
-                              onSuccess();
-                          } else {
-                              router.visit(redirectUrl);
-                          }
+                          onSuccess ? onSuccess() : router.visit(redirectUrl);
                       },
-                      onError: (errors) => {
-                          console.error('Create Error:', errors);
-                          toast({ title: errorMessage, variant: 'destructive' });
-                      },
+                      onError: (errors) => handleError(errors, errorMessage),
                   })
                 : router.put(`${url}/${id}`, data, {
                       onSuccess: () => {
                           toast({ title: successMessage, variant: 'success' });
-                          if (onSuccess) {
-                              onSuccess();
-                          } else {
-                              router.visit(redirectUrl);
-                          }
+                          onSuccess ? onSuccess() : router.visit(redirectUrl);
                       },
-                      onError: (errors) => {
-                          for (const key in errors) {
-                              console.error(`Error on ${key}:`, errors[key]);
-                          }
-                          toast({ title: errorMessage, variant: 'destructive' });
-                      },
+                      onError: (errors) => handleError(errors, errorMessage),
                   });
 
         return request;

@@ -35,4 +35,17 @@ class CategoryPermissionController extends Controller implements HasMiddleware
             new Middleware("can:$permission Delete", only: ['destroy', 'destroy_selected']),
         ];
     }
+
+    public function store(CategoryPermissionRequest $request)
+    {
+        $data = $this->repository->validateCategoryRequest($request);
+        $this->repository->create($data);
+        return redirect()->route('permissions.index')->with('success', 'Category Permission created successfully');
+    }
+    public function update(CategoryPermissionRequest $request, $id)
+    {
+        $data = $this->repository->validateCategoryRequest($request);
+        $this->repository->update($id, $data);
+        return redirect()->route('permissions.index')->with('success', 'Category Permission updated successfully');
+    }
 }

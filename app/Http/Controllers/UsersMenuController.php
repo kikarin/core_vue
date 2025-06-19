@@ -95,4 +95,18 @@ class UsersMenuController extends Controller implements HasMiddleware
         }
     }
 
+        public function store(UsersMenuRequest $request)
+    {
+        $data = $this->repository->validateMenuRequest($request);
+        $this->repository->create($data);
+        return redirect()->route('menus.index')->with('success', 'Menu berhasil ditambahkan!');
+    }
+
+    public function update(UsersMenuRequest $request, $id)
+    {
+        $data = $this->repository->validateMenuRequest($request);
+        $menu = $this->repository->getById($id);
+        $menu->update($data);
+        return redirect()->route('menus.index')->with('success', 'Menu berhasil diperbarui!');
+    }
 }

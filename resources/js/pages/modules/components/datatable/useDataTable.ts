@@ -4,7 +4,9 @@ import type { DataTableProps } from './types';
 export function useDataTable(props: DataTableProps, emit: (event: string, ...args: any[]) => void) {
     const visibleColumns = computed(() => props.columns.filter((col) => col.visible !== false));
 
-    const totalPages = computed(() => Math.ceil(props.total / props.perPage));
+    const totalPages = computed(() => {
+        return props.hidePagination ? 1 : Math.ceil(props.total / props.perPage);
+    });
 
     const getPageNumbers = () => {
         const pages = [];

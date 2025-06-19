@@ -27,8 +27,6 @@ class PermissionRequest extends FormRequest
         ];
         if ($this->isMethod('patch') || $this->isMethod('put')) {
             $rules['id'] = 'required';
-        } else {
-            $rules['is_crud'] = 'required';
         }
         return $rules;
     }

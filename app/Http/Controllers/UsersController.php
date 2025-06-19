@@ -9,6 +9,7 @@ use App\Traits\BaseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Models\User;
 
 class UsersController extends Controller implements HasMiddleware
 {
@@ -62,4 +63,24 @@ class UsersController extends Controller implements HasMiddleware
         ]);
     }
 
+    public function store(UsersRequest $request)
+    {
+        $data = $this->repository->validateUserRequest($request);
+        $user = User::create($data);
+        if (isset($data['role_id'])) {
+            $user->roles()->sync($data['role_id']);
+        }
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan!');
+    }
+
+    public function update(UsersRequest $request, $id)
+    {
+        $data = $this->repository->validateUserRequest($request);
+        $user = User::findOrFail($id);
+        $user->update($data);
+        if (isset($data['role_id'])) {
+            $user->roles()->sync($data['role_id']);
+        }
+        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui!');
+    }
 }

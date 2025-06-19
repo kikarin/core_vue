@@ -86,4 +86,13 @@ class PermissionController extends Controller implements HasMiddleware
         $data = $this->repository->customShow($data, $item);
         return inertia('modules/permissions/PermissionDetail', $data);
     }
+
+    public function store(PermissionRequest $request)
+    {
+        return $this->repository->customCreateEdit([], null);
+    }
+    public function update(PermissionRequest $request, $id)
+    {
+        return $this->repository->customCreateEdit([], $id);
+    }
 }

@@ -22,4 +22,5 @@ export type DataTableProps = {
     sort: Sort;
     page: number;
     perPage: number;
+    hidePagination?: boolean;
 };

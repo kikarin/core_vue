@@ -1,4 +1,3 @@
-<!-- components/DataTable.vue -->
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +21,7 @@ const props = defineProps({
     sort: { type: Object as PropType<Sort>, default: () => ({ key: '', order: 'asc' }) },
     page: { type: Number, default: 1 },
     perPage: { type: Number, default: 10 },
+    hidePagination: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['update:selected', 'update:search', 'update:sort', 'update:page', 'update:perPage', 'deleted']);
@@ -31,9 +31,10 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
 
 <template>
     <div class="space-y-4">
-        <!-- Search and Length -->
+        <!-- Search dan Length -->
         <div class="flex flex-col flex-wrap items-center justify-center gap-4 text-center sm:flex-row sm:justify-between">
-            <div class="flex items-center gap-2">
+            <!-- Length -->
+            <div v-if="!props.hidePagination" class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">Show</span>
                 <Select :model-value="props.perPage" @update:model-value="(val) => emit('update:perPage', val === 'all' ? -1 : Number(val))">
                     <SelectTrigger class="w-24">
@@ -48,14 +49,14 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
                         <SelectItem value="all">All</SelectItem>
                     </SelectContent>
                 </Select>
-
                 <span class="text-muted-foreground text-sm">entries</span>
             </div>
+
+            <!-- Search (selalu tampil di kanan) -->
             <div class="w-full sm:w-64">
                 <Input :model-value="props.search" @update:model-value="(val) => emit('update:search', val)" placeholder="Search..." class="w-full" />
             </div>
         </div>
-
         <!-- Table -->
         <div class="rounded-md border">
             <div class="overflow-x-auto">
@@ -147,16 +148,15 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
                     </TableBody>
                 </Table>
             </div>
-
             <!-- Pagination Info -->
             <div
+                v-if="!props.hidePagination"
                 class="text-muted-foreground flex flex-col items-center justify-center gap-2 border-t p-4 text-center text-sm md:flex-row md:justify-between"
             >
                 <span>
                     Showing {{ (props.page - 1) * props.perPage + 1 }} to {{ Math.min(props.page * props.perPage, props.total) }} of
                     {{ props.total }} entries
                 </span>
-
                 <div class="flex flex-wrap items-center justify-center gap-2">
                     <Button size="sm" :disabled="props.page === 1" @click="emit('update:page', props.page - 1)" class="bg-muted/40 text-foreground">
                         Previous

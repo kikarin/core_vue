@@ -99,11 +99,6 @@ const formInputs = [
 ];
 
 const handleSave = (form: any) => {
-    if (!Array.isArray(form.role_id) || form.role_id.length === 0) {
-        alert('Role harus dipilih minimal 1');
-        return;
-    }
-
     const formData: Record<string, any> = {
         name: form.name,
         email: form.email,

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\UsersRequest;
+use App\Repositories\RoleRepository;
+use App\Repositories\UsersRoleRepository;
 
 class UsersRepository
 {
@@ -16,12 +19,14 @@ class UsersRepository
     protected $model;
     protected $usersRoleRepository;
     protected $roleRepository;
+    protected $request;
 
     public function __construct(User $model, RoleRepository $roleRepository, UsersRoleRepository $usersRoleRepository)
     {
         $this->model               = $model;
         $this->roleRepository      = $roleRepository;
         $this->usersRoleRepository = $usersRoleRepository;
+        $this->request             = UsersRequest::createFromBase(request());
 
         $this->with = ['users_role', 'role', 'created_by_user', 'updated_by_user'];
     }
@@ -276,5 +281,15 @@ class UsersRepository
         return \Inertia\Inertia::render('modules/users/Show', [
             'item' => $item,
         ]);
+    }
+
+    /**
+     * Validasi request user (create/edit) pakai rules & messages dari UsersRequest
+     */
+    public function validateUserRequest($request)
+    {
+        $rules = method_exists($request, 'rules') ? $request->rules() : [];
+        $messages = method_exists($request, 'messages') ? $request->messages() : [];
+        return $request->validate($rules, $messages);
     }
 }

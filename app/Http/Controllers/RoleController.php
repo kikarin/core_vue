@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Models\Permission;
+use App\Models\Role;
 
 class RoleController extends Controller implements HasMiddleware
 {
@@ -91,5 +92,20 @@ class RoleController extends Controller implements HasMiddleware
                 'order'        => $data['meta']['order'],
             ],
         ]);
+    }
+
+    public function store(RoleRequest $request)
+    {
+        $data = $this->repository->validateRoleRequest($request);
+        Role::create($data);
+        return redirect()->route('roles.index')->with('success', 'Role berhasil ditambahkan!');
+    }
+
+    public function update(RoleRequest $request, $id)
+    {
+        $data = $this->repository->validateRoleRequest($request);
+        $role = Role::findOrFail($id);
+        $role->update($data);
+        return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui!');
     }
 }

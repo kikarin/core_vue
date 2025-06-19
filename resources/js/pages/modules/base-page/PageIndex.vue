@@ -7,7 +7,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import DataTable from '../components/DataTable.vue';
 import HeaderActions from './HeaderActions.vue';
 
@@ -22,14 +22,16 @@ const limit = ref(10);
 const search = ref('');
 const sort = ref<{ key: string; order: 'asc' | 'desc' }>({ key: '', order: 'asc' });
 
+const isAllMode = computed(() => limit.value === -1);
+
 const fetchData = async () => {
     loading.value = true;
     try {
         const response = await axios.get(props.apiEndpoint, {
             params: {
                 search: search.value,
-                page: page.value > 1 ? page.value - 1 : 0,
-                per_page: limit.value,
+                page: limit.value === -1 ? undefined : (page.value > 1 ? page.value - 1 : 0),
+                per_page: props.limit !== undefined ? props.limit : limit.value,
                 sort: sort.value.key,
                 order: sort.value.order,
             },
@@ -70,6 +72,8 @@ const props = defineProps<{
     onDeleteSelected?: () => void;
     apiEndpoint: string;
     onDeleteRowConfirm?: (row: any) => Promise<void>;
+    hidePagination?: boolean;
+    limit?: number;
 }>();
 
 const emit = defineEmits(['search', 'update:selected']);
@@ -176,13 +180,14 @@ defineExpose({ fetchData });
                 :search="search"
                 :sort="sort"
                 :page="page"
-                :per-page="limit"
+                :per-page="props.limit !== undefined ? props.limit : limit"
                 @update:search="(val) => handleSearch({ search: val })"
                 @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
                 @update:page="(val) => handleSearch({ page: val })"
                 @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })"
                 @deleted="fetchData()"
                 :on-delete-row="handleDeleteRow"
+                :hide-pagination="props.hidePagination"
             />
 
             <Dialog v-model:open="showConfirm">

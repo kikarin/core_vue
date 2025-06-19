@@ -18,16 +18,16 @@ class ActivityLogController extends Controller implements HasMiddleware
     public function __construct(ActivityLogRepository $repository, Request $request)
     {
         $this->repository = $repository;
-        $this->request    = $request;
-        $this->with       = ['causer', 'causer.role'];
+        $this->request = $request;
+        $this->with = ['causer', 'causer.role'];
         $this->initialize();
-        $this->commonData['kode_first_menu']  = 'USERS-MANAGEMENT';
+        $this->commonData['kode_first_menu'] = 'USERS-MANAGEMENT';
         $this->commonData['kode_second_menu'] = $this->kode_menu;
     }
 
     public static function middleware(): array
     {
-        $className  = class_basename(__CLASS__);
+        $className = class_basename(__CLASS__);
         $permission = str_replace('Controller', '', $className);
         $permission = trim(implode(' ', preg_split('/(?=[A-Z])/', $permission)));
         return [
@@ -43,12 +43,12 @@ class ActivityLogController extends Controller implements HasMiddleware
         return response()->json([
             'data' => $data['logs'],
             'meta' => [
-                'total'        => $data['meta']['total'],
+                'total' => $data['meta']['total'],
                 'current_page' => $data['meta']['current_page'],
-                'per_page'     => $data['meta']['per_page'],
-                'search'       => $data['meta']['search'],
-                'sort'         => $data['meta']['sort'],
-                'order'        => $data['meta']['order'],
+                'per_page' => $data['meta']['per_page'],
+                'search' => $data['meta']['search'],
+                'sort' => $data['meta']['sort'],
+                'order' => $data['meta']['order'],
             ],
         ]);
     }
@@ -62,23 +62,23 @@ class ActivityLogController extends Controller implements HasMiddleware
 
         // Format data sesuai kebutuhan
         $fields = [
-            [ 'label' => 'Module', 'value' => $item->log_name ?? '-' ],
-            [ 'label' => 'Event', 'value' => $item->event ?? '-' ],
-            [ 'label' => 'Subject Type', 'value' => $item->subject_type ? class_basename($item->subject_type) : '-' ],
-            [ 'label' => 'Subject ID', 'value' => $item->subject_id ?? '-' ],
-            [ 'label' => 'Data', 'value' => $this->formatActivityData($item) ],
+            ['label' => 'Module', 'value' => $item->log_name ?? '-'],
+            ['label' => 'Event', 'value' => $item->event ?? '-'],
+            ['label' => 'Subject Type', 'value' => $item->subject_type ? class_basename($item->subject_type) : '-'],
+            ['label' => 'Subject ID', 'value' => $item->subject_id ?? '-'],
+            ['label' => 'Data', 'value' => $this->formatActivityData($item)],
         ];
 
         $actionFields = [
-            [ 'label' => 'Created At', 'value' => $item->created_at ? date('Y-m-d H:i:s', strtotime($item->created_at)) : '-' ],
-            [ 'label' => 'Created By', 'value' => optional($item->causer)->name ?? '-' ],
-            [ 'label' => 'Role', 'value' => optional(optional($item->causer)->role)->name ?? '-' ],
+            ['label' => 'Created At', 'value' => $item->created_at ? date('Y-m-d H:i:s', strtotime($item->created_at)) : '-'],
+            ['label' => 'Created By', 'value' => optional($item->causer)->name ?? '-'],
+            ['label' => 'Role', 'value' => optional(optional($item->causer)->role)->name ?? '-'],
         ];
 
         return inertia('modules/activity-logs/Show', [
-            'fields'       => $fields,
+            'fields' => $fields,
             'actionFields' => $actionFields,
-            'backUrl'      => '/menu-permissions/logs',
+            'backUrl' => '/menu-permissions/logs',
         ]);
     }
 
@@ -89,27 +89,14 @@ class ActivityLogController extends Controller implements HasMiddleware
     {
         $data = [];
 
-        // Properties data
-        if ($item->properties && is_array($item->properties)) {
-            if (isset($item->properties['attributes'])) {
-                $data['attributes'] = $item->properties['attributes'];
-            }
-            if (isset($item->properties['old'])) {
-                $data['old'] = $item->properties['old'];
-            }
+        if ($item->properties && $item->properties instanceof \Illuminate\Support\Collection) {
+            $data = $item->properties->toArray(); // ← fix di sini
         }
 
-        // Description
-        if ($item->description) {
-            $data['description'] = $item->description;
-        }
-
-        // Jika data kosong, tampilkan array kosong
         if (empty($data)) {
             return '[]';
         }
 
-        // Format sebagai JSON yang readable
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     }
 

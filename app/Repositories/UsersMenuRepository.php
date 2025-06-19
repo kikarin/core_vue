@@ -101,7 +101,6 @@ class UsersMenuRepository
         // Apply sorting
         if (request('sort')) {
             $order = request('order', 'asc');
-            // Mapping nama kolom frontend ke nama kolom database
             $sortMapping = [
                 'name'   => 'nama',
                 'code'   => 'kode',
@@ -109,21 +108,49 @@ class UsersMenuRepository
                 'parent' => 'rel',
                 'order'  => 'urutan',
             ];
-
             $sortColumn = $sortMapping[request('sort')] ?? 'urutan';
             $query->orderBy($sortColumn, $order);
         } else {
-            $query->orderBy('urutan'); // default sort
+            $query->orderBy('urutan');
         }
 
-        // Apply pagination
-        $perPage        = (int) request('per_page', 10);
-        $page           = (int) request('page', 0);
+        $perPage = (int) request('per_page', 10);
+        $page = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
 
-        $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
+        // Jika per_page == -1, ambil semua data tanpa paginate
+        if ($perPage === -1) {
+            $menus = $query->get();
+            $transformedMenus = $menus->map(function ($menu) {
+                return [
+                    'id'         => $menu->id,
+                    'name'       => $menu->nama,
+                    'code'       => $menu->kode,
+                    'icon'       => $menu->icon,
+                    'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
+                    'permission' => optional($menu->permission)->name ?? '-',
+                    'url'        => $menu->url,
+                    'order'      => $menu->urutan,
+                ];
+            });
+            $data += [
+                'listUsersMenu'  => $this->listDropdown(),
+                'get_Permission' => $this->permissionRepository->getAll()->pluck('name', 'id'),
+                'menus'          => $transformedMenus,
+                'meta'           => [
+                    'total'        => $menus->count(),
+                    'current_page' => 1,
+                    'per_page'     => $menus->count(),
+                    'search'       => request('search', ''),
+                    'sort'         => request('sort', ''),
+                    'order'        => request('order', 'asc'),
+                ],
+            ];
+            return $data;
+        }
 
-        // Transform data
+        // Default: paginate
+        $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
         $transformedMenus = $menus->getCollection()->map(function ($menu) {
             return [
                 'id'         => $menu->id,
@@ -136,7 +163,6 @@ class UsersMenuRepository
                 'order'      => $menu->urutan,
             ];
         });
-
         $data += [
             'listUsersMenu'  => $this->listDropdown(),
             'get_Permission' => $this->permissionRepository->getAll()->pluck('name', 'id'),
@@ -150,7 +176,6 @@ class UsersMenuRepository
                 'order'        => request('order', 'asc'),
             ],
         ];
-
         return $data;
     }
 
@@ -174,13 +199,14 @@ class UsersMenuRepository
             return collect([]);
         }
 
-        $roleId = $user->role->id;
+        $role = $user->role;
+        $roleId = $role->id;
 
-        // Cache key berdasarkan role agar tiap role punya cache menu sendiri
-        $cacheKey = "menus_for_role_{$roleId}";
+        // Tambahkan versioning (timestamp) biar cache otomatis invalid saat CRUD
+        $version = Cache::get("menus_version", now()->timestamp);
+        $cacheKey = "menus_for_role_{$roleId}_v_{$version}";
 
-        // Cache selama 30 menit
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($roleId) {
+        return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($role) {
             $menus = $this->model
                 ->with('children.children.children', 'permission')
                 ->select('id', 'nama', 'kode', 'icon', 'rel', 'url', 'urutan', 'permission_id')
@@ -188,13 +214,15 @@ class UsersMenuRepository
                 ->orderBy('urutan')
                 ->get();
 
-            // Ambil kembali role user (jika kamu butuh model lengkap)
-            $role = Auth::user()->role;
-
-            // Filter menu berdasarkan permission
             return $this->filterMenusByPermission($menus, $role);
         });
     }
+
+    public function invalidateMenusCache()
+    {
+        Cache::put('menus_version', now()->timestamp);
+    }
+
 
     /**
      * Recursively filter menus based on permission
@@ -281,6 +309,8 @@ class UsersMenuRepository
         // Update cache dengan data terbaru
         $this->updateCache();
 
+        $this->invalidateMenusCache();
+
         return $model;
     }
 
@@ -312,5 +342,13 @@ class UsersMenuRepository
             $this->updateCache();
         }
         return $record;
+    }
+    /**
+     * Validasi request untuk create/edit
+     */
+        public function validateMenuRequest($request)
+    {
+        $rules = method_exists($request, 'rules') ? $request->rules() : [];
+        return $request->validate($rules);
     }
 }
