@@ -9,6 +9,7 @@ use App\Traits\BaseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Models\UsersMenu;
 
 class UsersMenuController extends Controller implements HasMiddleware
 {
@@ -71,21 +72,72 @@ class UsersMenuController extends Controller implements HasMiddleware
     public function apiIndex()
     {
         try {
-            $data = $this->repository->customIndex([]);
+            $query = UsersMenu::with(['rel_users_menu', 'permission'])
+                ->orderBy('urutan')
+                ->get();
+
+            // Susun data secara hierarki
+            $menus = [];
+            $counter = 1;
+
+            // Ambil menu utama (rel = 0) terlebih dahulu
+            foreach ($query->where('rel', 0)->sortBy('urutan') as $menu) {
+                $prefix = '';
+                $menus[] = [
+                    'no'         => $counter++,
+                    'id'         => $menu->id,
+                    'name'       => $prefix . $menu->nama,
+                    'code'       => $menu->kode,
+                    'icon'       => $menu->icon,
+                    'url'        => $menu->url,
+                    'order'      => $menu->urutan,
+                    'permission' => optional($menu->permission)->name ?? '-',
+                ];
+
+                // Level 1 children
+                foreach ($query->where('rel', $menu->id)->sortBy('urutan') as $child) {
+                    $prefix = '===';
+                    $menus[] = [
+                        'no'         => $counter++,
+                        'id'         => $child->id,
+                        'name'       => $prefix . $child->nama,
+                        'code'       => $child->kode,
+                        'icon'       => $child->icon,
+                        'url'        => $child->url,
+                        'order'      => $child->urutan,
+                        'permission' => optional($child->permission)->name ?? '-',
+                    ];
+
+                    // Level 2 children
+                    foreach ($query->where('rel', $child->id)->sortBy('urutan') as $grandChild) {
+                        $prefix = '======';
+                        $menus[] = [
+                            'no'         => $counter++,
+                            'id'         => $grandChild->id,
+                            'name'       => $prefix . $grandChild->nama,
+                            'code'       => $grandChild->kode,
+                            'icon'       => $grandChild->icon,
+                            'url'        => $grandChild->url,
+                            'order'      => $grandChild->urutan,
+                            'permission' => optional($grandChild->permission)->name ?? '-',
+                        ];
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
-                'data'    => $data['menus'],
+                'data'    => $menus,
                 'meta'    => [
-                    'total'        => $data['meta']['total'],
-                    'current_page' => $data['meta']['current_page'],
-                    'per_page'     => $data['meta']['per_page'],
-                    'search'       => $data['meta']['search'],
-                    'sort'         => $data['meta']['sort'],
-                    'order'        => $data['meta']['order'],
+                    'total'        => count($menus),
+                    'current_page' => 1,
+                    'per_page'     => count($menus),
+                    'search'       => request('search', ''),
+                    'sort'         => request('sort', ''),
+                    'order'        => request('order', 'asc'),
                 ],
-                'listUsersMenu' => $data['listUsersMenu'],
-                'permissions'   => $data['get_Permission'],
+                'listUsersMenu' => $this->repository->listDropdown(),
+                'permissions'   => $this->permissionRepository->getAll()->pluck('name', 'id'),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -95,7 +147,7 @@ class UsersMenuController extends Controller implements HasMiddleware
         }
     }
 
-        public function store(UsersMenuRequest $request)
+    public function store(UsersMenuRequest $request)
     {
         $data = $this->repository->validateMenuRequest($request);
         $this->repository->create($data);

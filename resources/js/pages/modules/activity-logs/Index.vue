@@ -38,19 +38,32 @@ const actions = (row: any) => [
 ];
 
 const deleteSelected = async () => {
-    if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
-    try {
-        await axios.post('/menu-permissions/logs/destroy-selected', {
-            ids: selected.value,
-        });
-        selected.value = [];
-        pageIndex.value.fetchData();
-        toast({ title: 'Data berhasil dihapus', variant: 'success' });
-    } catch (error) {
-        console.error('Gagal menghapus data:', error);
-        toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' });
-    }
-};
+  if (!selected.value.length) {
+    return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
+  }
+
+  try {
+    const response = await axios.post('/menu-permissions/logs/destroy-selected', {
+      ids: selected.value,
+    })
+
+    selected.value = []
+    pageIndex.value.fetchData()
+
+    toast({
+      title: response.data?.message,
+      variant: 'success',
+    })
+  } catch (error: any) {
+    console.error('Gagal menghapus data:', error)
+
+    const message = error.response?.data?.message
+    toast({
+      title: message,
+      variant: 'destructive',
+    })
+  }
+}
 
 const deleteLog = async (row: any) => {
     await router.delete(`/menu-permissions/logs/${row.id}`, {
@@ -72,6 +85,7 @@ const deleteLog = async (row: any) => {
         :columns="columns"
         :actions="actions"
         api-endpoint="/api/activity-logs"
+        create-url="/menu-permissions/logs/create"
         ref="pageIndex"
         :selected="selected"
         @update:selected="(val) => (selected = val)"

@@ -42,19 +42,33 @@ const actions = (row: any) => [
 ];
 
 const deleteSelected = async () => {
-    if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
-    try {
-        await axios.post('/menu-permissions/roles/destroy-selected', {
-            ids: selected.value,
-        });
-        selected.value = [];
-        pageIndex.value.fetchData();
-        toast({ title: 'Data berhasil dihapus', variant: 'success' });
-    } catch (error) {
-        console.error('Gagal menghapus data:', error);
-        toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' });
+    if (!selected.value.length) {
+        return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
     }
-};
+
+    try {
+        const response = await axios.post('/menu-permissions/roles/destroy-selected', {
+            ids: selected.value,
+        })
+
+        selected.value = []
+        pageIndex.value.fetchData()
+
+        toast({
+            title: response.data?.message,
+            variant: 'success',
+        })
+    } catch (error: any) {
+        console.error('Gagal menghapus data:', error)
+
+        const message = error.response?.data?.message
+        toast({
+            title: message,
+            variant: 'destructive',
+        })
+    }
+}
+
 
 const deleteRole = async (row: any) => {
     await router.delete(`/menu-permissions/roles/${row.id}`, {
@@ -70,18 +84,8 @@ const deleteRole = async (row: any) => {
 </script>
 
 <template>
-    <PageIndex
-        title="Roles"
-        :breadcrumbs="breadcrumbs"
-        :columns="columns"
-        :create-url="'/menu-permissions/roles/create'"
-        :actions="actions"
-        :selected="selected"
-        @update:selected="(val) => (selected = val)"
-        :on-delete-selected="deleteSelected"
-        api-endpoint="/api/roles"
-        ref="pageIndex"
-        :on-toast="toast"
-        :on-delete-row-confirm="deleteRole"
-    />
+    <PageIndex title="Roles" :breadcrumbs="breadcrumbs" :columns="columns"
+        :create-url="'/menu-permissions/roles/create'" :actions="actions" :selected="selected"
+        @update:selected="(val) => (selected = val)" :on-delete-selected="deleteSelected" api-endpoint="/api/roles"
+        ref="pageIndex" :on-toast="toast" :on-delete-row-confirm="deleteRole" />
 </template>

@@ -11,20 +11,53 @@ const breadcrumbs = [
 ];
 
 const columns = [
-    { key: 'name', label: 'Name', searchable: true, orderable: true, visible: true },
-    { key: 'code', label: 'Code', searchable: true, orderable: true, visible: true },
-    { key: 'icon', label: 'Icon', searchable: false, orderable: false, visible: true },
     {
-        key: 'parent',
-        label: 'Parent',
+        key: 'no',
+        label: 'No',
         searchable: false,
-        orderable: true,
+        orderable: false,
+        visible: true,
+        width: '50px'
+    },
+    {
+        key: 'name',
+        label: 'Nama',
+        searchable: true,
+        orderable: false,
         visible: true,
         format: (row: any) => {
-            return row.parent === '-' ? 'Menu Utama' : row.parent;
-        },
+            return `<span>${row.name}</span>`;
+        }
     },
-    { key: 'url', label: 'URL', searchable: true, orderable: true, visible: true },
+    {
+        key: 'code',
+        label: 'Kode',
+        searchable: true,
+        orderable: false,
+        visible: true
+    },
+    {
+        key: 'order',
+        label: 'Urutan',
+        searchable: false,
+        orderable: false,
+        visible: true,
+        width: '80px'
+    },
+    {
+        key: 'url',
+        label: 'URL',
+        searchable: true,
+        orderable: false,
+        visible: true
+    },
+    {
+        key: 'permission',
+        label: 'Permission',
+        searchable: true,
+        orderable: false,
+        visible: true
+    }
 ];
 
 const selected = ref<number[]>([]);
@@ -52,19 +85,33 @@ const actions = (row: any) => [
 ];
 
 const deleteSelected = async () => {
-    if (!selected.value.length) return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
-    try {
-        await axios.post('/menu-permissions/menus/destroy-selected', {
-            ids: selected.value,
-        });
-        selected.value = [];
-        pageIndex.value.fetchData();
-        toast({ title: 'Data berhasil dihapus', variant: 'success' });
-    } catch (error) {
-        console.error('Gagal menghapus data:', error);
-        toast({ title: 'Gagal menghapus data yang dipilih.', variant: 'destructive' });
+    if (!selected.value.length) {
+        return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
     }
-};
+
+    try {
+        const response = await axios.post('/menu-permissions/menus/destroy-selected', {
+            ids: selected.value,
+        })
+
+        selected.value = []
+        pageIndex.value.fetchData()
+
+        toast({
+            title: response.data?.message,
+            variant: 'success',
+        })
+    } catch (error: any) {
+        console.error('Gagal menghapus data:', error)
+
+        const message = error.response?.data?.message
+        toast({
+            title: message,
+            variant: 'destructive',
+        })
+    }
+}
+
 
 const deleteMenu = async (row: any) => {
     await router.delete(`/menu-permissions/menus/${row.id}`, {
@@ -80,20 +127,8 @@ const deleteMenu = async (row: any) => {
 </script>
 
 <template>
-    <PageIndex
-        title="Menus"
-        :breadcrumbs="breadcrumbs"
-        :columns="columns"
-        :create-url="'/menu-permissions/menus/create'"
-        :actions="actions"
-        :selected="selected"
-        @update:selected="(val) => (selected = val)"
-        :on-delete-selected="deleteSelected"
-        api-endpoint="/api/menus"
-        ref="pageIndex"
-        :on-toast="toast"
-        :on-delete-row-confirm="deleteMenu"
-        :hide-pagination="true"
-        :limit="limit"
-    />
+    <PageIndex title="Menus" :breadcrumbs="breadcrumbs" :columns="columns"
+        :create-url="'/menu-permissions/menus/create'" :actions="actions" :selected="selected"
+        @update:selected="(val) => (selected = val)" :on-delete-selected="deleteSelected" api-endpoint="/api/menus"
+        ref="pageIndex" :on-toast="toast" :on-delete-row-confirm="deleteMenu" :hide-pagination="true" :limit="limit" />
 </template>
