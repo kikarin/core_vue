@@ -31,7 +31,7 @@ const currentRoleName = computed(() => user.value?.role?.name ?? null);
             </template>
         </div>
         <div v-if="currentRoleName" class="ml-auto">
-            <Badge>{{ currentRoleName }}</Badge>
+            <Badge class="py-2 px-3 text-sm">{{ currentRoleName }}</Badge>
         </div>
     </header>
 </template>

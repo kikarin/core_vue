@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { router } from '@inertiajs/vue3';
-import { MoreHorizontal } from 'lucide-vue-next';
+import { MoreHorizontal, MoreVertical } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -54,8 +54,8 @@ const items = computed(() => {
 <template>
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon">
-                <MoreHorizontal class="h-4 w-4" />
+            <Button variant="outline" size="icon">
+                <MoreVertical class="h-4 w-4" />
             </Button>
         </DropdownMenuTrigger>
 
