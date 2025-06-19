@@ -19,8 +19,8 @@ class CategoryPermissionRepository
     {
         if ($record == null) {
             if (empty($data['sequence'])) {
-                $last_sequence = $this->getLastSequence();
-                $last_sequence = ($last_sequence == null) ? 1 : $last_sequence->sequence + 1;
+                $last_sequence    = $this->getLastSequence();
+                $last_sequence    = ($last_sequence == null) ? 1 : $last_sequence->sequence + 1;
                 $data['sequence'] = $last_sequence;
             }
         }
@@ -66,12 +66,12 @@ class CategoryPermissionRepository
                 ->get()
                 ->map(function ($cat) {
                     return [
-                        'id' => $cat->id,
-                        'name' => $cat->name,
-                        'sequence' => $cat->sequence,
+                        'id'          => $cat->id,
+                        'name'        => $cat->name,
+                        'sequence'    => $cat->sequence,
                         'permissions' => $cat->permission->map(function ($perm) {
                             return [
-                                'id' => $perm->id,
+                                'id'   => $perm->id,
                                 'name' => $perm->name,
                             ];
                         }),

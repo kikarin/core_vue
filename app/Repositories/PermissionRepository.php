@@ -40,14 +40,14 @@ class PermissionRepository
     {
         // Jika POST dan is_crud == 'ya', generate CRUD
         if (request()->isMethod('post') && request('is_crud') === 'ya') {
-            $baseName = request('name');
+            $baseName   = request('name');
             $categoryId = request('category_permission_id');
-            $crudList = ['Show', 'Detail', 'Add', 'Edit', 'Delete'];
+            $crudList   = ['Show', 'Detail', 'Add', 'Edit', 'Delete'];
             foreach ($crudList as $crud) {
                 Permission::create([
-                    'name' => $baseName . ' ' . $crud,
+                    'name'                   => $baseName . ' ' . $crud,
                     'category_permission_id' => $categoryId,
-                    'guard_name' => 'web',
+                    'guard_name'             => 'web',
                 ]);
             }
             return redirect()->route('permissions.index')->with('success', 'Berhasil generate permission CRUD!');
@@ -55,9 +55,9 @@ class PermissionRepository
         // Jika tidak, buat satu permission saja (POST)
         if (request()->isMethod('post')) {
             Permission::create([
-                'name' => request('name'),
+                'name'                   => request('name'),
                 'category_permission_id' => request('category_permission_id'),
-                'guard_name' => 'web',
+                'guard_name'             => 'web',
             ]);
             return redirect()->route('permissions.index')->with('success', 'Berhasil menambah permission!');
         }

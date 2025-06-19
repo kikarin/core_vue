@@ -20,7 +20,6 @@ console.log('SetPermissions.vue props.selectedPermissions:', props.selectedPermi
 
 const selectedPermissions = ref<number[]>([...props.selectedPermissions]);
 const loading = ref(false);
-const success = ref(false);
 
 const breadcrumbs = [
     { title: 'Menu & Permissions', href: '#' },
@@ -41,7 +40,7 @@ const savePermissions = () => {
             errorMessage: 'Gagal menyimpan permission.',
             onSuccess: () => {
                 router.visit(`/menu-permissions/roles/set-permissions/${props.item.id}`, {
-                    only: ['item', 'permissionGroups', 'selectedPermissions'], 
+                    only: ['item', 'permissionGroups', 'selectedPermissions'],
                     preserveScroll: true,
                 });
             },

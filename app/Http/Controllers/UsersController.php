@@ -67,11 +67,11 @@ class UsersController extends Controller implements HasMiddleware
     public function store(UsersRequest $request)
     {
         $data = $this->repository->validateUserRequest($request);
-    
+
         if (isset($data['role_id']) && is_array($data['role_id']) && count($data['role_id']) > 0) {
             $data['current_role_id'] = $data['role_id'][0];
         }
-    
+
         $user = User::create($data);
         if (isset($data['role_id'])) {
             $user->roles()->sync($data['role_id']);
@@ -79,15 +79,15 @@ class UsersController extends Controller implements HasMiddleware
         }
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan!');
     }
-    
+
     public function update(UsersRequest $request, $id)
     {
         $data = $this->repository->validateUserRequest($request);
-    
+
         if (isset($data['role_id']) && is_array($data['role_id']) && count($data['role_id']) > 0) {
             $data['current_role_id'] = $data['role_id'][0];
         }
-    
+
         $user = User::findOrFail($id);
         $user->update($data);
         if (isset($data['role_id'])) {

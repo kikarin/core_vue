@@ -100,7 +100,7 @@ class UsersMenuRepository
 
         // Apply sorting
         if (request('sort')) {
-            $order = request('order', 'asc');
+            $order       = request('order', 'asc');
             $sortMapping = [
                 'name'   => 'nama',
                 'code'   => 'kode',
@@ -114,13 +114,13 @@ class UsersMenuRepository
             $query->orderBy('urutan');
         }
 
-        $perPage = (int) request('per_page', 10);
-        $page = (int) request('page', 0);
+        $perPage        = (int) request('per_page', 10);
+        $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
 
         // Jika per_page == -1, ambil semua data tanpa paginate
         if ($perPage === -1) {
-            $menus = $query->get();
+            $menus            = $query->get();
             $transformedMenus = $menus->map(function ($menu) {
                 return [
                     'id'         => $menu->id,
@@ -128,7 +128,7 @@ class UsersMenuRepository
                     'code'       => $menu->kode,
                     'icon'       => $menu->icon,
                     'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
-                    'permission' => optional($menu->permission)->name ?? '-',
+                    'permission' => optional($menu->permission)->name     ?? '-',
                     'url'        => $menu->url,
                     'order'      => $menu->urutan,
                 ];
@@ -150,7 +150,7 @@ class UsersMenuRepository
         }
 
         // Default: paginate
-        $menus = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
+        $menus            = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
         $transformedMenus = $menus->getCollection()->map(function ($menu) {
             return [
                 'id'         => $menu->id,
@@ -158,7 +158,7 @@ class UsersMenuRepository
                 'code'       => $menu->kode,
                 'icon'       => $menu->icon,
                 'parent'     => optional($menu->rel_users_menu)->nama ?? '-',
-                'permission' => optional($menu->permission)->name ?? '-',
+                'permission' => optional($menu->permission)->name     ?? '-',
                 'url'        => $menu->url,
                 'order'      => $menu->urutan,
             ];
@@ -199,11 +199,11 @@ class UsersMenuRepository
             return collect([]);
         }
 
-        $role = $user->role;
+        $role   = $user->role;
         $roleId = $role->id;
 
         // Tambahkan versioning (timestamp) biar cache otomatis invalid saat CRUD
-        $version = Cache::get("menus_version", now()->timestamp);
+        $version  = Cache::get('menus_version', now()->timestamp);
         $cacheKey = "menus_for_role_{$roleId}_v_{$version}";
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($role) {
@@ -346,7 +346,7 @@ class UsersMenuRepository
     /**
      * Validasi request untuk create/edit
      */
-        public function validateMenuRequest($request)
+    public function validateMenuRequest($request)
     {
         $rules = method_exists($request, 'rules') ? $request->rules() : [];
         return $request->validate($rules);

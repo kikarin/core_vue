@@ -44,14 +44,22 @@ export function useHandleFormSave() {
                 ? router.post(url, data, {
                       onSuccess: () => {
                           toast({ title: successMessage, variant: 'success' });
-                          onSuccess ? onSuccess() : router.visit(redirectUrl);
+                          if (onSuccess) {
+                              onSuccess();
+                          } else {
+                              router.visit(redirectUrl);
+                          }
                       },
                       onError: (errors) => handleError(errors, errorMessage),
                   })
                 : router.put(`${url}/${id}`, data, {
                       onSuccess: () => {
                           toast({ title: successMessage, variant: 'success' });
-                          onSuccess ? onSuccess() : router.visit(redirectUrl);
+                          if (onSuccess) {
+                              onSuccess();
+                          } else {
+                              router.visit(redirectUrl);
+                          }
                       },
                       onError: (errors) => handleError(errors, errorMessage),
                   });

@@ -38,32 +38,32 @@ const actions = (row: any) => [
 ];
 
 const deleteSelected = async () => {
-  if (!selected.value.length) {
-    return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
-  }
+    if (!selected.value.length) {
+        return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
+    }
 
-  try {
-    const response = await axios.post('/menu-permissions/logs/destroy-selected', {
-      ids: selected.value,
-    })
+    try {
+        const response = await axios.post('/menu-permissions/logs/destroy-selected', {
+            ids: selected.value,
+        });
 
-    selected.value = []
-    pageIndex.value.fetchData()
+        selected.value = [];
+        pageIndex.value.fetchData();
 
-    toast({
-      title: response.data?.message,
-      variant: 'success',
-    })
-  } catch (error: any) {
-    console.error('Gagal menghapus data:', error)
+        toast({
+            title: response.data?.message,
+            variant: 'success',
+        });
+    } catch (error: any) {
+        console.error('Gagal menghapus data:', error);
 
-    const message = error.response?.data?.message
-    toast({
-      title: message,
-      variant: 'destructive',
-    })
-  }
-}
+        const message = error.response?.data?.message;
+        toast({
+            title: message,
+            variant: 'destructive',
+        });
+    }
+};
 
 const deleteLog = async (row: any) => {
     await router.delete(`/menu-permissions/logs/${row.id}`, {

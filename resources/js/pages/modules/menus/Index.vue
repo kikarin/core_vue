@@ -17,7 +17,7 @@ const columns = [
         searchable: false,
         orderable: false,
         visible: true,
-        width: '50px'
+        width: '50px',
     },
     {
         key: 'name',
@@ -27,14 +27,14 @@ const columns = [
         visible: true,
         format: (row: any) => {
             return `<span>${row.name}</span>`;
-        }
+        },
     },
     {
         key: 'code',
         label: 'Kode',
         searchable: true,
         orderable: false,
-        visible: true
+        visible: true,
     },
     {
         key: 'order',
@@ -42,22 +42,22 @@ const columns = [
         searchable: false,
         orderable: false,
         visible: true,
-        width: '80px'
+        width: '80px',
     },
     {
         key: 'url',
         label: 'URL',
         searchable: true,
         orderable: false,
-        visible: true
+        visible: true,
     },
     {
         key: 'permission',
         label: 'Permission',
         searchable: true,
         orderable: false,
-        visible: true
-    }
+        visible: true,
+    },
 ];
 
 const selected = ref<number[]>([]);
@@ -86,32 +86,31 @@ const actions = (row: any) => [
 
 const deleteSelected = async () => {
     if (!selected.value.length) {
-        return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' })
+        return toast({ title: 'Pilih data yang akan dihapus', variant: 'destructive' });
     }
 
     try {
         const response = await axios.post('/menu-permissions/menus/destroy-selected', {
             ids: selected.value,
-        })
+        });
 
-        selected.value = []
-        pageIndex.value.fetchData()
+        selected.value = [];
+        pageIndex.value.fetchData();
 
         toast({
             title: response.data?.message,
             variant: 'success',
-        })
+        });
     } catch (error: any) {
-        console.error('Gagal menghapus data:', error)
+        console.error('Gagal menghapus data:', error);
 
-        const message = error.response?.data?.message
+        const message = error.response?.data?.message;
         toast({
             title: message,
             variant: 'destructive',
-        })
+        });
     }
-}
-
+};
 
 const deleteMenu = async (row: any) => {
     await router.delete(`/menu-permissions/menus/${row.id}`, {
@@ -127,8 +126,20 @@ const deleteMenu = async (row: any) => {
 </script>
 
 <template>
-    <PageIndex title="Menus" :breadcrumbs="breadcrumbs" :columns="columns"
-        :create-url="'/menu-permissions/menus/create'" :actions="actions" :selected="selected"
-        @update:selected="(val) => (selected = val)" :on-delete-selected="deleteSelected" api-endpoint="/api/menus"
-        ref="pageIndex" :on-toast="toast" :on-delete-row-confirm="deleteMenu" :hide-pagination="true" :limit="limit" />
+    <PageIndex
+        title="Menus"
+        :breadcrumbs="breadcrumbs"
+        :columns="columns"
+        :create-url="'/menu-permissions/menus/create'"
+        :actions="actions"
+        :selected="selected"
+        @update:selected="(val) => (selected = val)"
+        :on-delete-selected="deleteSelected"
+        api-endpoint="/api/menus"
+        ref="pageIndex"
+        :on-toast="toast"
+        :on-delete-row-confirm="deleteMenu"
+        :hide-pagination="true"
+        :limit="limit"
+    />
 </template>

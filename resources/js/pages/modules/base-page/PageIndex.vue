@@ -7,7 +7,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import DataTable from '../components/DataTable.vue';
 import HeaderActions from './HeaderActions.vue';
 
@@ -18,11 +18,9 @@ const total = ref(0);
 const loading = ref(false);
 
 const page = ref(1);
-const limit = ref(10);
+const localLimit = ref(10);
 const search = ref('');
 const sort = ref<{ key: string; order: 'asc' | 'desc' }>({ key: '', order: 'asc' });
-
-const isAllMode = computed(() => limit.value === -1);
 
 const fetchData = async () => {
     loading.value = true;
@@ -30,8 +28,8 @@ const fetchData = async () => {
         const response = await axios.get(props.apiEndpoint, {
             params: {
                 search: search.value,
-                page: limit.value === -1 ? undefined : (page.value > 1 ? page.value - 1 : 0),
-                per_page: props.limit !== undefined ? props.limit : limit.value,
+                page: localLimit.value === -1 ? undefined : page.value > 1 ? page.value - 1 : 0,
+                per_page: props.limit !== undefined ? props.limit : localLimit.value,
                 sort: sort.value.key,
                 order: sort.value.order,
             },
@@ -41,7 +39,7 @@ const fetchData = async () => {
         const meta = response.data.meta || {};
         total.value = Number(meta.total) || 0;
         page.value = Number(meta.current_page) || 1;
-        limit.value = Number(meta.per_page) || 10;
+        localLimit.value = Number(meta.per_page) || 10;
         search.value = meta.search || '';
         sort.value.key = meta.sort || '';
         sort.value.order = meta.order || 'asc';
@@ -60,7 +58,7 @@ watch(search, () => {
     debouncedFetchData();
 });
 
-watch([page, limit, () => sort.value.key, () => sort.value.order], fetchData);
+watch([page, localLimit, () => sort.value.key, () => sort.value.order], fetchData);
 
 const props = defineProps<{
     title: string;
@@ -100,7 +98,7 @@ const handleSearch = (params: { search?: string; sortKey?: string; sortOrder?: '
     if (params.sortKey) sort.value.key = params.sortKey;
     if (params.sortOrder) sort.value.order = params.sortOrder;
     if (params.page) page.value = params.page;
-    if (params.limit) limit.value = params.limit;
+    if (params.limit) localLimit.value = params.limit;
 };
 
 const handleDeleteSelected = () => {

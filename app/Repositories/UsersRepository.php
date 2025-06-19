@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\UsersRequest;
-use App\Repositories\RoleRepository;
-use App\Repositories\UsersRoleRepository;
 
 class UsersRepository
 {
@@ -288,7 +286,7 @@ class UsersRepository
      */
     public function validateUserRequest($request)
     {
-        $rules = method_exists($request, 'rules') ? $request->rules() : [];
+        $rules    = method_exists($request, 'rules') ? $request->rules() : [];
         $messages = method_exists($request, 'messages') ? $request->messages() : [];
         return $request->validate($rules, $messages);
     }

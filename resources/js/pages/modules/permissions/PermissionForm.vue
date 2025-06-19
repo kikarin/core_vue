@@ -22,29 +22,29 @@ const formInputs = [
     },
     ...(props.get_CategoryPermission
         ? [
-            {
-                name: 'category_permission_id',
-                label: 'Category Permission',
-                type: 'select' as const,
-                options: Object.entries(props.get_CategoryPermission).map(([id, name]) => ({ value: Number(id), label: name })),
-                required: true,
-                placeholder: 'Pilih Kategori',
-            },
-        ]
+              {
+                  name: 'category_permission_id',
+                  label: 'Category Permission',
+                  type: 'select' as const,
+                  options: Object.entries(props.get_CategoryPermission).map(([id, name]) => ({ value: Number(id), label: name })),
+                  required: true,
+                  placeholder: 'Pilih Kategori',
+              },
+          ]
         : []),
     ...(props.mode === 'create'
         ? [
-            {
-                name: 'is_crud',
-                label: 'Buatkan CRUD',
-                type: 'radio' as const,
-                options: [
-                    { value: 'ya', label: 'Ya' },
-                    { value: 'tidak', label: 'Tidak' },
-                ],
-                help: 'Jika Ya, akan dibuatkan 5 permission CRUD (Show, Detail, Add, Edit, Delete) otomatis.',
-            },
-        ]
+              {
+                  name: 'is_crud',
+                  label: 'Buatkan CRUD',
+                  type: 'radio' as const,
+                  options: [
+                      { value: 'ya', label: 'Ya' },
+                      { value: 'tidak', label: 'Tidak' },
+                  ],
+                  help: 'Jika Ya, akan dibuatkan 5 permission CRUD (Show, Detail, Add, Edit, Delete) otomatis.',
+              },
+          ]
         : []),
 ];
 

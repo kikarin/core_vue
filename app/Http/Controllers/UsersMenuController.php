@@ -77,12 +77,12 @@ class UsersMenuController extends Controller implements HasMiddleware
                 ->get();
 
             // Susun data secara hierarki
-            $menus = [];
+            $menus   = [];
             $counter = 1;
 
             // Ambil menu utama (rel = 0) terlebih dahulu
             foreach ($query->where('rel', 0)->sortBy('urutan') as $menu) {
-                $prefix = '';
+                $prefix  = '';
                 $menus[] = [
                     'no'         => $counter++,
                     'id'         => $menu->id,
@@ -96,7 +96,7 @@ class UsersMenuController extends Controller implements HasMiddleware
 
                 // Level 1 children
                 foreach ($query->where('rel', $menu->id)->sortBy('urutan') as $child) {
-                    $prefix = '===';
+                    $prefix  = '===';
                     $menus[] = [
                         'no'         => $counter++,
                         'id'         => $child->id,
@@ -110,7 +110,7 @@ class UsersMenuController extends Controller implements HasMiddleware
 
                     // Level 2 children
                     foreach ($query->where('rel', $child->id)->sortBy('urutan') as $grandChild) {
-                        $prefix = '======';
+                        $prefix  = '======';
                         $menus[] = [
                             'no'         => $counter++,
                             'id'         => $grandChild->id,

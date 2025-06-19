@@ -50,7 +50,7 @@ class RoleRepository
             $permission_id_array = array_map('intval', $permission_id_array);
             $record->syncPermissions($permission_id_array);
             $properties['attributes'] = $record->permissions()->pluck('name')->toArray();
-            activity()->event('Set Permission')->performedOn($record)->withProperties($properties)->log("User");
+            activity()->event('Set Permission')->performedOn($record)->withProperties($properties)->log('User');
 
             Cache::forget("menus_for_role_$id");
 
