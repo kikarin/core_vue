@@ -66,7 +66,7 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
                             <TableHead class="w-12 text-center">No</TableHead>
                             <TableHead class="w-10 text-center">
                                 <label
-                                    class="border-input bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border"
+                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-gray-500 border"
                                 >
                                     <input
                                         type="checkbox"
@@ -101,7 +101,7 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
                             </TableCell>
                             <TableCell class="text-center">
                                 <label
-                                    class="border-input bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border"
+                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-gray-500 border"
                                 >
                                     <input
                                         type="checkbox"
