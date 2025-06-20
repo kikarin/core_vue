@@ -108,7 +108,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
 <template>
     <div class="w-full">
         <!-- ALERT ERROR -->
-        <Alert v-if="Object.keys(formErrors).length" variant="destructive" class="mb-4">
+        <Alert v-if="Object.keys(formErrors).length" variant="destructive" class="mb-4 shadow-none hover:shadow-none">
             <AlertCircle class="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
@@ -119,8 +119,8 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
         </Alert>
         <form @submit="handleSubmit" class="space-y-6">
             <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-1 items-start gap-2 md:grid-cols-12 md:gap-4">
-                <label class="col-span-full text-sm font-medium md:col-span-3 md:pt-2">{{ input.label }}</label>
-                <div class="col-span-full md:col-span-9">
+                <label class="col-span-full text-sm font-medium md:col-span-4 md:pt-2">{{ input.label }}</label>
+                <div class="col-span-full md:col-span-8">
                     <!-- MULTI-SELECT -->
                     <div v-if="input.type === 'multi-select'" class="relative">
                         <div

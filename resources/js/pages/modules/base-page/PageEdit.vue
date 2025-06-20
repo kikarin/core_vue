@@ -32,7 +32,7 @@ const handleCancel = () => {
                 <div class="col-span-1 lg:col-span-7 lg:col-start-1">
                     <Card class="w-full">
                         <CardHeader class="flex items-center justify-between">
-                            <CardTitle class="text-2xl">Edit {{ title }}</CardTitle>
+                            <CardTitle class="text-xl">Edit {{ title }}</CardTitle>
                             <Button variant="secondary" @click="handleCancel"> ← Back </Button>
                         </CardHeader>
                         <CardContent>

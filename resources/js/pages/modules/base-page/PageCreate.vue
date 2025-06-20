@@ -20,7 +20,7 @@ defineProps<{
                 <div class="col-span-1 lg:col-span-7 lg:col-start-1">
                     <Card class="w-full">
                         <CardHeader class="flex items-center justify-between">
-                            <CardTitle class="text-2xl">{{ title }}</CardTitle>
+                            <CardTitle class="text-xl">{{ title }}</CardTitle>
                             <Button variant="secondary" @click="backUrl ? router.visit(backUrl) : router.visit('/')"> ← Back </Button>
                         </CardHeader>
                         <CardContent>

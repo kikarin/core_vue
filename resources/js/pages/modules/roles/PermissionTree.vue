@@ -30,7 +30,7 @@ const toggleGroup = (group: (typeof props.groups)[0]) => {
 </script>
 
 <template>
-    <div v-if="groups.length" class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div v-if="groups.length" class="grid gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <div v-for="group in groups" :key="group.label" class="bg-card rounded-lg border shadow-sm">
             <!-- Card Header -->
             <div class="flex items-center justify-between border-b px-4 py-3">

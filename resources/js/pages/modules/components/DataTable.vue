@@ -64,7 +64,7 @@ const selectLabel = computed(() => {
             </div>
         </div>
         <!-- Table -->
-        <div class="rounded-md border">
+        <div class="rounded-md border shadow-sm">
             <div class="overflow-x-auto">
                 <Table>
                     <TableHeader>
