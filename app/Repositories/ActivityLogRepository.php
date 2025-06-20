@@ -60,8 +60,38 @@ class ActivityLogRepository
             $query->orderBy('created_at', 'desc'); // default sort
         }
 
+        // Penanganan khusus jika per_page == -1 (show all)
+        $perPage = (int) request('per_page', 10);
+        if ($perPage === -1) {
+            $allLogs = $query->get();
+            $transformedLogs = $allLogs->map(function ($log) {
+                return [
+                    'id'           => $log->id,
+                    'module'       => $log->log_name,
+                    'event'        => $log->event,
+                    'subject_type' => class_basename($log->subject_type),
+                    'subject_id'   => $log->subject_id,
+                    'data'         => $log->description,
+                    'causer_name'  => optional($log->causer)->name,
+                    'causer_role'  => optional(optional($log->causer)->role)->name,
+                    'created_at'   => $log->created_at,
+                ];
+            });
+            $data += [
+                'logs' => $transformedLogs,
+                'meta' => [
+                    'total'        => $transformedLogs->count(),
+                    'current_page' => 1,
+                    'per_page'     => -1,
+                    'search'       => request('search', ''),
+                    'sort'         => request('sort', ''),
+                    'order'        => request('order', 'asc'),
+                ],
+            ];
+            return $data;
+        }
+
         // Apply pagination
-        $perPage        = (int) request('per_page', 10);
         $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
 

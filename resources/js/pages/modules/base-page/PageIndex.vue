@@ -58,7 +58,13 @@ watch(search, () => {
     debouncedFetchData();
 });
 
-watch([page, localLimit, () => sort.value.key, () => sort.value.order], fetchData);
+watch([page, localLimit, () => sort.value.key, () => sort.value.order], (vals, oldVals) => {
+    if (vals[2] !== oldVals[2] || vals[3] !== oldVals[3]) {
+        debouncedFetchData();
+    } else {
+        fetchData();
+    }
+});
 
 const props = defineProps<{
     title: string;
@@ -72,6 +78,7 @@ const props = defineProps<{
     onDeleteRowConfirm?: (row: any) => Promise<void>;
     hidePagination?: boolean;
     limit?: number;
+    disableLength?: boolean;
 }>();
 
 const emit = defineEmits(['search', 'update:selected']);
@@ -178,7 +185,7 @@ defineExpose({ fetchData });
                 :search="search"
                 :sort="sort"
                 :page="page"
-                :per-page="props.limit !== undefined ? props.limit : limit"
+                :per-page="props.limit !== undefined ? props.limit : localLimit"
                 @update:search="(val) => handleSearch({ search: val })"
                 @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
                 @update:page="(val) => handleSearch({ page: val })"
@@ -186,6 +193,7 @@ defineExpose({ fetchData });
                 @deleted="fetchData()"
                 :on-delete-row="handleDeleteRow"
                 :hide-pagination="props.hidePagination"
+                :disable-length="props.disableLength"
             />
 
             <Dialog v-model:open="showConfirm">

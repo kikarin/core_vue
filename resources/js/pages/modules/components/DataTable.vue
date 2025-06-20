@@ -9,6 +9,7 @@ import * as LucideIcons from 'lucide-vue-next';
 import { type PropType } from 'vue';
 import type { Column, Sort } from './datatable/types';
 import { useDataTable } from './datatable/useDataTable';
+import { computed } from 'vue';
 
 const props = defineProps({
     columns: { type: Array as PropType<Column[]>, required: true },
@@ -22,11 +23,17 @@ const props = defineProps({
     page: { type: Number, default: 1 },
     perPage: { type: Number, default: 10 },
     hidePagination: { type: Boolean, default: false },
+    disableLength: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['update:selected', 'update:search', 'update:sort', 'update:page', 'update:perPage', 'deleted']);
 
 const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggleSelectAll } = useDataTable(props, emit);
+
+const selectLabel = computed(() => {
+    if (props.perPage === -1) return 'All';
+    return props.perPage;
+});
 </script>
 
 <template>
@@ -34,11 +41,11 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
         <!-- Search dan Length -->
         <div class="flex flex-col flex-wrap items-center justify-center gap-4 text-center sm:flex-row sm:justify-between">
             <!-- Length -->
-            <div v-if="!props.hidePagination" class="flex items-center gap-2">
+            <div v-if="!props.disableLength" class="flex items-center gap-2">
                 <span class="text-muted-foreground text-sm">Show</span>
                 <Select :model-value="props.perPage" @update:model-value="(val) => emit('update:perPage', val === 'all' ? -1 : Number(val))">
                     <SelectTrigger class="w-24">
-                        <SelectValue placeholder="Select" />
+                        <SelectValue :placeholder="selectLabel" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem :value="10">10</SelectItem>
@@ -82,7 +89,7 @@ const { visibleColumns, totalPages, getPageNumbers, sortBy, toggleSelect, toggle
                                 v-for="col in visibleColumns"
                                 :key="col.key"
                                 class="cursor-pointer select-none"
-                                @click="col.sortable === false ? null : sortBy(col.key)"
+                                @click="col.orderable === false ? null : sortBy(col.key)"
                             >
                                 <div class="flex items-center gap-1">
                                     {{ col.label }}

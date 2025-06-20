@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useToast } from '@/components/ui/toast/useToast';
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const breadcrumbs = [{ title: 'Users', href: '/users' }];
 
@@ -53,20 +53,32 @@ const pageIndex = ref();
 
 const { toast } = useToast();
 
-const actions = (row: any) => [
-    {
-        label: 'Detail',
-        onClick: () => router.visit(`/users/${row.id}`),
-    },
-    {
-        label: 'Edit',
-        onClick: () => router.visit(`/users/${row.id}/edit`),
-    },
-    {
-        label: 'Delete',
-        onClick: () => pageIndex.value.handleDeleteRow(row),
-    },
-];
+const page = usePage();
+const currentUserId = computed(() => (page.props as any)?.auth?.user?.id);
+
+const actions = (row: any) => {
+    const baseActions = [
+        {
+            label: 'Detail',
+            onClick: () => router.visit(`/users/${row.id}`),
+        },
+        {
+            label: 'Edit',
+            onClick: () => router.visit(`/users/${row.id}/edit`),
+        },
+        {
+            label: 'Delete',
+            onClick: () => pageIndex.value.handleDeleteRow(row),
+        },
+    ];
+    if (row.id !== currentUserId.value) {
+        baseActions.push({
+            label: 'Login As',
+            onClick: () => router.visit(`/users/${row.id}/login-as`),
+        });
+    }
+    return baseActions;
+};
 
 const deleteSelected = async () => {
     if (!selected.value.length) {
@@ -111,19 +123,9 @@ const deleteUser = async (row: any) => {
 
 <template>
     <div class="space-y-4">
-        <PageIndex
-            title="Users"
-            :breadcrumbs="breadcrumbs"
-            :columns="columns"
-            :create-url="'/users/create'"
-            :actions="actions"
-            :selected="selected"
-            @update:selected="(val) => (selected = val)"
-            :on-delete-selected="deleteSelected"
-            api-endpoint="/api/users"
-            ref="pageIndex"
-            :on-toast="toast"
-            :on-delete-row="deleteUser"
-        />
+        <PageIndex title="Users" :breadcrumbs="breadcrumbs" :columns="columns" :create-url="'/users/create'"
+            :actions="actions" :selected="selected" @update:selected="(val) => (selected = val)"
+            :on-delete-selected="deleteSelected" api-endpoint="/api/users" ref="pageIndex" :on-toast="toast"
+            :on-delete-row="deleteUser" />
     </div>
 </template>

@@ -14,21 +14,29 @@ type SaveOptions = {
 export function useHandleFormSave() {
     const { toast } = useToast();
 
-    const handleError = (errors: Record<string, any>, fallbackMessage: string) => {
+    /**
+     * Mengembalikan error field ke pemanggil, hanya error umum yang pakai toast
+     */
+    const handleError = (errors: Record<string, any>, fallbackMessage: string, setFormErrors?: (errors: Record<string, string>) => void) => {
         if (!errors || Object.keys(errors).length === 0) {
             toast({ title: fallbackMessage, variant: 'destructive' });
             return;
         }
-
-        Object.entries(errors).forEach(([field, message]) => {
-            toast({
-                title: `${field}: ${message}`,
-                variant: 'destructive',
+        // Jika ada setFormErrors, lempar error ke form
+        if (setFormErrors) {
+            setFormErrors(errors);
+        } else {
+            // Fallback: tetap pakai toast jika tidak ada handler
+            Object.entries(errors).forEach(([field, message]) => {
+                toast({
+                    title: `${field}: ${message}`,
+                    variant: 'destructive',
+                });
             });
-        });
+        }
     };
 
-    const save = (data: Record<string, any>, options: SaveOptions) => {
+    const save = (data: Record<string, any>, options: SaveOptions & { setFormErrors?: (errors: Record<string, string>) => void }) => {
         const {
             url,
             redirectUrl = url,
@@ -37,6 +45,7 @@ export function useHandleFormSave() {
             successMessage = 'Data berhasil disimpan',
             errorMessage = 'Gagal menyimpan data',
             onSuccess,
+            setFormErrors,
         } = options;
 
         const request =
@@ -50,7 +59,7 @@ export function useHandleFormSave() {
                               router.visit(redirectUrl);
                           }
                       },
-                      onError: (errors) => handleError(errors, errorMessage),
+                      onError: (errors) => handleError(errors, errorMessage, setFormErrors),
                   })
                 : router.put(`${url}/${id}`, data, {
                       onSuccess: () => {
@@ -61,7 +70,7 @@ export function useHandleFormSave() {
                               router.visit(redirectUrl);
                           }
                       },
-                      onError: (errors) => handleError(errors, errorMessage),
+                      onError: (errors) => handleError(errors, errorMessage, setFormErrors),
                   });
 
         return request;

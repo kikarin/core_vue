@@ -9,6 +9,8 @@ import * as LucideIcons from 'lucide-vue-next';
 import { Eye, EyeOff, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ButtonsForm from './ButtonsForm.vue';
+import { Alert, AlertTitle, AlertDescription } from '../../../components/ui/alert';
+import { useToast } from '@/components/ui/toast/useToast';
 
 const props = defineProps<{
     formInputs: {
@@ -43,10 +45,36 @@ const iconOptions = computed(() => {
         }));
 });
 
+const formErrors = ref<Record<string, string>>({});
+
+const { toast } = useToast();
+
 const handleSubmit = (e: Event) => {
     e.preventDefault();
-    emit('save', form);
+    formErrors.value = {}; // reset error sebelum submit
+
+    // Cek required field
+    let isValid = true;
+    const localErrors: Record<string, string> = {};
+    props.formInputs.forEach(input => {
+        if (input.required && !form[input.name]) {
+            isValid = false;
+            localErrors[input.name] = `${input.label} wajib diisi`;
+        }
+    });
+
+    if (!isValid) {
+        toast({ title: 'Data is not valid', variant: 'destructive' });
+        formErrors.value = localErrors; // <-- tampilkan alert error juga
+        return;
+    }
+
+    emit('save', form, setFormErrors);
 };
+
+function setFormErrors(errors: Record<string, string>) {
+    formErrors.value = errors;
+}
 
 const togglePassword = (field: { value: boolean }) => {
     field.value = !field.value;
@@ -79,6 +107,16 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
 
 <template>
     <div class="w-full">
+        <!-- ALERT ERROR -->
+        <Alert v-if="Object.keys(formErrors).length" variant="destructive" class="mb-4">
+            <AlertCircle class="w-4 h-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+                <ul class="list-disc pl-5">
+                    <li v-for="(msg, field) in formErrors" :key="field">{{ msg }}</li>
+                </ul>
+            </AlertDescription>
+        </Alert>
         <form @submit="handleSubmit" class="space-y-6">
             <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-1 items-start gap-2 md:grid-cols-12 md:gap-4">
                 <label class="col-span-full text-sm font-medium md:col-span-3 md:pt-2">{{ input.label }}</label>

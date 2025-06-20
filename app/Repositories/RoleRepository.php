@@ -94,9 +94,33 @@ class RoleRepository
 
         // Apply pagination
         $perPage        = (int) request('per_page', 10);
+        if ($perPage === -1) {
+            $allRoles = $query->get();
+            $transformedRoles = $allRoles->map(function ($role) {
+                return [
+                    'id'               => $role->id,
+                    'name'             => $role->name,
+                    'bg'               => $role->bg,
+                    'init_page_login'  => $role->init_page_login,
+                    'is_allow_login'   => $role->is_allow_login ? 'Ya' : 'Tidak',
+                    'is_vertical_menu' => $role->is_vertical_menu ? 'Vertical' : 'Horizontal',
+                ];
+            });
+            $data += [
+                'roles' => $transformedRoles,
+                'meta'  => [
+                    'total'        => $transformedRoles->count(),
+                    'current_page' => 1,
+                    'per_page'     => -1,
+                    'search'       => request('search', ''),
+                    'sort'         => request('sort', ''),
+                    'order'        => request('order', 'asc'),
+                ],
+            ];
+            return $data;
+        }
         $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
-
         $roles = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
 
         // Transform data

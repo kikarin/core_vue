@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { router } from '@inertiajs/vue3';
-import { MoreHorizontal, MoreVertical } from 'lucide-vue-next';
+import { MoreVertical } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -25,27 +24,6 @@ const items = computed(() => {
     }
 
     const links: { label: string; action: () => void; icon?: any }[] = [];
-
-    if (props.show !== false) {
-        links.push({
-            label: 'Detail',
-            action: () => router.visit(`${props.baseUrl}/${props.id}`),
-        });
-    }
-
-    if (props.edit !== false) {
-        links.push({
-            label: 'Edit',
-            action: () => router.visit(`${props.baseUrl}/${props.id}/edit`),
-        });
-    }
-
-    if (props.delete !== false && props.onDelete) {
-        links.push({
-            label: 'Delete',
-            action: () => props.onDelete?.(),
-        });
-    }
 
     return links;
 });

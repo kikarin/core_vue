@@ -139,7 +139,7 @@ const deleteMenu = async (row: any) => {
         ref="pageIndex"
         :on-toast="toast"
         :on-delete-row-confirm="deleteMenu"
+        :disable-length="true"
         :hide-pagination="true"
-        :limit="limit"
     />
 </template>
