@@ -109,7 +109,7 @@ class UsersController extends Controller implements HasMiddleware
             'role_id' => 'required|integer|exists:roles,id',
         ]);
 
-        $authUser = Auth::user();
+        $authUser  = Auth::user();
         $newRoleId = $request->input('role_id');
 
         $hasRole = \App\Models\UsersRole::where('users_id', $authUser->id)
@@ -120,11 +120,11 @@ class UsersController extends Controller implements HasMiddleware
             return back()->with('error', 'Invalid role.');
         }
 
-        $user = User::find($authUser->id);
+        $user                  = User::find($authUser->id);
         $user->current_role_id = $newRoleId;
         $user->save();
 
-        $newRole = \App\Models\Role::find($newRoleId);
+        $newRole     = \App\Models\Role::find($newRoleId);
         $redirectUrl = $newRole && !empty($newRole->init_page_login) ? $newRole->init_page_login : 'dashboard';
 
         return redirect($redirectUrl)->with('success', 'Successfully switched role.');

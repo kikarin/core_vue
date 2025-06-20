@@ -160,7 +160,7 @@ trait BaseTrait
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Data berhasil dihapus.',  
+                    'message' => 'Data berhasil dihapus.',
                 ]);
             }
 
@@ -231,8 +231,8 @@ trait BaseTrait
         $auth_user = Auth::user();
         return [
             'can' => [
-                'Add'    => $auth_user    && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Add') : false,
-                'Edit'   => $auth_user   && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Edit') : false,
+                'Add'    => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Add') : false,
+                'Edit'   => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Edit') : false,
                 'Delete' => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Delete') : false,
                 'Detail' => $auth_user && method_exists($auth_user, 'can') ? $auth_user->can($this->permission_main . ' Detail') : false,
             ],

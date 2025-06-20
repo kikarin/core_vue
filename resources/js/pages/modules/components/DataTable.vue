@@ -6,10 +6,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import RowActions from '@/pages/modules/components/tables/RowActions.vue';
 import * as LucideIcons from 'lucide-vue-next';
 
-import { type PropType } from 'vue';
+import { computed, type PropType } from 'vue';
 import type { Column, Sort } from './datatable/types';
 import { useDataTable } from './datatable/useDataTable';
-import { computed } from 'vue';
 
 const props = defineProps({
     columns: { type: Array as PropType<Column[]>, required: true },
@@ -73,7 +72,7 @@ const selectLabel = computed(() => {
                             <TableHead class="w-12 text-center">No</TableHead>
                             <TableHead class="w-10 text-center">
                                 <label
-                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-gray-500 border"
+                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border border-gray-500"
                                 >
                                     <input
                                         type="checkbox"
@@ -108,7 +107,7 @@ const selectLabel = computed(() => {
                             </TableCell>
                             <TableCell class="text-center">
                                 <label
-                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-gray-500 border"
+                                    class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border border-gray-500"
                                 >
                                     <input
                                         type="checkbox"

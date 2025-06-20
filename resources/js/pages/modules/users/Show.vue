@@ -55,9 +55,16 @@ const fields = computed(() => {
         { label: 'Role', value: user.value?.role?.name || '-' },
         {
             label: 'All Roles',
-            value: allRoles && allRoles !== ''
-                ? `<div class='flex flex-wrap'>${allRoles.split(', ').map((role: string) => `<span class='inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mr-1 mb-1'>${role.trim()}</span>`).join('')}</div>`
-                : '-',
+            value:
+                allRoles && allRoles !== ''
+                    ? `<div class='flex flex-wrap'>${allRoles
+                          .split(', ')
+                          .map(
+                              (role: string) =>
+                                  `<span class='inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mr-1 mb-1'>${role.trim()}</span>`,
+                          )
+                          .join('')}</div>`
+                    : '-',
         },
         {
             label: 'Status',

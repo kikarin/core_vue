@@ -3,7 +3,7 @@ import { useToast } from '@/components/ui/toast/useToast';
 import PageIndex from '@/pages/modules/base-page/PageIndex.vue';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const breadcrumbs = [{ title: 'Users', href: '/users' }];
 
@@ -123,9 +123,19 @@ const deleteUser = async (row: any) => {
 
 <template>
     <div class="space-y-4">
-        <PageIndex title="Users" :breadcrumbs="breadcrumbs" :columns="columns" :create-url="'/users/create'"
-            :actions="actions" :selected="selected" @update:selected="(val) => (selected = val)"
-            :on-delete-selected="deleteSelected" api-endpoint="/api/users" ref="pageIndex" :on-toast="toast"
-            :on-delete-row="deleteUser" />
+        <PageIndex
+            title="Users"
+            :breadcrumbs="breadcrumbs"
+            :columns="columns"
+            :create-url="'/users/create'"
+            :actions="actions"
+            :selected="selected"
+            @update:selected="(val) => (selected = val)"
+            :on-delete-selected="deleteSelected"
+            api-endpoint="/api/users"
+            ref="pageIndex"
+            :on-toast="toast"
+            :on-delete-row="deleteUser"
+        />
     </div>
 </template>

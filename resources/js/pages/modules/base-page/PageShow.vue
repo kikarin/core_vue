@@ -80,10 +80,11 @@ const confirmDelete = () => {
                         <div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2">
                             <div v-for="field in fields" :key="field.label" class="space-y-1" :class="field.label === 'Data' ? 'sm:col-span-2' : ''">
                                 <div class="text-muted-foreground text-xs">{{ field.label }}</div>
-                                <div :class="['text-foreground text-sm font-semibold break-words whitespace-pre-wrap', field.className]"
-                                     v-if="field.value && field.value.startsWith && field.value.startsWith('<div')"
-                                     v-html="field.value">
-                                </div>
+                                <div
+                                    :class="['text-foreground text-sm font-semibold break-words whitespace-pre-wrap', field.className]"
+                                    v-if="field.value && field.value.startsWith && field.value.startsWith('<div')"
+                                    v-html="field.value"
+                                ></div>
                                 <div v-else :class="['text-foreground text-sm font-semibold break-words whitespace-pre-wrap', field.className]">
                                     {{ field.value }}
                                 </div>

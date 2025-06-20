@@ -63,7 +63,7 @@ class ActivityLogRepository
         // Penanganan khusus jika per_page == -1 (show all)
         $perPage = (int) request('per_page', 10);
         if ($perPage === -1) {
-            $allLogs = $query->get();
+            $allLogs         = $query->get();
             $transformedLogs = $allLogs->map(function ($log) {
                 return [
                     'id'           => $log->id,

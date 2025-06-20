@@ -61,7 +61,6 @@ const columns = [
 ];
 
 const selected = ref<number[]>([]);
-const limit = ref(-1); // <= aktifkan non-paginated mode
 const pageIndex = ref();
 const { toast } = useToast();
 

@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/components/ui/toast/useToast';
 import { useForm } from '@inertiajs/vue3';
 import * as LucideIcons from 'lucide-vue-next';
 import { Eye, EyeOff, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import { Alert, AlertDescription, AlertTitle } from '../../../components/ui/alert';
 import ButtonsForm from './ButtonsForm.vue';
-import { Alert, AlertTitle, AlertDescription } from '../../../components/ui/alert';
-import { useToast } from '@/components/ui/toast/useToast';
 
 const props = defineProps<{
     formInputs: {
@@ -56,7 +56,7 @@ const handleSubmit = (e: Event) => {
     // Cek required field
     let isValid = true;
     const localErrors: Record<string, string> = {};
-    props.formInputs.forEach(input => {
+    props.formInputs.forEach((input) => {
         if (input.required && !form[input.name]) {
             isValid = false;
             localErrors[input.name] = `${input.label} wajib diisi`;
@@ -109,7 +109,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
     <div class="w-full">
         <!-- ALERT ERROR -->
         <Alert v-if="Object.keys(formErrors).length" variant="destructive" class="mb-4">
-            <AlertCircle class="w-4 h-4" />
+            <AlertCircle class="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
                 <ul class="list-disc pl-5">
@@ -188,10 +188,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
                         <SelectTrigger class="w-full">
                             <SelectValue :placeholder="input.placeholder">
                                 <template v-if="form[input.name]">
-                                    <component
-                                        :is="LucideIcons[form[input.name] as keyof typeof LucideIcons]"
-                                        class="mr-2 inline-block h-4 w-4"
-                                    />
+                                    <component :is="LucideIcons[form[input.name] as keyof typeof LucideIcons]" class="mr-2 inline-block h-4 w-4" />
                                     {{ form[input.name] }}
                                 </template>
                             </SelectValue>

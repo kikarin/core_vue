@@ -93,9 +93,9 @@ class RoleRepository
         }
 
         // Apply pagination
-        $perPage        = (int) request('per_page', 10);
+        $perPage = (int) request('per_page', 10);
         if ($perPage === -1) {
-            $allRoles = $query->get();
+            $allRoles         = $query->get();
             $transformedRoles = $allRoles->map(function ($role) {
                 return [
                     'id'               => $role->id,
@@ -121,7 +121,7 @@ class RoleRepository
         }
         $page           = (int) request('page', 0);
         $pageForLaravel = $page < 1 ? 1 : $page + 1;
-        $roles = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
+        $roles          = $query->paginate($perPage, ['*'], 'page', $pageForLaravel);
 
         // Transform data
         $transformedRoles = $roles->getCollection()->map(function ($role) {
