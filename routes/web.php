@@ -20,6 +20,7 @@ Route::get('dashboard', function () {
 // Users Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/users', UsersController::class)->names('users');
+    Route::post('/users/switch-role', [UsersController::class, 'switchRole'])->name('users.switch-role');
     Route::get('/api/users', [UsersController::class, 'apiIndex']);
     Route::post('/users/destroy-selected', [UsersController::class, 'destroy_selected'])->name('users.destroy_selected');
 });

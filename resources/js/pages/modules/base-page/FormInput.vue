@@ -80,9 +80,9 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
 <template>
     <div class="w-full">
         <form @submit="handleSubmit" class="space-y-6">
-            <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-12 items-start gap-4">
-                <label class="col-span-3 pt-2 text-sm font-medium">{{ input.label }}</label>
-                <div class="col-span-9">
+            <div v-for="input in formInputs" :key="input.name" class="grid grid-cols-1 items-start gap-2 md:grid-cols-12 md:gap-4">
+                <label class="col-span-full text-sm font-medium md:col-span-3 md:pt-2">{{ input.label }}</label>
+                <div class="col-span-full md:col-span-9">
                     <!-- MULTI-SELECT -->
                     <div v-if="input.type === 'multi-select'" class="relative">
                         <div
@@ -153,7 +153,6 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
                                     <component
                                         :is="LucideIcons[form[input.name] as keyof typeof LucideIcons]"
                                         class="mr-2 inline-block h-4 w-4"
-                                        v-bind="$attrs"
                                     />
                                     {{ form[input.name] }}
                                 </template>
@@ -167,7 +166,7 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
                                     :value="option.value"
                                     class="hover:bg-accent flex cursor-pointer items-center gap-2 rounded-md p-2"
                                 >
-                                    <component :is="LucideIcons[option.icon as keyof typeof LucideIcons]" class="h-4 w-4" v-bind="$attrs" />
+                                    <component :is="LucideIcons[option.icon as keyof typeof LucideIcons]" class="h-4 w-4" />
                                     <span class="text-sm">{{ option.label }}</span>
                                 </SelectItem>
                             </div>
@@ -270,9 +269,9 @@ const getSelectedLabels = (fieldName: string, options: { value: string | number;
             </div>
 
             <!-- BUTTONS -->
-            <div class="grid grid-cols-12 items-center">
-                <div class="col-span-3"></div>
-                <div class="col-span-9">
+            <div class="grid grid-cols-1 items-center md:grid-cols-12">
+                <div class="hidden md:col-span-3 md:block"></div>
+                <div class="col-span-full md:col-span-9">
                     <ButtonsForm @save="handleSubmit" @cancel="emit('cancel')" />
                 </div>
             </div>

@@ -11,6 +11,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use App\Models\User;
 use App\Repositories\UsersRoleRepository;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller implements HasMiddleware
 {
@@ -95,5 +96,37 @@ class UsersController extends Controller implements HasMiddleware
             app(UsersRoleRepository::class)->setRole($user->id, $data['role_id']);
         }
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui!');
+    }
+
+    public function show($id)
+    {
+        return $this->repository->handleShow($id);
+    }
+
+    public function switchRole(Request $request)
+    {
+        $request->validate([
+            'role_id' => 'required|integer|exists:roles,id',
+        ]);
+
+        $authUser = Auth::user();
+        $newRoleId = $request->input('role_id');
+
+        $hasRole = \App\Models\UsersRole::where('users_id', $authUser->id)
+                            ->where('role_id', $newRoleId)
+                            ->exists();
+
+        if (!$hasRole) {
+            return back()->with('error', 'Invalid role.');
+        }
+
+        $user = User::find($authUser->id);
+        $user->current_role_id = $newRoleId;
+        $user->save();
+
+        $newRole = \App\Models\Role::find($newRoleId);
+        $redirectUrl = $newRole && !empty($newRole->init_page_login) ? $newRole->init_page_login : 'dashboard';
+
+        return redirect($redirectUrl)->with('success', 'Successfully switched role.');
     }
 }

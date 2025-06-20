@@ -276,8 +276,11 @@ class UsersRepository
             return redirect()->back()->with('error', 'User not found');
         }
 
+        $itemArray = $item->toArray();
+        $itemArray['all_roles'] = $item->list_role_name_str;
+
         return \Inertia\Inertia::render('modules/users/Show', [
-            'item' => $item,
+            'item' => $itemArray,
         ]);
     }
 

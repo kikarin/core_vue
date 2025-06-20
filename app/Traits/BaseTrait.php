@@ -160,7 +160,7 @@ trait BaseTrait
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Data berhasil dihapus.',
+                    'message' => 'Data berhasil dihapus.',  
                 ]);
             }
 
