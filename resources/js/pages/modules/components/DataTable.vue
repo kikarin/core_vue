@@ -65,8 +65,8 @@ const selectLabel = computed(() => {
         </div>
         <!-- Table -->
         <div class="rounded-md border shadow-sm">
-            <div class="overflow-x-auto">
-                <Table>
+            <div class="w-full overflow-x-auto">
+                <Table class="min-w-max">
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-12 text-center">No</TableHead>
@@ -83,7 +83,7 @@ const selectLabel = computed(() => {
                                     <div class="bg-primary h-3 w-3 scale-0 transform rounded-sm transition-all peer-checked:scale-100"></div>
                                 </label>
                             </TableHead>
-                            <TableHead class="w-28 text-center">Actions</TableHead>
+                            <TableHead class="w-28 text-center text-xs sm:text-sm px-2 sm:px-4 whitespace-normal break-words">Actions</TableHead>
                             <TableHead
                                 v-for="col in visibleColumns"
                                 :key="col.key"
@@ -102,10 +102,10 @@ const selectLabel = computed(() => {
                     </TableHeader>
                     <TableBody>
                         <TableRow v-for="(row, index) in props.rows" :key="index" class="hover:bg-muted/40 border-t transition">
-                            <TableCell class="text-center">
+                            <TableCell class="text-center text-xs sm:text-sm px-2 sm:px-4 whitespace-normal break-words">
                                 {{ (props.page - 1) * props.perPage + index + 1 }}
                             </TableCell>
-                            <TableCell class="text-center">
+                            <TableCell class="text-center text-xs sm:text-sm px-2 sm:px-4 whitespace-normal break-words">
                                 <label
                                     class="bg-background relative inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border border-gray-500"
                                 >
@@ -126,7 +126,7 @@ const selectLabel = computed(() => {
                                     </svg>
                                 </label>
                             </TableCell>
-                            <TableCell class="text-center">
+                            <TableCell class="text-center text-xs sm:text-sm px-2 sm:px-4 whitespace-normal break-words">
                                 <RowActions
                                     v-if="actions(row).length > 0"
                                     :actions="actions(row)"
