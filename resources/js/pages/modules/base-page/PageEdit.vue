@@ -27,7 +27,6 @@ const handleCancel = () => {
     <!-- <Head :title="`Edit ${title}`" /> -->
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="space-y-4 p-4">
-            <!-- <HeaderIndex :title="`Edit ${title}`" :back-url="backUrl" /> -->
             <div class="grid grid-cols-1 lg:grid-cols-12">
                 <div class="col-span-1 lg:col-span-7 lg:col-start-1">
                     <Card class="w-full">
