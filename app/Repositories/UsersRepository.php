@@ -33,12 +33,15 @@ class UsersRepository
     {
         $query = $this->model
             ->with(['role', 'users_role.role'])
-            ->select('id', 'name', 'email', 'current_role_id', 'is_active');
+            ->select('users.id', 'users.name', 'users.email', 'users.current_role_id', 'users.is_active')
+            ->leftJoin('roles', 'users.current_role_id', '=', 'roles.id');
 
         if (request('search')) {
-            $query->where(function ($q) {
-                $q->where('name', 'like', '%' . request('search') . '%')
-                    ->orWhere('email', 'like', '%' . request('search') . '%');
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('users.name', 'like', '%' . $search . '%')
+                    ->orWhere('users.email', 'like', '%' . $search . '%')
+                    ->orWhere('roles.name', 'like', '%' . $search . '%');
             });
         }
 

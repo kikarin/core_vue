@@ -23,6 +23,7 @@ const props = defineProps({
     perPage: { type: Number, default: 10 },
     hidePagination: { type: Boolean, default: false },
     disableLength: { type: Boolean, default: false },
+    hideSearch: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['update:selected', 'update:search', 'update:sort', 'update:page', 'update:perPage', 'deleted']);
@@ -59,7 +60,7 @@ const selectLabel = computed(() => {
             </div>
 
             <!-- Search (selalu tampil di kanan) -->
-            <div class="w-full sm:w-64">
+            <div v-if="!props.hideSearch" class="w-full sm:w-64">
                 <Input :model-value="props.search" @update:model-value="(val) => emit('update:search', val)" placeholder="Search..." class="w-full" />
             </div>
         </div>

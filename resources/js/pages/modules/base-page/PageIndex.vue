@@ -79,6 +79,7 @@ const props = defineProps<{
     hidePagination?: boolean;
     limit?: number;
     disableLength?: boolean;
+    hideSearch?: boolean;
 }>();
 
 const emit = defineEmits(['search', 'update:selected']);
@@ -194,6 +195,7 @@ defineExpose({ fetchData });
                 :on-delete-row="handleDeleteRow"
                 :hide-pagination="props.hidePagination"
                 :disable-length="props.disableLength"
+                :hide-search="props.hideSearch"
             />
 
             <Dialog v-model:open="showConfirm">

@@ -30,7 +30,9 @@ class ActivityLogRepository
     {
         $query = $this->model
             ->with(['causer', 'causer.role'])
-            ->select('id', 'log_name', 'description', 'subject_type', 'subject_id', 'causer_type', 'causer_id', 'created_at', 'event');
+            ->select('activity_log.id', 'activity_log.log_name', 'activity_log.description', 'activity_log.subject_type', 'activity_log.subject_id', 'activity_log.causer_type', 'activity_log.causer_id', 'activity_log.created_at', 'activity_log.event')
+            ->leftJoin('users', 'activity_log.causer_id', '=', 'users.id')
+            ->leftJoin('roles', 'users.current_role_id', '=', 'roles.id');
 
         // Apply search
         if (request('search')) {
@@ -39,7 +41,9 @@ class ActivityLogRepository
                 $q->where('log_name', 'like', '%' . $searchTerm . '%')
                     ->orWhere('description', 'like', '%' . $searchTerm . '%')
                     ->orWhere('subject_type', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('event', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('event', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('users.name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('roles.name', 'like', '%' . $searchTerm . '%');
             });
         }
 

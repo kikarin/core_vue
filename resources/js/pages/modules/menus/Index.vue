@@ -140,5 +140,6 @@ const deleteMenu = async (row: any) => {
         :on-delete-row-confirm="deleteMenu"
         :disable-length="true"
         :hide-pagination="true"
+        :hide-search="true"
     />
 </template>

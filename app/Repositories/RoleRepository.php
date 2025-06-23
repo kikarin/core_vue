@@ -71,7 +71,15 @@ class RoleRepository
             $searchTerm = request('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('init_page_login', 'like', '%' . $searchTerm . '%');
+                    ->orWhere('init_page_login', 'like', '%' . $searchTerm . '%')
+                    ->orWhere(function ($subQ) use ($searchTerm) {
+                        if (stripos('ya', $searchTerm) !== false) {
+                            $subQ->orWhere('is_allow_login', 1);
+                        }
+                        if (stripos('tidak', $searchTerm) !== false) {
+                            $subQ->orWhere('is_allow_login', 0);
+                        }
+                    });
             });
         }
 
