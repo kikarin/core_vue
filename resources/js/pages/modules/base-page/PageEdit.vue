@@ -24,7 +24,6 @@ const handleCancel = () => {
 </script>
 
 <template>
-    <!-- <Head :title="`Edit ${title}`" /> -->
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="space-y-4 p-4">
             <div class="grid grid-cols-1 lg:grid-cols-12">
