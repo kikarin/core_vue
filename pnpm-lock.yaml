@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@inertiajs/vue3':
-        specifier: ^2.0.12
-        version: 2.0.12(vue@3.5.17(typescript@5.8.3))
+        specifier: ^2.0.13
+        version: 2.0.13(vue@3.5.17(typescript@5.8.3))
       '@tailwindcss/vite':
         specifier: ^4.1.10
         version: 4.1.10(vite@6.3.5(@types/node@22.15.32)(jiti@2.4.2)(lightningcss@1.30.1)(stylus@0.57.0))
@@ -30,8 +30,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       concurrently:
-        specifier: ^9.1.2
-        version: 9.1.2
+        specifier: ^9.2.0
+        version: 9.2.0
       laravel-vite-plugin:
         specifier: ^1.3.0
         version: 1.3.0(vite@6.3.5(@types/node@22.15.32)(jiti@2.4.2)(lightningcss@1.30.1)(stylus@0.57.0))
@@ -66,8 +66,8 @@ importers:
         specifier: ^3.5.17
         version: 3.5.17(typescript@5.8.3)
       vue-json-pretty:
-        specifier: ^2.4.0
-        version: 2.4.0(vue@3.5.17(typescript@5.8.3))
+        specifier: ^2.5.0
+        version: 2.5.0(vue@3.5.17(typescript@5.8.3))
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.17(typescript@5.8.3))
@@ -103,14 +103,14 @@ importers:
         specifier: ^9.33.0
         version: 9.33.0(eslint@9.29.0(jiti@2.4.2))
       prettier:
-        specifier: ^3.5.3
-        version: 3.5.3
+        specifier: ^3.6.0
+        version: 3.6.0
       prettier-plugin-organize-imports:
         specifier: ^4.1.0
-        version: 4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
+        version: 4.1.0(prettier@3.6.0)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
       prettier-plugin-tailwindcss:
         specifier: ^0.6.13
-        version: 0.6.13(prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)))(prettier@3.5.3)
+        version: 0.6.13(prettier-plugin-organize-imports@4.1.0(prettier@3.6.0)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)))(prettier@3.6.0)
       shadcn-vue:
         specifier: ^2.2.0
         version: 2.2.0(eslint@9.29.0(jiti@2.4.2))(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
@@ -491,11 +491,11 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@inertiajs/core@2.0.12':
-    resolution: {integrity: sha512-TxMRUcSB/w2Or9KSsldgcx49u+1xveLg7HuwRkqrs196ZrDwYRjtc984uc838vDP+dsFIz//+Tn0n7ysG/MgMQ==}
+  '@inertiajs/core@2.0.13':
+    resolution: {integrity: sha512-MZ1JkEoA1s7eheHiQFXVjIOw9xBx2zZFX/lCwAUSb5w6WOsz7gaLj/fTxoMZr9eyxzcfaLScsky+EcSpiRU78w==}
 
-  '@inertiajs/vue3@2.0.12':
-    resolution: {integrity: sha512-ruvThr3BKunFjh+EamcGilAI8RGSF/upL//E9bnchYEWFCwQtZ2NzQ0tBOFLQ+qYnaRiDjsyTa63h1R36PUmbg==}
+  '@inertiajs/vue3@2.0.13':
+    resolution: {integrity: sha512-Zg6wbpG04Qs2ellggnlV5aP9x182nndDROFqdxfiPGokHjU5XZiRg1ss6LfskeDmEULBT/nH55Z1p+Mgz5t++A==}
     peerDependencies:
       vue: ^3.0.0
 
@@ -1109,8 +1109,8 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
-  concurrently@9.1.2:
-    resolution: {integrity: sha512-H9MWcoPsYddwbOGM6difjVwVZHl63nwMEwDJG/L7VGtuaJhb12h2caPG2tVPWs7emuYix252iGfqOyrz1GczTQ==}
+  concurrently@9.2.0:
+    resolution: {integrity: sha512-IsB/fiXTupmagMW4MNp2lx2cdSN2FfZq78vF90LBB+zZHArbIQZjQtzXCiXnvTxCZSvXanTqFLWBjw2UkLx1SQ==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -1266,8 +1266,8 @@ packages:
     resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
     engines: {node: '>= 0.4'}
 
-  es-toolkit@1.39.3:
-    resolution: {integrity: sha512-Qb/TCFCldgOy8lZ5uC7nLGdqJwSabkQiYQShmw4jyiPk1pZzaYWTwaYKYP7EgLccWYgZocMrtItrwh683voaww==}
+  es-toolkit@1.39.4:
+    resolution: {integrity: sha512-hHqQ0yJERMNrJUyYHnf02qDuIxjRnnJlx1CFdR9Ia6tw6jPA7kXmb+tWzc7trJDHwMsc393hZ/m2XMxYXGAfqQ==}
 
   esbuild@0.25.5:
     resolution: {integrity: sha512-P8OtKZRv/5J5hhz0cUAdu/cLuPIKXpQl1R9pZtvmHWQvrAUVd0UNIPT4IB4W3rNOqVO0rlqHmCIbSwxh/c9yUQ==}
@@ -2028,8 +2028,8 @@ packages:
       prettier-plugin-svelte:
         optional: true
 
-  prettier@3.5.3:
-    resolution: {integrity: sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==}
+  prettier@3.6.0:
+    resolution: {integrity: sha512-ujSB9uXHJKzM/2GBuE0hBOUgC77CN3Bnpqa+g80bkv3T3A93wL/xlzDATHhnhkzifz/UE2SNOvmbTz5hSkDlHw==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -2418,8 +2418,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  vue-json-pretty@2.4.0:
-    resolution: {integrity: sha512-e9bP41DYYIc2tWaB6KuwqFJq5odZ8/GkE6vHQuGcbPn37kGk4a3n1RNw3ZYeDrl66NWXgTlOfS+M6NKkowmkWw==}
+  vue-json-pretty@2.5.0:
+    resolution: {integrity: sha512-nZA6qXYaiMaE2J0HkKtkrLcPJoN03SDSBdZWEPiRwoOVySWOfoZCyadhBwBN6wAHTga+c/R49ExGWoKFXnu37A==}
     engines: {node: '>= 10.0.0', npm: '>= 5.0.0'}
     peerDependencies:
       vue: '>=3.0.0'
@@ -2857,18 +2857,18 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@inertiajs/core@2.0.12':
+  '@inertiajs/core@2.0.13':
     dependencies:
       axios: 1.10.0
-      es-toolkit: 1.39.3
+      es-toolkit: 1.39.4
       qs: 6.14.0
     transitivePeerDependencies:
       - debug
 
-  '@inertiajs/vue3@2.0.12(vue@3.5.17(typescript@5.8.3))':
+  '@inertiajs/vue3@2.0.13(vue@3.5.17(typescript@5.8.3))':
     dependencies:
-      '@inertiajs/core': 2.0.12
-      es-toolkit: 1.39.3
+      '@inertiajs/core': 2.0.13
+      es-toolkit: 1.39.4
       vue: 3.5.17(typescript@5.8.3)
     transitivePeerDependencies:
       - debug
@@ -3205,7 +3205,7 @@ snapshots:
       '@vue/compiler-sfc': 3.5.17
       '@vuedx/template-ast-types': 0.7.1
       fast-glob: 3.3.3
-      prettier: 3.5.3
+      prettier: 3.6.0
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -3502,7 +3502,7 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  concurrently@9.1.2:
+  concurrently@9.2.0:
     dependencies:
       chalk: 4.1.2
       lodash: 4.17.21
@@ -3643,7 +3643,7 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
-  es-toolkit@1.39.3: {}
+  es-toolkit@1.39.4: {}
 
   esbuild@0.25.5:
     optionalDependencies:
@@ -4313,20 +4313,20 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
+  prettier-plugin-organize-imports@4.1.0(prettier@3.6.0)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
     dependencies:
-      prettier: 3.5.3
+      prettier: 3.6.0
       typescript: 5.8.3
     optionalDependencies:
       vue-tsc: 2.2.10(typescript@5.8.3)
 
-  prettier-plugin-tailwindcss@0.6.13(prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)))(prettier@3.5.3):
+  prettier-plugin-tailwindcss@0.6.13(prettier-plugin-organize-imports@4.1.0(prettier@3.6.0)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)))(prettier@3.6.0):
     dependencies:
-      prettier: 3.5.3
+      prettier: 3.6.0
     optionalDependencies:
-      prettier-plugin-organize-imports: 4.1.0(prettier@3.5.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
+      prettier-plugin-organize-imports: 4.1.0(prettier@3.6.0)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
 
-  prettier@3.5.3: {}
+  prettier@3.6.0: {}
 
   prompts@2.4.2:
     dependencies:
@@ -4739,7 +4739,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-json-pretty@2.4.0(vue@3.5.17(typescript@5.8.3)):
+  vue-json-pretty@2.5.0(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       vue: 3.5.17(typescript@5.8.3)
 
