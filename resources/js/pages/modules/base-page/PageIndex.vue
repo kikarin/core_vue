@@ -50,17 +50,11 @@ const fetchData = async () => {
     }
 };
 
-const debouncedFetchData = debounce(fetchData, 400);
-
 onMounted(fetchData);
-
-watch(search, () => {
-    debouncedFetchData();
-});
 
 watch([page, localLimit, () => sort.value.key, () => sort.value.order], (vals, oldVals) => {
     if (vals[2] !== oldVals[2] || vals[3] !== oldVals[3]) {
-        debouncedFetchData();
+        fetchData();
     } else {
         fetchData();
     }
@@ -163,6 +157,18 @@ const localActions = (row: any) => {
     });
 };
 
+const handleSearchDebounced = debounce((val: string) => {
+    search.value = val;
+    fetchData();
+}, 400);
+
+const handleSort = debounce((val: { key: string; order: 'asc' | 'desc' }) => {
+    sort.value.key = val.key;
+    sort.value.order = val.order;
+    page.value = 1;
+    fetchData();
+}, 200);
+
 defineExpose({ fetchData });
 </script>
 
@@ -187,8 +193,8 @@ defineExpose({ fetchData });
                 :sort="sort"
                 :page="page"
                 :per-page="props.limit !== undefined ? props.limit : localLimit"
-                @update:search="(val) => handleSearch({ search: val })"
-                @update:sort="(val) => handleSearch({ sortKey: val.key, sortOrder: val.order })"
+                @update:search="handleSearchDebounced"
+                @update:sort="handleSort"
                 @update:page="(val) => handleSearch({ page: val })"
                 @update:perPage="(val) => handleSearch({ limit: Number(val), page: 1 })"
                 @deleted="fetchData()"

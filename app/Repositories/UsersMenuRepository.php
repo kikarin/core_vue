@@ -314,35 +314,6 @@ class UsersMenuRepository
         return $model;
     }
 
-    public function create($data)
-    {
-        $record = $this->model->create($data);
-        $this->forgetCache();
-        $this->updateCache();
-        return $record;
-    }
-
-    public function update($id, $data)
-    {
-        $record = $this->model->find($id);
-        if ($record) {
-            $record->update($data);
-            $this->forgetCache();
-            $this->updateCache();
-        }
-        return $record;
-    }
-
-    public function delete($id)
-    {
-        $record = $this->model->find($id);
-        if ($record) {
-            $record->delete();
-            $this->forgetCache();
-            $this->updateCache();
-        }
-        return $record;
-    }
     /**
      * Validasi request untuk create/edit
      */

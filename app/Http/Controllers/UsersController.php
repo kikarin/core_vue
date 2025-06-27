@@ -12,6 +12,8 @@ use Illuminate\Routing\Controllers\Middleware;
 use App\Models\User;
 use App\Repositories\UsersRoleRepository;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+use App\Models\UsersRole;
 
 class UsersController extends Controller implements HasMiddleware
 {
@@ -112,7 +114,7 @@ class UsersController extends Controller implements HasMiddleware
         $authUser  = Auth::user();
         $newRoleId = $request->input('role_id');
 
-        $hasRole = \App\Models\UsersRole::where('users_id', $authUser->id)
+        $hasRole = UsersRole::where('users_id', $authUser->id)
                             ->where('role_id', $newRoleId)
                             ->exists();
 
@@ -124,7 +126,7 @@ class UsersController extends Controller implements HasMiddleware
         $user->current_role_id = $newRoleId;
         $user->save();
 
-        $newRole     = \App\Models\Role::find($newRoleId);
+        $newRole     = Role::find($newRoleId);
         $redirectUrl = $newRole && !empty($newRole->init_page_login) ? $newRole->init_page_login : 'dashboard';
 
         return redirect($redirectUrl)->with('success', 'Successfully switched role.');
